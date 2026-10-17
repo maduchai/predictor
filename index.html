@@ -142,7 +142,7 @@
 <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
 
 <script>
-  // DÁN CONFIG FIREBASE CỦA MÀY VÀO ĐÂY
+  // CONFIG CỦA MÀY ĐÃ ĐƯỢC NHÉT VÀO ĐÂY
   const firebaseConfig = {
     apiKey: "AIzaSyAaQg91q7wMeQ4kXyCnOQuolvN_KmJoHBI",
     authDomain: "vip1-c45cb.firebaseapp.com",
@@ -150,8 +150,10 @@
     storageBucket: "vip1-c45cb.firebasestorage.app",
     messagingSenderId: "191209527323",
     appId: "1:191209527323:web:b908c85ad00bfb6c2ac0be",
-    databaseURL: "https://ten-du-an-default-rtdb.firebaseio.com"
+    measurementId: "G-69TTES99HF",
+    databaseURL: "https://vip1-c45cb-default-rtdb.firebaseio.com" // Tao đã sửa lại link này cho chuẩn với projectId của mày
   };
+  
   firebase.initializeApp(firebaseConfig);
   const db = firebase.database();
 
