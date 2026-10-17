@@ -137,111 +137,116 @@
   </div>
 </div>
 
-<!-- FIREBASE SDK & LOGIC -->
-<script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-  import { getDatabase, ref, set, get, update, push } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
 
-  // ĐIỀN CONFIG FIREBASE CỦA MÀY VÀO ĐÂY
+<script>
   const firebaseConfig = {
-    apiKey: "ĐIỀN_API_KEY",
-    authDomain: "ĐIỀN_AUTH_DOMAIN",
-    projectId: "ĐIỀN_PROJECT_ID",
-    storageBucket: "ĐIỀN_STORAGE_BUCKET",
-    messagingSenderId: "ĐIỀN_SENDER_ID",
-    appId: "ĐIỀN_APP_ID",
-    databaseURL: "https://ĐIỀN_PROJECT_ID-default-rtdb.firebaseio.com"
+    apiKey: "AIzaSyAaQg91q7wMeQ4kXyCnOQuolvN_KmJoHBI",
+    authDomain: "vip1-c45cb.firebaseapp.com",
+    projectId: "vip1-c45cb",
+    storageBucket: "vip1-c45cb.firebasestorage.app",
+    messagingSenderId: "191209527323",
+    appId: "1:191209527323:web:b908c85ad00bfb6c2ac0be",
+    databaseURL: "https://ten-du-an-default-rtdb.firebaseio.com"
   };
+  firebase.initializeApp(firebaseConfig);
+  const db = firebase.database();
 
-  const app = initializeApp(firebaseConfig);
-  const db = getDatabase(app);
-
-  let currentUser=null, currentGame='sunwin';
+  let currentUser=null, currentGame='sunwin', myId=null;
   let history={ sunwin:[], hitclub:[], b52:[], md5:[] };
   let userIP = "Đang lấy...";
   fetch('https://api.ipify.org?format=json').then(r=>r.json()).then(d=>userIP=d.ip).catch(()=>userIP="Lỗi IP");
 
-  // GÁN HÀM RA WINDOW ĐỂ HTML GỌI ĐƯỢC
-  window.UI = {
+  const UI = {
     msg(id,txt,err){ const el=document.getElementById(id); el.innerHTML=txt; el.className=`msg ${err?'err':'ok'}`; setTimeout(()=>el.classList.add('hidden'),5000); },
     toggle(){ const m=document.getElementById('depMethod').value; document.getElementById('formCard').classList.toggle('hidden', m!=='card'); document.getElementById('formBank').classList.toggle('hidden', m!=='bank'); }
   };
 
-  window.Auth = {
-    async register(){
+  const Auth = {
+    register: function() {
       const u=document.getElementById('uName').value.trim(), p=document.getElementById('uPass').value.trim();
       if(!u||!p) return UI.msg('authMsg',"Nhập đủ tên/pass",1);
       
-      const snapshot = await get(ref(db, 'users'));
-      let users = snapshot.exists() ? snapshot.val() : {};
-      if(Object.values(users).find(x => x.username === u)) return UI.msg('authMsg',"Tên đã tồn tại",1);
-      
-      const newUserRef = push(ref(db, 'users'));
-      await set(newUserRef, {id: newUserRef.key, username: u, password: p, xu: 0, bankCode: 'HB'+Math.floor(1000+Math.random()*9000), devices: []});
-      UI.msg('authMsg',"Đăng ký thành công!",0);
+      db.ref('users').once('value').then(snap => {
+        let users = snap.val() || {};
+        if(Object.values(users).find(x => x.username === u)) return UI.msg('authMsg',"Tên đã tồn tại",1);
+        
+        const newRef = db.ref('users').push();
+        newRef.set({id: newRef.key, username: u, password: p, xu: 0, bankCode: 'HB'+Math.floor(1000+Math.random()*9000), devices: []}).then(() => {
+          UI.msg('authMsg',"Đăng ký thành công!",0);
+        });
+      });
     },
-    async login(){
+    login: function() {
       const u=document.getElementById('uName').value.trim(), p=document.getElementById('uPass').value.trim();
-      const snapshot = await get(ref(db, 'users'));
-      if(!snapshot.exists()) return UI.msg('authMsg',"Chưa có user",1);
-      
-      let user = Object.values(snapshot.val()).find(x => x.username === u && x.password === p);
-      if(!user) return UI.msg('authMsg',"Sai tài khoản/pass",1);
+      db.ref('users').once('value').then(snap => {
+        if(!snap.exists()) return UI.msg('authMsg',"Chưa có user",1);
+        let user = Object.values(snap.val()).find(x => x.username === u && x.password === p);
+        if(!user) return UI.msg('authMsg',"Sai tài khoản/pass",1);
 
-      let ua=navigator.userAgent, dName="Thiết bị";
-      if(/android/i.test(ua)) dName="Android"; else if(/iPhone|iPad/i.test(ua)) dName="iOS"; else if(/Windows/i.test(ua)) dName="Windows"; else if(/Mac/i.test(ua)) dName="Mac";
+        let ua=navigator.userAgent, dName="Thiết bị";
+        if(/android/i.test(ua)) dName="Android"; else if(/iPhone|iPad/i.test(ua)) dName="iOS"; else if(/Windows/i.test(ua)) dName="Windows"; else if(/Mac/i.test(ua)) dName="Mac";
 
-      let devId = Date.now().toString();
-      let devs = user.devices || [];
-      devs.push({id:devId, name:dName, ip:userIP, time:new Date().toLocaleString('vi-VN')});
-      if(devs.length>5) devs.shift();
-      
-      await update(ref(db, 'users/' + user.id), {devices: devs});
-      currentUser=user;
-      
-      document.getElementById('authView').classList.add('hidden'); 
-      document.getElementById('mainView').classList.remove('hidden');
-      this.render();
+        let devId = Date.now().toString();
+        myId = user.id;
+        let devs = user.devices || [];
+        devs.push({id:devId, name:dName, ip:userIP, time:new Date().toLocaleString('vi-VN')});
+        if(devs.length>5) devs.shift();
+        
+        db.ref('users/' + user.id).update({devices: devs}).then(() => {
+          currentUser=user;
+          document.getElementById('authView').classList.add('hidden'); 
+          document.getElementById('mainView').classList.remove('hidden');
+          Auth.render();
+        });
+      });
     },
-    async refresh(){ 
-      if(!currentUser) return; 
-      const snapshot = await get(ref(db, 'users/' + currentUser.id));
-      if(snapshot.exists()) { currentUser = snapshot.val(); this.render(); UI.msg('appMsg',"Đã làm mới!",0); }
+    refresh: function() {
+      if(!currentUser) return;
+      db.ref('users/' + currentUser.id).once('value').then(snap => {
+        if(snap.exists()) {
+          currentUser = snap.val();
+          Auth.render();
+          UI.msg('appMsg',"Đã làm mới!",0);
+        }
+      });
     },
-    render(){
+    render: function() {
       document.getElementById('uiName').textContent=currentUser.username;
       document.getElementById('uiXu').textContent=currentUser.xu||0;
       document.getElementById('bankCode').textContent=currentUser.bankCode;
       Game.render();
     },
-    async depositCard(){
+    depositCard: function() {
       if(!currentUser) return;
       const type=document.getElementById('cardType').value, amount=parseInt(document.getElementById('depAmount').value);
       const serial=document.getElementById('cardSerial').value.trim(), pin=document.getElementById('cardPin').value.trim();
       if(!serial||!pin) return UI.msg('depMsg',"Nhập đủ Serial/PIN",1);
       if(serial.length<10||serial.length>15||pin.length<10||pin.length>15) return UI.msg('depMsg',"Serial/PIN phải 10-15 số",1);
       
-      const newDep = push(ref(db, 'deposits'));
-      await set(newDep, {id: newDep.key, userId: currentUser.id, username: currentUser.username, method: 'Thẻ', info: `${type} - S:${serial} - P:${pin}`, amount, status: 'pending', created_at: Date.now()});
-      
-      UI.msg('depMsg',"Gửi thẻ thành công!",0);
-      document.getElementById('cardSerial').value=""; document.getElementById('cardPin').value="";
+      const newDep = db.ref('deposits').push();
+      newDep.set({id: newDep.key, userId: currentUser.id, username: currentUser.username, method: 'Thẻ', info: `${type} - S:${serial} - P:${pin}`, amount, status: 'pending', created_at: Date.now()}).then(() => {
+        UI.msg('depMsg',"Gửi thẻ thành công!",0);
+        document.getElementById('cardSerial').value=""; document.getElementById('cardPin').value="";
+      });
     },
-    async depositBank(){
+    depositBank: function() {
       if(!currentUser) return;
       const amount=parseInt(document.getElementById('depAmount').value);
-      const newDep = push(ref(db, 'deposits'));
-      await set(newDep, {id: newDep.key, userId: currentUser.id, username: currentUser.username, method: 'Bank', info: `Nội dung: ${currentUser.bankCode}`, amount, status: 'pending', created_at: Date.now()});
-      UI.msg('depMsg',"Đã ghi nhận, chờ check!",0);
+      const newDep = db.ref('deposits').push();
+      newDep.set({id: newDep.key, userId: currentUser.id, username: currentUser.username, method: 'Bank', info: `Nội dung: ${currentUser.bankCode}`, amount, status: 'pending', created_at: Date.now()}).then(() => {
+        UI.msg('depMsg',"Đã ghi nhận, chờ check!",0);
+      });
     }
   };
 
-  window.Game = {
+  const Game = {
     select(g, el){ currentGame=g; document.querySelectorAll('.game').forEach(x=>x.classList.remove('active')); el.classList.add('active'); Predictor.render(); },
     render(){ Predictor.render(); }
   };
 
-  window.Predictor = {
+  const Predictor = {
     addRound(){
       const t=parseInt(document.getElementById('totalInput').value);
       if(isNaN(t)||t<3||t>18) return UI.msg('appMsg',"Phải từ 3-18",1);
@@ -256,7 +261,7 @@
       else el.innerHTML=h.slice(-20).map(a=>`<div class="h-item ${a.result.toLowerCase()}">${a.total} (${a.result[0]})</div>`).join('');
     },
     render(){ this.renderHist(); this.reset(); },
-    async analyzeImage(){
+    analyzeImage(){
       if(!currentUser || currentUser.xu<5) return UI.msg('uploadMsg',"Đéo đủ 5 Xu",1);
       const f=document.getElementById('imageInput'); if(!f.files.length) return UI.msg('uploadMsg',"Chưa chọn ảnh",1);
       const btn=document.getElementById('btnUpload'); btn.disabled=true; btn.innerHTML="ĐANG QUÉT..."; UI.msg('uploadMsg',"Đang xử lý...",0);
@@ -264,7 +269,7 @@
       const rd=new FileReader();
       rd.onload=(e)=>{
         const img=new Image();
-        img.onload=async ()=>{
+        img.onload=()=>{
           const cv=document.createElement('canvas'), ctx=cv.getContext('2d');
           cv.width=img.width; cv.height=img.height; ctx.drawImage(img,0,0);
           const data=ctx.getImageData(0,0,cv.width,cv.height).data;
@@ -274,36 +279,36 @@
           if(tot===0){ pred=Math.random()<0.5?"TÀI":"XỈU"; rate=50; }
           else { let pT=(r/tot)*100; if(pT>50){pred="XỈU"; rate=Math.min(99,Math.round(pT));} else {pred="TÀI"; rate=Math.min(99,Math.round(100-pT));} }
           
-          await update(ref(db, 'users/' + currentUser.id), {xu: currentUser.xu - 5});
-          currentUser.xu -= 5;
-          Auth.render();
-          
-          btn.disabled=false; btn.innerHTML="TẢI ẢNH & QUÉT"; f.value="";
-          document.getElementById('predResult').classList.remove('hidden');
-          document.getElementById('predResult').innerHTML=`<div>KẾT QUẢ ẢNH</div><h2 style="color:${pred==='TÀI'?'#00e676':'#ff5252'};margin:10px 0">${pred}</h2><div style="color:#ffd166">Tự tin: ${rate}%</div>`;
-          UI.msg('uploadMsg',"Đã trừ 5 xu",0);
+          db.ref('users/' + currentUser.id).update({xu: currentUser.xu - 5}).then(() => {
+            currentUser.xu -= 5;
+            Auth.render();
+            btn.disabled=false; btn.innerHTML="TẢI ẢNH & QUÉT"; f.value="";
+            document.getElementById('predResult').classList.remove('hidden');
+            document.getElementById('predResult').innerHTML=`<div>KẾT QUẢ ẢNH</div><h2 style="color:${pred==='TÀI'?'#00e676':'#ff5252'};margin:10px 0">${pred}</h2><div style="color:#ffd166">Tự tin: ${rate}%</div>`;
+            UI.msg('uploadMsg',"Đã trừ 5 xu",0);
+          });
         }; img.src=e.target.result;
       }; rd.readAsDataURL(f.files[0]);
     },
-    async predict(){
+    predict(){
       if(!currentUser || currentUser.xu<2) return UI.msg('appMsg',"Đéo đủ 2 Xu",1);
       if(history[currentGame].length<3) return UI.msg('appMsg',"Cần ít nhất 3 phiên",1);
       
-      await update(ref(db, 'users/' + currentUser.id), {xu: currentUser.xu - 2});
-      currentUser.xu -= 2;
-      Auth.render();
-      
-      const el=document.getElementById('predResult'); el.classList.remove('hidden'); el.innerHTML=`<div class="loading"></div> Đang phân tích...`;
-      setTimeout(()=>{
-        let t=history[currentGame].filter(x=>x.result==='TAI').length, x=history[currentGame].length-t;
-        let tot=t+x, pT=Math.round((t/tot)*100), pX=100-pT;
-        let pred = pT>pX?"TÀI":"XỈU", rate = pT>pX?pT:pX;
-        
-        document.getElementById('pTai').textContent=`TÀI ${pT}%`; document.getElementById('pXiu').textContent=`XỈU ${pX}%`;
-        document.getElementById('barTai').style.width=pT+"%"; document.getElementById('barXiu').style.width=pX+"%";
-        
-        el.innerHTML=`<div>KẾT QUẢ (${currentGame.toUpperCase()})</div><h2 style="color:${pred==='TÀI'?'#00e676':'#ff5252'};margin:10px 0">${pred}</h2><div style="color:#ffd166">Tự tin: ${rate}%</div>`;
-      }, 1000);
+      db.ref('users/' + currentUser.id).update({xu: currentUser.xu - 2}).then(() => {
+        currentUser.xu -= 2;
+        Auth.render();
+        const el=document.getElementById('predResult'); el.classList.remove('hidden'); el.innerHTML=`<div class="loading"></div> Đang phân tích...`;
+        setTimeout(()=>{
+          let t=history[currentGame].filter(x=>x.result==='TAI').length, x=history[currentGame].length-t;
+          let tot=t+x, pT=Math.round((t/tot)*100), pX=100-pT;
+          let pred = pT>pX?"TÀI":"XỈU", rate = pT>pX?pT:pX;
+          
+          document.getElementById('pTai').textContent=`TÀI ${pT}%`; document.getElementById('pXiu').textContent=`XỈU ${pX}%`;
+          document.getElementById('barTai').style.width=pT+"%"; document.getElementById('barXiu').style.width=pX+"%";
+          
+          el.innerHTML=`<div>KẾT QUẢ (${currentGame.toUpperCase()})</div><h2 style="color:${pred==='TÀI'?'#00e676':'#ff5252'};margin:10px 0">${pred}</h2><div style="color:#ffd166">Tự tin: ${rate}%</div>`;
+        }, 1000);
+      });
     }
   };
 </script>
