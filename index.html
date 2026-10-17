@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hai×bo · Predictor</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Plus+Jakarta+Sans:wght@400;600;800&display=swap');
+  @keyframes rainbow-bg {
+    0% { background-color: #ff0000; } 14% { background-color: #ff7f00; }
+    28% { background-color: #ffff00; } 42% { background-color: #00ff00; }
+    57% { background-color: #0000ff; } 71% { background-color: #4b0082; }
+    85% { background-color: #9400d3; } 100% { background-color: #ff0000; }
+  }
+  @keyframes rainbow-text {
+    0% { color: #ff0000; text-shadow: 0 0 10px #ff0000; } 14% { color: #ff7f00; text-shadow: 0 0 10px #ff7f00; }
+    28% { color: #ffff00; text-shadow: 0 0 10px #ffff00; } 42% { color: #00ff00; text-shadow: 0 0 10px #00ff00; }
+    57% { color: #0000ff; text-shadow: 0 0 10px #0000ff; } 71% { color: #4b0082; text-shadow: 0 0 10px #4b0082; }
+    85% { color: #9400d3; text-shadow: 0 0 10px #9400d3; } 100% { color: #ff0000; text-shadow: 0 0 10px #ff0000; }
+  }
+  :root{ --panel:#0a141ecc; --panel2:#0e1c28cc; --line:#ffffff44; --txt:#ffffff; --dim:#cccccc; --green:#00e676; --red:#ff5252; --yel:#ffd166; }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{ animation: rainbow-bg 5s linear infinite; color:var(--txt); font-family:'Plus Jakarta Sans', sans-serif; padding:20px; display:flex; justify-content:center; min-height:100vh; backdrop-filter: blur(10px); }
+  .app{ width:100%; max-width:900px; }
+  .header{ text-align:center; margin-bottom:24px; }
+  .header h1{ animation: rainbow-text 2s linear infinite; font-family: 'Orbitron', sans-serif; font-size:2.5rem; letter-spacing:3px; }
+  .card{ background:linear-gradient(180deg,var(--panel) 0%, var(--panel2) 100%); padding:22px; border-radius:14px; border:2px solid var(--line); margin-bottom:20px; box-shadow:0 10px 30px rgba(0,0,0,0.8); }
+  h2{ color:#fff; margin-bottom:15px; font-size:1.1rem; text-transform:uppercase; border-bottom:1px solid var(--line); padding-bottom:5px;}
+  input, select{ width:100%; padding:12px; margin-bottom:10px; background:#000000aa; border:1px solid var(--line); color:#fff; border-radius:8px; font-family:inherit; font-size:0.95rem; }
+  input:focus, select:focus{ border-color:#fff; outline:none; }
+  button{ background:#fff; color:#000; border:none; padding:12px 20px; border-radius:8px; cursor:pointer; font-weight:900; transition:0.2s; font-family:inherit; }
+  button:hover{ box-shadow:0 0 20px #fff; transform:scale(1.02); }
+  .btn-green{ background:var(--green); color:#000; } .btn-red{ background:var(--red); color:#fff; } 
+  .row{ display:flex; gap:10px; margin-bottom:10px; } .row > * { flex: 1; }
+  .hidden{ display:none!important; }
+  .msg{ margin-top:10px; font-size:0.85rem; padding:10px; border-radius:6px; font-weight:bold; background:#000; color:#fff; }
+  .msg.err{ color:var(--red); border:1px solid var(--red); }
+  .msg.ok{ color:var(--green); border:1px solid var(--green); }
+  .games-grid{ display:grid; grid-template-columns:repeat(4, 1fr); gap:12px; margin-bottom:20px; }
+  .game-btn{ background:#000000aa; border:2px solid var(--line); padding:15px 10px; border-radius:10px; text-align:center; cursor:pointer; transition:0.2s; color:#fff;}
+  .game-btn.active{ border-color:#fff; background:#ffffff44; box-shadow:0 0 15px #fff; }
+  .game-btn img{ width:50px; height:50px; border-radius:8px; }
+  .progress-bar-bg{ height:15px; background:#000; border-radius:6px; overflow:hidden; display:flex; border:1px solid #fff; }
+  .bar-tai{ background:var(--green); height:100%; transition:width 0.5s; }
+  .bar-xiu{ background:var(--red); height:100%; transition:width 0.5s; }
+  .hist-list{ display:flex; flex-wrap:wrap; gap:6px; margin-top:10px; }
+  .hist-item{ padding:6px 12px; border-radius:6px; font-weight:bold; font-size:0.85rem; background:#000; border:1px solid #fff; }
+  .hist-item.tai{ color:var(--green); } .hist-item.xiu{ color:var(--red); }
+  .pred-result{ text-align:center; padding:20px; background:#000000dd; border-radius:10px; border:2px dashed #fff; margin-top:15px; }
+  .pred-result h3{ font-size:2rem; margin-bottom:10px; font-family: 'Orbitron', sans-serif;}
+  .header-bar{ display:flex; justify-content:space-between; align-items:center; background:#000000cc; padding:15px 20px; border-radius:10px; margin-bottom:20px; border:1px solid #fff; }
+  .xu-balance { color: var(--yel); font-weight: bold; font-size: 1.2rem; }
+  .loading-spinner { display: inline-block; width: 20px; height: 20px; border: 3px solid rgba(255,255,255,0.3); border-radius: 50%; border-top-color: #fff; animation: spin 1s ease-in-out infinite; margin-right: 8px; vertical-align: middle; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .music-btn { position: fixed; top: 20px; right: 20px; z-index: 9999; background: #000; color: #fff; border: 2px solid #fff; padding: 10px 15px; border-radius: 50px; font-size: 1rem; font-weight: bold; cursor: pointer; box-shadow: 0 0 15px #fff; transition: 0.3s; }
+  .music-btn:hover { background: #fff; color: #000; }
+</style>
+</head>
+<body>
+
+<button class="music-btn" id="musicBtn" onclick="toggleMusic()">🎵 Bật Nhạc</button>
+<audio id="bgMusic" loop><source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" type="audio/mpeg"></audio>
+
+<div class="app">
+  <div class="header"><h1>Hai×bo</h1></div>
+
+  <div id="authView" class="card" style="max-width:500px; margin:0 auto;">
+    <h2>Đăng Nhập / Đăng Ký</h2>
+    <input id="uName" placeholder="Tên đăng nhập">
+    <input id="uPass" type="password" placeholder="Mật khẩu">
+    <div class="row">
+      <button onclick="Auth.login()">Đăng Nhập</button>
+      <button class="btn-green" onclick="Auth.register()">Đăng Ký</button>
+    </div>
+    <div id="authMsg" class="msg hidden"></div>
+  </div>
+
+  <div id="mainView" class="hidden">
+    <div class="header-bar">
+      <div>Chào, <b id="uiName"></b></div>
+      <div class="xu-balance">💎 <span id="uiXu">0</span> Xu</div>
+      <button class="btn-red" style="width:auto; padding:8px 15px; font-size:0.85rem" onclick="Auth.logout()">Thoát</button>
+    </div>
+
+    <div class="card">
+      <h2>Chọn Nền Tảng</h2>
+      <div class="games-grid" id="gameGrid">
+        <div class="game-btn active" data-game="sunwin" onclick="Game.select('sunwin')"><img src="https://via.placeholder.com/50/00e5ff/000?text=S"><span>Sunwin</span></div>
+        <div class="game-btn" data-game="hitclub" onclick="Game.select('hitclub')"><img src="https://via.placeholder.com/50/b57bff/000?text=H"><span>Hitclub</span></div>
+        <div class="game-btn" data-game="b52" onclick="Game.select('b52')"><img src="https://via.placeholder.com/50/ff5252/000?text=B"><span>B52</span></div>
+        <div class="game-btn" data-game="md5" onclick="Game.select('md5')"><img src="https://via.placeholder.com/50/00e676/000?text=M"><span>Tài Xỉu MD5</span></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Nhập Kết Quả Phiên</h2>
+      <div class="row">
+        <input id="totalInput" type="number" min="3" max="18" placeholder="Tổng xúc xắc (3-18)">
+        <button class="btn-green" style="flex:0 0 auto" onclick="Predictor.addRound()">Ghi</button>
+      </div>
+      <div class="row" style="margin-bottom:0">
+        <button class="btn-green" onclick="Predictor.quick(11)">+ Tài mẫu</button>
+        <button class="btn-red" onclick="Predictor.quick(9)">+ Xỉu mẫu</button>
+      </div>
+      <div id="appMsg" class="msg hidden"></div>
+      
+      <div style="margin-top: 15px; border-top: 1px dashed #fff; padding-top: 15px;">
+        <h2>Dự Đoán Bằng Ảnh (AI Scan - 5 Xu)</h2>
+        <input type="file" id="imageInput" accept="image/*" style="background: none; border: none; padding: 0; margin-bottom: 10px;">
+        <button id="btnUpload" onclick="Predictor.analyzeImage()">TẢI ẢNH LÊN & DỰ ĐOÁN</button>
+        <div id="uploadMsg" class="msg hidden"></div>
+      </div>
+
+      <h2 style="margin-top:20px">Lịch Sử Phiên</h2>
+      <div class="hist-list" id="histList"></div>
+    </div>
+
+    <div class="card">
+      <h2>Tỉ Lệ Thắng & Dự Đoán</h2>
+      <div class="progress-bar-bg">
+        <div class="bar-tai" id="barTai" style="width:50%"></div>
+        <div class="bar-xiu" id="barXiu" style="width:50%"></div>
+      </div>
+      <div style="display:flex; justify-content:space-between; margin-top:5px; font-weight:bold;">
+        <span id="percentTai" style="color:var(--green)">TÀI 50%</span>
+        <span id="percentXiu" style="color:var(--red)">XỈU 50%</span>
+      </div>
+      <button onclick="Predictor.predict()" style="width:100%; margin-top:15px; background:#b57bff; color:#fff; font-size:1.05rem;">PHÂN TÍCH CẦU (2 Xu)</button>
+      <div id="predResult" class="pred-result hidden"></div>
+    </div>
+
+    <div class="card">
+      <h2>Nạp Xu</h2>
+      <div style="font-size:0.85rem; margin-bottom:10px">Tỷ lệ: <b>20 Xu / 10k</b> - <b>220 Xu / 100k</b> - <b>1000 Xu / 400k</b></div>
+      <div class="row">
+        <select id="depMethod" onchange="UI.toggleMethod()">
+          <option value="card">Thẻ Cào</option>
+          <option value="bank">Chuyển Khoản</option>
+        </select>
+        <select id="depAmount">
+          <option value="10000">10.000đ (20 Xu)</option>
+          <option value="100000">100.000đ (220 Xu)</option>
+          <option value="400000">400.000đ (1000 Xu)</option>
+        </select>
+      </div>
+      <div id="formCard">
+        <select id="cardType" style="margin-bottom:10px">
+          <option value="Viettel">Viettel</option>
+          <option value="Vina">VinaPhone</option>
+          <option value="Mobi">Mobifone</option>
+        </select>
+        <input id="cardSerial" placeholder="Số Serial (10-15 số)" maxlength="15">
+        <input id="cardPin" placeholder="Mã thẻ (PIN) (10-15 số)" maxlength="15">
+        <button class="btn-green" onclick="Auth.depositCard()">Gửi Thẻ Cào</button>
+      </div>
+      <div id="formBank" class="hidden">
+        <div style="background:rgba(255,255,255,0.1); padding:15px; border-radius:8px; margin-bottom:15px;">
+          <p>Ngân hàng: <b>LPBank</b></p><p>Số TK: <b>0868866580</b></p>
+          <p>Chủ TK: <b>MA VAN HUNG</b></p><p>Nội dung CK: <b id="bankCode" style="color:var(--yel)">...</b></p>
+        </div>
+        <button class="btn-green" onclick="Auth.depositBank()">Tôi Đã Chuyển Khoản</button>
+      </div>
+      <div id="depMsg" class="msg hidden"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+const bgMusic = document.getElementById('bgMusic');
+const musicBtn = document.getElementById('musicBtn');
+let isMusicPlaying = false;
+function toggleMusic() {
+  if (isMusicPlaying) { bgMusic.pause(); musicBtn.innerHTML = "🎵 Bật Nhạc"; musicBtn.style.color = "#fff"; isMusicPlaying = false; } 
+  else { bgMusic.volume = 0.4; bgMusic.play().then(() => { musicBtn.innerHTML = "🔇 Tắt Nhạc"; musicBtn.style.color = "var(--green)"; isMusicPlaying = true; }).catch(e => alert("Lỗi phát nhạc!")); }
+}
+
+const DB = {
+  init(){ if(!localStorage.getItem('pred_users')) { localStorage.setItem('pred_users', JSON.stringify([])); localStorage.setItem('pred_deposits', JSON.stringify([])); } },
+  getUsers(){ return JSON.parse(localStorage.getItem('pred_users')) || []; },
+  saveUsers(u){ localStorage.setItem('pred_users', JSON.stringify(u)); },
+  getUser(id){ return this.getUsers().find(u => u.id === id); },
+  updateUser(id, data){ let users = this.getUsers(); let idx = users.findIndex(u => u.id === id); if(idx > -1) { users[idx] = {...users[idx], ...data}; this.saveUsers(users); } },
+  getDeposits(){ return JSON.parse(localStorage.getItem('pred_deposits')) || []; },
+  saveDeposits(d){ localStorage.setItem('pred_deposits', JSON.stringify(d)); }
+};
+DB.init();
+
+let currentUser = null; let currentGame = 'sunwin';
+let gameHistories = { sunwin: [], hitclub: [], b52: [], md5: [] };
+let userIP = "Đang lấy...";
+fetch('https://api.ipify.org?format=json').then(r=>r.json()).then(d=>userIP=d.ip).catch(()=>userIP="Không xác định");
+
+const UI = {
+  msg(id, text, isErr){
+    const el = document.getElementById(id);
+    el.innerHTML = text; el.classList.remove('hidden', 'err', 'ok'); el.classList.add(isErr ? 'err' : 'ok');
+    if(!text.includes('spinner')) { setTimeout(()=>{ if(el.innerHTML === text) el.classList.add('hidden'); }, 5000); }
+  },
+  toggleMethod(){
+    const m = document.getElementById('depMethod').value;
+    document.getElementById('formCard').classList.toggle('hidden', m !== 'card');
+    document.getElementById('formBank').classList.toggle('hidden', m !== 'bank');
+  }
+};
+
+const Auth = {
+  register(){
+    const u = document.getElementById('uName').value.trim(); const p = document.getElementById('uPass').value.trim();
+    if(!u || !p) return UI.msg('authMsg', "Nhập đủ tên và pass", true);
+    let users = DB.getUsers(); if(users.find(x => x.username === u)) return UI.msg('authMsg', "Tên đã tồn tại", true);
+    const userCode = 'HAIBO' + Math.floor(1000 + Math.random() * 9000);
+    users.push({ id: Date.now(), username: u, password: p, xu: 0, bankCode: userCode, ip: userIP });
+    DB.saveUsers(users); UI.msg('authMsg', "Đăng ký thành công!", false);
+  },
+  login(){
+    const u = document.getElementById('uName').value.trim(); const p = document.getElementById('uPass').value.trim();
+    let user = DB.getUsers().find(x => x.username === u && x.password === p);
+    if(!user) return UI.msg('authMsg', "Sai tài khoản hoặc mật khẩu", true);
+    currentUser = user; DB.updateUser(currentUser.id, { ip: userIP });
+    document.getElementById('authView').classList.add('hidden'); document.getElementById('mainView').classList.remove('hidden'); this.renderUI();
+  },
+  renderUI(){
+    if(!currentUser) return; currentUser = DB.getUser(currentUser.id);
+    document.getElementById('uiName').textContent = currentUser.username;
+    document.getElementById('uiXu').textContent = currentUser.xu || 0;
+    document.getElementById('bankCode').textContent = currentUser.bankCode;
+    Game.render();
+  },
+  logout(){ location.reload(); },
+  depositCard(){
+    if(!currentUser) return;
+    const type = document.getElementById('cardType').value; const amount = parseInt(document.getElementById('depAmount').value);
+    const serial = document.getElementById('cardSerial').value.trim(); const pin = document.getElementById('cardPin').value.trim();
+    if(!serial || !pin) return UI.msg('depMsg', "Nhập đủ Serial và Mã thẻ", true);
+    if(serial.length < 10 || serial.length > 15 || pin.length < 10 || pin.length > 15) return UI.msg('depMsg', "Serial và PIN phải từ 10-15 số!", true);
+    let deps = DB.getDeposits();
+    deps.push({ id: Date.now(), userId: currentUser.id, username: currentUser.username, method: 'Thẻ cào', info: `${type} - S:${serial} - P:${pin}`, amount, status: 'pending', created_at: Date.now() });
+    DB.saveDeposits(deps); document.getElementById('cardSerial').value = ""; document.getElementById('cardPin').value = "";
+    UI.msg('depMsg', "Đã gửi thẻ, chờ Admin duyệt!", false);
+  },
+  depositBank(){
+    if(!currentUser) return;
+    const amount = parseInt(document.getElementById('depAmount').value);
+    let deps = DB.getDeposits();
+    deps.push({ id: Date.now(), userId: currentUser.id, username: currentUser.username, method: 'Chuyển khoản', info: `Nội dung: ${currentUser.bankCode}`, amount, status: 'pending', created_at: Date.now() });
+    DB.saveDeposits(deps); UI.msg('depMsg', "Đã ghi nhận, chờ Admin check bill!", false);
+  }
+};
+
+const Game = { select(gameId){ currentGame = gameId; document.querySelectorAll('.game-btn').forEach(btn => btn.classList.toggle('active', btn.dataset.game === gameId)); Predictor.render(); }, render(){ Predictor.render(); } };
+
+const Algorithms = {
+  sunwin(hist){
+    let countTai = hist.filter(x => x.result === 'TAI').length; let countXiu = hist.length - countTai; let reason = "Sunwin: Phân tích cơ bản.";
+    let last3 = hist.slice(-3).map(h => h.result);
+    if(last3.length === 3 && last3.every(r => r === 'TAI')) { countXiu += 4; reason = "Sunwin: Cầu bệt Tài 3 phiên, ép Xỉu."; }
+    else if(last3.length === 3 && last3.every(r => r === 'XIU')) { countTai += 4; reason = "Sunwin: Cầu bệt Xỉu 3 phiên, ép Tài."; }
+    else {
+      let l4 = hist.slice(-4).map(h=>h.result).join('');
+      if(l4 === 'TAIXIUTAI' || l4 === 'XIUTAIXIU') {
+        let l = hist[hist.length-1].result;
+        if(l === 'TAI') { countXiu += 3; reason = "Sunwin: Bắt nhịp 1-1, ép Xỉu."; }
+        else { countTai += 3; reason = "Sunwin: Bắt nhịp 1-1, ép Tài."; }
+      }
+    }
+    return { countTai, countXiu, reason };
+  },
+  hitclub(hist){
+    let countTai = hist.filter(x => x.result === 'TAI').length; let countXiu = hist.length - countTai; let last = hist[hist.length-1].result; let reason = "Hitclub: Bám xu hướng cầu.";
+    if(last === 'TAI') { countTai += 2; reason = "Hitclub: Cửa Tài mạnh, bám Tài."; } else { countXiu += 2; reason = "Hitclub: Cửa Xỉu mạnh, bám Xỉu."; }
+    let l5 = hist.slice(-5).map(h=>h.result).join('');
+    if(l5 === 'TAITAITAITAITAI') { countXiu += 5; reason = "Hitclub: Cầu quá dài, bẻ Xỉu."; }
+    if(l5 === 'XIUXIUXIUXIUXIU') { countTai += 5; reason = "Hitclub: Cầu quá dài, bẻ Tài."; }
+    return { countTai, countXiu, reason };
+  },
+  b52(hist){
+    let countTai = hist.filter(x => x.result === 'TAI').length; let countXiu = hist.length - countTai; let last = hist[hist.length-1].result; let reason = "B52: Bẻ cầu liên tục.";
+    if(last === 'TAI') { countXiu += 4; reason = "B52: Phiên trước Tài, bẻ Xỉu."; } else { countTai += 4; reason = "B52: Phiên trước Xỉu, bẻ Tài."; }
+    if(hist.length >= 2 && hist[hist.length-1].result === hist[hist.length-2].result) {
+      if(last === 'TAI') countXiu += 3; else countTai += 3; reason = "B52: Nhịp đúp, bẻ cầu mạnh.";
+    }
+    return { countTai, countXiu, reason };
+  },
+  md5(hist){
+    let countTai = hist.filter(x => x.result === 'TAI').length; let countXiu = hist.length - countTai; let reason = "MD5: Băm thời gian (Hash).";
+    const now = new Date().getTime().toString(); let hash = 0;
+    for (let i = 0; i < now.length; i++) { hash = ((hash << 5) - hash) + now.charCodeAt(i); hash |= 0; }
+    if(Math.abs(hash) % 2 === 0) { countTai += 2; reason = "MD5: Hash chẵn, Tài."; } else { countXiu += 2; reason = "MD5: Hash lẻ, Xỉu."; }
+    return { countTai, countXiu, reason };
+  }
+};
+
+const Predictor = {
+  addRound(){
+    const t = parseInt(document.getElementById('totalInput').value, 10);
+    if(isNaN(t) || t < 3 || t > 18) return UI.msg('appMsg', "Tổng xúc xắc phải từ 3-18", true);
+    const result = t >= 11 ? "TAI" : "XIU"; gameHistories[currentGame].push({ total: t, result: result });
+    document.getElementById('totalInput').value = ""; UI.msg('appMsg', `Đã thêm ${result} (${t})`, false); this.resetProgress(); this.renderHist();
+  },
+  quick(t){ document.getElementById('totalInput').value = t; this.addRound(); },
+  resetProgress(){
+    document.getElementById('percentTai').textContent = "TÀI 50%"; document.getElementById('percentXiu').textContent = "XỈU 50%";
+    document.getElementById('barTai').style.width = "50%"; document.getElementById('barXiu').style.width = "50%"; document.getElementById('predResult').classList.add('hidden');
+  },
+  renderHist(){
+    const hist = gameHistories[currentGame]; const el = document.getElementById('histList');
+    if(hist.length === 0) el.innerHTML = `<div style="color:#ccc; font-size:0.85rem">Chưa có dữ liệu...</div>`;
+    else el.innerHTML = hist.slice(-20).map(h => `<div class="hist-item ${h.result.toLowerCase()}">${h.total} (${h.result === 'TAI' ? 'T' : 'X'})</div>`).join('');
+  },
+  render(){ this.renderHist(); this.resetProgress(); },
+  analyzeImage(){
+    currentUser = DB.getUser(currentUser.id); if((currentUser.xu || 0) < 5) return UI.msg('uploadMsg', "Đéo đủ 5 Xu để quét ảnh!", true);
+    const fileInput = document.getElementById('imageInput'); if(fileInput.files.length === 0) return UI.msg('uploadMsg', "Chưa chọn ảnh!", true);
+    const btn = document.getElementById('btnUpload'); btn.disabled = true; btn.innerHTML = `<span class="loading-spinner"></span> ĐANG QUÉT...`; UI.msg('uploadMsg', `<span class="loading-spinner"></span> Đang xử lý...`, false);
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const img = new Image();
+      img.onload = () => {
+        setTimeout(() => {
+          const canvas = document.createElement('canvas'); const ctx = canvas.getContext('2d');
+          canvas.width = img.width; canvas.height = img.height; ctx.drawImage(img, 0, 0);
+          const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height).data;
+          let redPixels = 0, greenPixels = 0;
+          for (let i = 0; i < imgData.length; i += 4) {
+            const r = imgData[i], g = imgData[i+1], b = imgData[i+2];
+            if (r > 150 && g < 100 && b < 100) redPixels++;
+            else if ((g > 150 && r < 120) || (b > 150 && r < 120)) greenPixels++;
+          }
+          let totalPixels = redPixels + greenPixels; let prediction = "", winRate = 0;
+          if(totalPixels === 0) { prediction = Math.random() < 0.5 ? "TÀI" : "XỈU"; winRate = 50; }
+          else {
+            let perTai = (redPixels / totalPixels) * 100;
+            if(perTai > 50) { prediction = "XỈU"; winRate = Math.min(99, Math.round(perTai)); } 
+            else { prediction = "TÀI"; winRate = Math.min(99, Math.round(100 - perTai)); }
+          }
+          DB.updateUser(currentUser.id, { xu: currentUser.xu - 5 }); this.renderUIUpdate();
+          btn.disabled = false; btn.innerHTML = `TẢI ẢNH LÊN & DỰ ĐOÁN`; fileInput.value = "";
+          const el = document.getElementById('predResult'); el.classList.remove('hidden');
+          el.innerHTML = `<div style="color:#fff; font-size:0.85rem">KẾT QUẢ TỪ ẢNH</div><h3 style="color:${prediction === 'TÀI' ? 'var(--green)' : 'var(--red)'}">${prediction}</h3><div style="color:var(--yel); font-weight:bold;">Độ Tự Tin: ${winRate}%</div>`;
+          UI.msg('uploadMsg', `[✓] Đã trừ 5 xu.`, false);
+        }, 1500); 
+      }; img.src = e.target.result;
+    }; reader.readAsDataURL(fileInput.files[0]);
+  },
+  predict(){
+    currentUser = DB.getUser(currentUser.id); if((currentUser.xu || 0) < 2) return UI.msg('appMsg', "Đéo đủ 2 Xu!", true);
+    const hist = gameHistories[currentGame]; if(hist.length < 3) return UI.msg('appMsg', "Cần ít nhất 3 phiên!", true);
+    DB.updateUser(currentUser.id, { xu: currentUser.xu - 2 }); this.renderUIUpdate();
+    const el = document.getElementById('predResult'); el.classList.remove('hidden'); el.innerHTML = `<div style="color:#fff;"><span class="loading-spinner"></span> Đang chạy thuật toán...</div>`;
+    setTimeout(() => {
+      let algoResult = { countTai: 0, countXiu: 0, reason: "" };
+      if(currentGame === 'sunwin') algoResult = Algorithms.sunwin(hist);
+      else if(currentGame === 'hitclub') algoResult = Algorithms.hitclub(hist);
+      else if(currentGame === 'b52') algoResult = Algorithms.b52(hist);
+      else if(currentGame === 'md5') algoResult = Algorithms.md5(hist);
+      let total = algoResult.countTai + algoResult.countXiu;
+      let perTai = Math.round((algoResult.countTai / total) * 100); let perXiu = 100 - perTai;
+      let prediction = (perTai > perXiu) ? "TÀI" : "XỈU"; let winRate = (prediction === "TÀI") ? perTai : perXiu;
+      document.getElementById('percentTai').textContent = `TÀI ${perTai}%`; document.getElementById('percentXiu').textContent = `XỈU ${perXiu}%`;
+      document.getElementById('barTai').style.width = perTai + "%"; document.getElementById('barXiu').style.width = perXiu + "%";
+      el.innerHTML = `<div style="color:#fff; font-size:0.85rem">KẾT QUẢ DỰ ĐOÁN (${currentGame.toUpperCase()})</div><h3 style="color:${prediction === 'TÀI' ? 'var(--green)' : 'var(--red)'}">${prediction}</h3><div style="color:var(--yel); font-weight:bold; margin-bottom:10px">Độ Tự Tin: ${winRate}%</div><div style="font-size:0.85rem; color:#ccc">Thuật toán: ${algoResult.reason}</div>`;
+    }, 1000);
+  },
+  renderUIUpdate(){ currentUser = DB.getUser(currentUser.id); document.getElementById('uiXu').textContent = currentUser.xu || 0; }
+};
+</script>
+</body>
+</html>
