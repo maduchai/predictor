@@ -137,11 +137,15 @@
   </div>
 </div>
 
-<!-- FIREBASE COMPAT -->
 <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
 
 <script>
+  // HÀM BẮT LỖI - NẾU CÓ LỖI SẼ HIỆN BẢNG THÔNG BÁO
+  window.onerror = function(msg, url, line) {
+    alert("LỖI JAVASCRIPT:\n" + msg + "\nDòng: " + line);
+  };
+
   const firebaseConfig = {
     apiKey: "AIzaSyAaQg91q7wMeQ4kXyCnOQuolvN_KmJoHBI",
     authDomain: "vip1-c45cb.firebaseapp.com",
@@ -154,19 +158,15 @@
   firebase.initializeApp(firebaseConfig);
   const db = firebase.database();
 
-  // WEBHOOK DISCORD CỦA MÀY ĐÃ ĐƯỢC NHÉT VÀO ĐÂY
   const DISCORD_WEBHOOK_URL = "https://discord.com/api/webhooks/1561068482504691742/R5_eAJ4B5QaQ7iGpCORqd8ZPwTiYDVJuUucjiiYqaMS4NjfN-zQ6cAvupv-IW9lN54Ke";
 
-  // HÀM GỬI THÔNG BÁO VỀ DISCORD
   function sendDiscordNotify(user, amount, method, info) {
-    if(!DISCORD_WEBHOOK_URL || DISCORD_WEBHOOK_URL.includes("ĐIỀN")) return;
-
+    if(!DISCORD_WEBHOOK_URL) return;
     const messageData = {
-      username: "Hai×bo Bot",
-      avatar_url: "https://i.imgur.com/4M34hi2.png",
+      username: "Hai×bo System",
       embeds: [{
         title: "🚨 CÓ NGƯỜI NẠP TIỀN!",
-        color: 65280, // Màu xanh lá
+        color: 65280, 
         fields: [
           { name: "👤 Tài khoản", value: user, inline: true },
           { name: "💰 Số tiền", value: amount.toLocaleString() + " VNĐ", inline: true },
@@ -262,7 +262,6 @@
         UI.msg('depMsg',"Gửi thẻ thành công!",0);
         document.getElementById('cardSerial').value=""; document.getElementById('cardPin').value="";
         
-        // GỬI THÔNG BÁO DISCORD
         sendDiscordNotify(currentUser.username, amount, 'Thẻ cào', infoText);
       });
     },
@@ -275,7 +274,6 @@
       newDep.set({id: newDep.key, userId: currentUser.id, username: currentUser.username, method: 'Bank', info: infoText, amount, status: 'pending', created_at: Date.now()}).then(() => {
         UI.msg('depMsg',"Đã ghi nhận, chờ check!",0);
         
-        // GỬI THÔNG BÁO DISCORD
         sendDiscordNotify(currentUser.username, amount, 'Chuyển khoản', infoText);
       });
     }
@@ -297,4 +295,60 @@
     reset(){ document.getElementById('pTai').textContent="TÀI 50%"; document.getElementById('pXiu').textContent="XỈU 50%"; document.getElementById('barTai').style.width="50%"; document.getElementById('barXiu').style.width="50%"; document.getElementById('predResult').classList.add('hidden'); },
     renderHist(){
       const h=history[currentGame], el=document.getElementById('histList');
-      if(!h.length) el.innerHTML="<div style='color:#
+      if(!h.length) el.innerHTML="<div style='color:#aaa'>Trống</div>";
+      else el.innerHTML=h.slice(-20).map(a=>`<div class="h-item ${a.result.toLowerCase()}">${a.total} (${a.result[0]})</div>`).join('');
+    },
+    render(){ this.renderHist(); this.reset(); },
+    analyzeImage(){
+      if(!currentUser || currentUser.xu<5) return UI.msg('uploadMsg',"Đéo đủ 5 Xu",1);
+      const f=document.getElementById('imageInput'); if(!f.files.length) return UI.msg('uploadMsg',"Chưa chọn ảnh",1);
+      const btn=document.getElementById('btnUpload'); btn.disabled=true; btn.innerHTML="ĐANG QUÉT..."; UI.msg('uploadMsg',"Đang xử lý...",0);
+      
+      const rd=new FileReader();
+      rd.onload=(e)=>{
+        const img=new Image();
+        img.onload=()=>{
+          const cv=document.createElement('canvas'), ctx=cv.getContext('2d');
+          cv.width=img.width; cv.height=img.height; ctx.drawImage(img,0,0);
+          const data=ctx.getImageData(0,0,cv.width,cv.height).data;
+          let r=0,g=0;
+          for(let i=0;i<data.length;i+=4){ if(data[i]>150&&data[i+1]<100&&data[i+2]<100) r++; else if(data[i+1]>150||data[i+2]>150) g++; }
+          let tot=r+g, pred="", rate=0;
+          if(tot===0){ pred=Math.random()<0.5?"TÀI":"XỈU"; rate=50; }
+          else { let pT=(r/tot)*100; if(pT>50){pred="XỈU"; rate=Math.min(99,Math.round(pT));} else {pred="TÀI"; rate=Math.min(99,Math.round(100-pT));} }
+          
+          db.ref('users/' + currentUser.id).update({xu: currentUser.xu - 5}).then(() => {
+            currentUser.xu -= 5;
+            Auth.render();
+            btn.disabled=false; btn.innerHTML="TẢI ẢNH & QUÉT"; f.value="";
+            document.getElementById('predResult').classList.remove('hidden');
+            document.getElementById('predResult').innerHTML=`<div>KẾT QUẢ ẢNH</div><h2 style="color:${pred==='TÀI'?'#00e676':'#ff5252'};margin:10px 0">${pred}</h2><div style="color:#ffd166">Tự tin: ${rate}%</div>`;
+            UI.msg('uploadMsg',"Đã trừ 5 xu",0);
+          });
+        }; img.src=e.target.result;
+      }; rd.readAsDataURL(f.files[0]);
+    },
+    predict(){
+      if(!currentUser || currentUser.xu<2) return UI.msg('appMsg',"Đéo đủ 2 Xu",1);
+      if(history[currentGame].length<3) return UI.msg('appMsg',"Cần ít nhất 3 phiên",1);
+      
+      db.ref('users/' + currentUser.id).update({xu: currentUser.xu - 2}).then(() => {
+        currentUser.xu -= 2;
+        Auth.render();
+        const el=document.getElementById('predResult'); el.classList.remove('hidden'); el.innerHTML=`<div class="loading"></div> Đang phân tích...`;
+        setTimeout(()=>{
+          let t=history[currentGame].filter(x=>x.result==='TAI').length, x=history[currentGame].length-t;
+          let tot=t+x, pT=Math.round((t/tot)*100), pX=100-pT;
+          let pred = pT>pX?"TÀI":"XỈU", rate = pT>pX?pT:pX;
+          
+          document.getElementById('pTai').textContent=`TÀI ${pT}%`; document.getElementById('pXiu').textContent=`XỈU ${pX}%`;
+          document.getElementById('barTai').style.width=pT+"%"; document.getElementById('barXiu').style.width=pX+"%";
+          
+          el.innerHTML=`<div>KẾT QUẢ (${currentGame.toUpperCase()})</div><h2 style="color:${pred==='TÀI'?'#00e676':'#ff5252'};margin:10px 0">${pred}</h2><div style="color:#ffd166">Tự tin: ${rate}%</div>`;
+        }, 1000);
+      });
+    }
+  };
+</script>
+</body>
+</html>
