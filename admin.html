@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>ADMIN · Hai×bo</title>
 <style>
-  :root{ --bg:#050a0f; --panel:#0a141e; --line:#14324a; --txt:#e0f7fa; --cyan:#00e5ff; --green:#00e676; --red:#ff5252; --yel:#ffd166; }
+  :root{ --bg:#050a0f; --panel:#0a141e; --line:#14324a; --txt:#e0f7fa; --cyan:#00e5ff; --green:#00e676; --red:#ff5252; --yel:#ffd166; --purple:#b57bff; }
   *{box-sizing:border-box;margin:0;padding:0}
   body{ background:radial-gradient(circle at 50% -20%, #0f2a3f 0%, var(--bg) 70%); color:var(--txt); font-family:system-ui,sans-serif; padding:20px; display:flex; justify-content:center; min-height:100vh; }
   .app{ width:100%; max-width:1000px; }
@@ -14,9 +14,10 @@
   .card{ background:linear-gradient(180deg,var(--panel) 0%, #0e1c28 100%); padding:20px; border-radius:12px; border:1px solid var(--line); margin-bottom:20px; }
   h2{ color:var(--cyan); margin-bottom:15px; font-size:1.1rem; border-bottom:1px solid var(--line); padding-bottom:5px; text-transform:uppercase;}
   input{ width:100%; padding:10px; margin-bottom:10px; background:#060f16; border:1px solid var(--line); color:#fff; border-radius:6px; outline:none;}
+  input:focus{ border-color:var(--cyan); }
   button{ background:var(--cyan); color:#000; border:none; padding:10px 15px; border-radius:6px; cursor:pointer; font-weight:bold; }
   .btn-sm{ padding:5px 8px; font-size:0.75rem; border-radius:4px; }
-  .btn-g{ background:var(--green); color:#000; } .btn-r{ background:var(--red); color:#fff; }
+  .btn-g{ background:var(--green); color:#000; } .btn-r{ background:var(--red); color:#fff; } .btn-p{ background:var(--purple); color:#fff;}
   table{ width:100%; border-collapse:collapse; margin-top:10px; font-size:0.9rem; }
   th,td{ padding:10px; text-align:left; border-bottom:1px solid var(--line); vertical-align:top;}
   th{ color:var(--cyan); font-size:0.8rem; }
@@ -33,6 +34,7 @@
 <div class="app">
   <div class="header"><h1>ADMIN HAI×BO</h1></div>
 
+  <!-- ĐĂNG NHẬP -->
   <div id="authView" class="card" style="max-width:400px; margin:0 auto;">
     <h2>Đăng Nhập</h2>
     <input id="adminPass" type="password" placeholder="Mật khẩu (admin123)">
@@ -40,6 +42,7 @@
     <div id="authMsg" class="msg"></div>
   </div>
 
+  <!-- QUẢN LÝ -->
   <div id="adminPanel" class="hidden">
     <div class="header-bar">
       <div style="color:var(--cyan); font-weight:bold">QUẢN LÝ</div>
@@ -67,10 +70,12 @@
   </div>
 </div>
 
+<!-- FIREBASE COMPAT -->
 <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
 
 <script>
+  // CONFIG FIREBASE CỦA MÀY
   const firebaseConfig = {
     apiKey: "AIzaSyAaQg91q7wMeQ4kXyCnOQuolvN_KmJoHBI",
     authDomain: "vip1-c45cb.firebaseapp.com",
@@ -78,8 +83,10 @@
     storageBucket: "vip1-c45cb.firebasestorage.app",
     messagingSenderId: "191209527323",
     appId: "1:191209527323:web:b908c85ad00bfb6c2ac0be",
-    databaseURL: "https://ten-du-an-default-rtdb.firebaseio.com"
+    measurementId: "G-69TTES99HF",
+    databaseURL: "https://vip1-c45cb-default-rtdb.firebaseio.com" // Đã sửa lại link chuẩn
   };
+  
   firebase.initializeApp(firebaseConfig);
   const db = firebase.database();
 
@@ -90,7 +97,9 @@
       document.getElementById('adminPanel').classList.remove('hidden');
       this.render();
     },
+    
     render: function() {
+      // 1. Load Đơn Nạp
       db.ref('deposits').once('value').then(snapD => {
         let deps = snapD.val() ? Object.values(snapD.val()) : [];
         deps.sort((a,b)=>b.created_at - a.created_at);
@@ -108,6 +117,7 @@
         }).join('') : `<tr><td colspan="5" style="text-align:center;color:#666">Trống</td></tr>`;
       });
 
+      // 2. Load User & Thiết bị
       db.ref('users').once('value').then(snapU => {
         let users = snapU.val() ? Object.values(snapU.val()) : [];
         document.getElementById('userList').innerHTML = users.length ? users.map(u => {
@@ -131,6 +141,7 @@
         }).join('') : `<tr><td colspan="3" style="text-align:center;color:#666">Trống</td></tr>`;
       });
     },
+
     approve: function(id) {
       db.ref('deposits/' + id).once('value').then(snap => {
         if(!snap.exists()) return;
@@ -148,6 +159,7 @@
         });
       });
     },
+
     editXu: function(id, action) {
       db.ref('users/' + id).once('value').then(snap => {
         if(!snap.exists()) return;
@@ -164,6 +176,7 @@
         db.ref('users/' + id).update({ xu: newXu }).then(() => { Admin.render(); });
       });
     },
+
     kick: function(userId, deviceId) {
       if(!confirm("Đá thiết bị này?")) return;
       db.ref('users/' + userId).once('value').then(snap => {
@@ -173,6 +186,7 @@
         db.ref('users/' + userId).update({ devices: newDevs }).then(() => { Admin.render(); });
       });
     },
+
     delUser: function(id) {
       if(!confirm("Xóa user này?")) return;
       db.ref('users/' + id).remove().then(() => { Admin.render(); });
