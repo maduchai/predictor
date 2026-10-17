@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hai×bo · Predictor</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&display=swap');
+  @keyframes bg { 0%{background:#ff0000;} 14%{background:#ff7f00;} 28%{background:#ffff00;} 42%{background:#00ff00;} 57%{background:#0000ff;} 71%{background:#4b0082;} 85%{background:#9400d3;} 100%{background:#ff0000;} }
+  @keyframes txt { 0%{color:#ff0000;} 14%{color:#ff7f00;} 28%{color:#ffff00;} 42%{color:#00ff00;} 57%{color:#0000ff;} 71%{color:#4b0082;} 85%{color:#9400d3;} 100%{color:#ff0000;} }
+  *{box-sizing:border-box;margin:0;padding:0;font-family:system-ui,sans-serif}
+  body{ animation:bg 5s linear infinite; padding:20px; display:flex; justify-content:center; min-height:100vh; color:#fff;}
+  .app{ width:100%; max-width:800px; }
+  .header{ text-align:center; margin-bottom:20px; }
+  .header h1{ animation:txt 2s linear infinite; font-family:'Orbitron',sans-serif; font-size:2.5rem; letter-spacing:3px;}
+  .card{ background:rgba(0,0,0,0.7); padding:20px; border-radius:12px; border:1px solid rgba(255,255,255,0.3); margin-bottom:20px; }
+  h2{ font-size:1rem; margin-bottom:15px; border-bottom:1px solid rgba(255,255,255,0.3); padding-bottom:5px; text-transform:uppercase;}
+  input, select{ width:100%; padding:12px; margin-bottom:10px; background:rgba(0,0,0,0.5); border:1px solid rgba(255,255,255,0.3); color:#fff; border-radius:8px; }
+  button{ background:#fff; color:#000; border:none; padding:12px 20px; border-radius:8px; cursor:pointer; font-weight:bold; }
+  .btn-green{ background:#00e676; color:#000;} .btn-red{ background:#ff5252; color:#fff; }
+  .row{ display:flex; gap:10px; margin-bottom:10px; } .row>*{flex:1;}
+  .hidden{ display:none!important; }
+  .msg{ padding:10px; border-radius:6px; background:#000; margin-top:10px; font-size:0.85rem; font-weight:bold;}
+  .msg.err{ color:#ff5252; border:1px solid #ff5252; } .msg.ok{ color:#00e676; border:1px solid #00e676; }
+  .games{ display:grid; grid-template-columns:repeat(4,1fr); gap:10px; margin-bottom:20px; }
+  .game{ background:rgba(0,0,0,0.5); border:1px solid rgba(255,255,255,0.3); padding:10px; border-radius:8px; text-align:center; cursor:pointer; font-size:0.9rem;}
+  .game.active{ border-color:#fff; background:rgba(255,255,255,0.2); }
+  .bar-bg{ height:15px; background:#000; border-radius:8px; display:flex; overflow:hidden; border:1px solid #fff; margin-bottom:10px;}
+  .bar-tai{ background:#00e676; height:100%; transition:0.5s;} .bar-xiu{ background:#ff5252; height:100%; transition:0.5s;}
+  .hist{ display:flex; flex-wrap:wrap; gap:5px; margin-top:10px; }
+  .h-item{ padding:5px 10px; border-radius:5px; background:#000; border:1px solid #fff; font-weight:bold;}
+  .h-item.tai{ color:#00e676;} .h-item.xiu{ color:#ff5252;}
+  .header-bar{ display:flex; justify-content:space-between; align-items:center; background:rgba(0,0,0,0.8); padding:15px; border-radius:10px; margin-bottom:20px; border:1px solid #fff; flex-wrap:wrap; gap:10px;}
+  .loading { display:inline-block; width:15px; height:15px; border:3px solid rgba(255,255,255,0.3); border-radius:50%; border-top-color:#fff; animation:spin 1s infinite;}
+  @keyframes spin{to{transform:rotate(360deg)}}
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="header"><h1>Hai×bo</h1></div>
+
+  <!-- ĐĂNG NHẬP -->
+  <div id="authView" class="card" style="max-width:400px; margin:0 auto;">
+    <h2>Đăng Nhập / Đăng Ký</h2>
+    <input id="uName" placeholder="Tên đăng nhập">
+    <input id="uPass" type="password" placeholder="Mật khẩu">
+    <div class="row">
+      <button onclick="Auth.login()">Đăng Nhập</button>
+      <button class="btn-green" onclick="Auth.register()">Đăng Ký</button>
+    </div>
+    <div id="authMsg" class="msg hidden"></div>
+  </div>
+
+  <!-- GIAO DIỆN CHÍNH -->
+  <div id="mainView" class="hidden">
+    <div class="header-bar">
+      <div>Chào, <b id="uiName" style="color:#00e5ff"></b></div>
+      <div>💎 <b id="uiXu" style="color:#ffd166">0</b> Xu</div>
+      <div style="display:flex; gap:10px;">
+        <button class="btn-green" style="padding:8px; font-size:0.85rem" onclick="Auth.refresh()">🔄 Làm Mới</button>
+        <button class="btn-red" style="padding:8px; font-size:0.85rem" onclick="location.reload()">Thoát</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Chọn Nền Tảng</h2>
+      <div class="games">
+        <div class="game active" onclick="Game.select('sunwin', this)">Sunwin</div>
+        <div class="game" onclick="Game.select('hitclub', this)">Hitclub</div>
+        <div class="game" onclick="Game.select('b52', this)">B52</div>
+        <div class="game" onclick="Game.select('md5', this)">MD5</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Dự đoán cầu</h2>
+      <div class="row">
+        <input id="totalInput" type="number" placeholder="Tổng xúc xắc (3-18)">
+        <button class="btn-green" style="flex:0 0 auto" onclick="Predictor.addRound()">Ghi</button>
+      </div>
+      <div class="row">
+        <button class="btn-green" onclick="Predictor.quick(11)">+ Tài mẫu</button>
+        <button class="btn-red" onclick="Predictor.quick(9)">+ Xỉu mẫu</button>
+      </div>
+      <div id="appMsg" class="msg hidden"></div>
+      
+      <h2 style="margin-top:20px">Dự Đoán Bằng Ảnh (5 Xu)</h2>
+      <input type="file" id="imageInput" accept="image/*">
+      <button id="btnUpload" onclick="Predictor.analyzeImage()">TẢI ẢNH LÊN & QUÉT</button>
+      <div id="uploadMsg" class="msg hidden"></div>
+
+      <h2 style="margin-top:20px">Lịch Sử</h2>
+      <div class="hist" id="histList"></div>
+    </div>
+
+    <div class="card">
+      <h2>Tỉ Lệ Thắng & Dự Đoán</h2>
+      <div class="bar-bg">
+        <div class="bar-tai" id="barTai" style="width:50%"></div>
+        <div class="bar-xiu" id="barXiu" style="width:50%"></div>
+      </div>
+      <div style="display:flex; justify-content:space-between; font-weight:bold; margin-bottom:15px;">
+        <span id="pTai" style="color:#00e676">TÀI 50%</span>
+        <span id="pXiu" style="color:#ff5252">XỈU 50%</span>
+      </div>
+      <button onclick="Predictor.predict()" style="width:100%; background:#b57bff; color:#fff;">PHÂN TÍCH (2 Xu)</button>
+      <div id="predResult" class="card hidden" style="margin-top:15px; text-align:center; background:rgba(0,0,0,0.9);"></div>
+    </div>
+
+    <div class="card">
+      <h2>Nạp Xu (10k=20x, 100k=220x, 400k=1000x)</h2>
+      <div class="row">
+        <select id="depMethod" onchange="UI.toggle()">
+          <option value="card">Thẻ Cào</option>
+          <option value="bank">Chuyển Khoản</option>
+        </select>
+        <select id="depAmount">
+          <option value="10000">10.000đ (20 Xu)</option>
+          <option value="100000">100.000đ (220 Xu)</option>
+          <option value="400000">400.000đ (1000 Xu)</option>
+        </select>
+      </div>
+      <div id="formCard">
+        <select id="cardType"><option>Viettel</option><option>Vina</option><option>Mobi</option></select>
+        <input id="cardSerial" placeholder="Serial (10-15 số)" maxlength="15">
+        <input id="cardPin" placeholder="Mã thẻ (10-15 số)" maxlength="15">
+        <button class="btn-green" onclick="Auth.depositCard()">Gửi Thẻ</button>
+      </div>
+      <div id="formBank" class="hidden">
+        <div style="background:rgba(255,255,255,0.1); padding:10px; margin-bottom:10px; font-size:0.9rem;">
+          <p>Bank: <b>LPBank</b> | STK: <b>0868866580</b></p>
+          <p>Chủ TK: <b>MA VAN HUNG</b></p>
+          <p>Nội dung: <b id="bankCode" style="color:#ffd166">...</b></p>
+        </div>
+        <button class="btn-green" onclick="Auth.depositBank()">Báo Đã Chuyển</button>
+      </div>
+      <div id="depMsg" class="msg hidden"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+const DB = {
+  init(){ if(!localStorage.getItem('pred_users')) { localStorage.setItem('pred_users', '[]'); localStorage.setItem('pred_deposits', '[]'); } },
+  getUsers(){ return JSON.parse(localStorage.getItem('pred_users')); },
+  saveUsers(u){ localStorage.setItem('pred_users', JSON.stringify(u)); },
+  getU(id){ return this.getUsers().find(u=>u.id===id); },
+  updateU(id,data){ let u=this.getUsers(); let i=u.findIndex(x=>x.id===id); if(i>-1){u[i]={...u[i],...data}; this.saveUsers(u);} },
+  getDeps(){ return JSON.parse(localStorage.getItem('pred_deposits')); },
+  saveDeps(d){ localStorage.setItem('pred_deposits', JSON.stringify(d)); }
+};
+DB.init();
+
+let currentUser=null, currentGame='sunwin';
+let history={ sunwin:[], hitclub:[], b52:[], md5:[] };
+let userIP = "Đang lấy...";
+fetch('https://api.ipify.org?format=json').then(r=>r.json()).then(d=>userIP=d.ip).catch(()=>userIP="Lỗi IP");
+
+const UI = {
+  msg(id,txt,err){ const el=document.getElementById(id); el.innerHTML=txt; el.className=`msg ${err?'err':'ok'}`; setTimeout(()=>el.classList.add('hidden'),5000); },
+  toggle(){ const m=document.getElementById('depMethod').value; document.getElementById('formCard').classList.toggle('hidden', m!=='card'); document.getElementById('formBank').classList.toggle('hidden', m!=='bank'); }
+};
+
+const Auth = {
+  register(){
+    const u=document.getElementById('uName').value.trim(), p=document.getElementById('uPass').value.trim();
+    if(!u||!p) return UI.msg('authMsg',"Nhập đủ tên/pass",1);
+    let users=DB.getUsers(); if(users.find(x=>x.username===u)) return UI.msg('authMsg',"Tên đã tồn tại",1);
+    users.push({id:Date.now(),username:u,password:p,xu:0,bankCode:'HB'+Math.floor(1000+Math.random()*9000),devices:[]});
+    DB.saveUsers(users); UI.msg('authMsg',"Đăng ký thành công!",0);
+  },
+  login(){
+    const u=document.getElementById('uName').value.trim(), p=document.getElementById('uPass').value.trim();
+    let user=DB.getUsers().find(x=>x.username===u&&x.password===p);
+    if(!user) return UI.msg('authMsg',"Sai tài khoản/pass",1);
+
+    let ua=navigator.userAgent, dName="Thiết bị";
+    if(/android/i.test(ua)) dName="Android"; else if(/iPhone|iPad/i.test(ua)) dName="iOS"; else if(/Windows/i.test(ua)) dName="Windows"; else if(/Mac/i.test(ua)) dName="Mac";
+
+    let devId = Date.now().toString();
+    let devs = user.devices || [];
+    devs.push({id:devId, name:dName, ip:userIP, time:new Date().toLocaleString('vi-VN')});
+    if(devs.length>5) devs.shift();
+    
+    DB.updateU(user.id, {devices:devs});
+    sessionStorage.setItem('my_device', devId);
+    currentUser=user;
+    
+    document.getElementById('authView').classList.add('hidden'); document.getElementById('mainView').classList.remove('hidden');
+    this.render();
+  },
+  refresh(){ if(!currentUser) return; currentUser=DB.getU(currentUser.id); this.render(); UI.msg('appMsg',"Đã làm mới dữ liệu!",0); },
+  render(){
+    if(!currentUser) return; currentUser=DB.getU(currentUser.id);
+    document.getElementById('uiName').textContent=currentUser.username;
+    document.getElementById('uiXu').textContent=currentUser.xu||0;
+    document.getElementById('bankCode').textContent=currentUser.bankCode;
+    Game.render();
+  },
+  depositCard(){
+    if(!currentUser) return;
+    const type=document.getElementById('cardType').value, amount=parseInt(document.getElementById('depAmount').value);
+    const serial=document.getElementById('cardSerial').value.trim(), pin=document.getElementById('cardPin').value.trim();
+    if(!serial||!pin) return UI.msg('depMsg',"Nhập đủ Serial/PIN",1);
+    if(serial.length<10||serial.length>15||pin.length<10||pin.length>15) return UI.msg('depMsg',"Serial/PIN phải 10-15 số",1);
+    let deps=DB.getDeps(); deps.push({id:Date.now(),userId:currentUser.id,username:currentUser.username,method:'Thẻ',info:`${type} - S:${serial} - P:${pin}`,amount,status:'pending',created_at:Date.now()});
+    DB.saveDeps(deps); UI.msg('depMsg',"Gửi thẻ thành công, chờ duyệt!",0);
+    document.getElementById('cardSerial').value=""; document.getElementById('cardPin').value="";
+  },
+  depositBank(){
+    if(!currentUser) return;
+    const amount=parseInt(document.getElementById('depAmount').value);
+    let deps=DB.getDeps(); deps.push({id:Date.now(),userId:currentUser.id,username:currentUser.username,method:'Bank',info:`Nội dung: ${currentUser.bankCode}`,amount,status:'pending',created_at:Date.now()});
+    DB.saveDeps(deps); UI.msg('depMsg',"Đã ghi nhận, chờ Admin check!",0);
+  }
+};
+
+const Game = {
+  select(g, el){ currentGame=g; document.querySelectorAll('.game').forEach(x=>x.classList.remove('active')); el.classList.add('active'); Predictor.render(); },
+  render(){ Predictor.render(); }
+};
+
+const Algo = {
+  sunwin(h){ let t=h.filter(x=>x.result==='TAI').length, x=h.length-t, r="Cơ bản"; let l3=h.slice(-3).map(a=>a.result); if(l3.length===3&&l3.every(a=>a==='TAI')){x+=4;r="Bệt Tài ép Xỉu";}else if(l3.length===3&&l3.every(a=>a==='XIU')){t+=4;r="Bệt Xỉu ép Tài";} return {t,x,r}; },
+  hitclub(h){ let t=h.filter(x=>x.result==='TAI').length, x=h.length-t, last=h[h.length-1].result, r="Bám cầu"; if(last==='TAI'){t+=2;}else{x+=2;} if(h.slice(-5).map(a=>a.result).join('')==='TAITAITAITAITAI'){x+=5;r="Bẻ cầu dài";} return {t,x,r}; },
+  b52(h){ let t=h.filter(x=>x.result==='TAI').length, x=h.length-t, last=h[h.length-1].result, r="Bẻ cầu"; if(last==='TAI'){x+=4;}else{t+=4;} if(h.length>=2&&last===h[h.length-2].result){if(last==='TAI'){x+=3;}else{t+=3;}r="Bẻ đúp";} return {t,x,r}; },
+  md5(h){ let t=h.filter(x=>x.result==='TAI').length, x=h.length-t, r="Hash"; let hash=new Date().getTime()%2; if(hash===0){t+=2;}else{x+=2;} return {t,x,r}; }
+};
+
+const Predictor = {
+  addRound(){
+    const t=parseInt(document.getElementById('totalInput').value);
+    if(isNaN(t)||t<3||t>18) return UI.msg('appMsg',"Phải từ 3-18",1);
+    history[currentGame].push({total:t, result:t>=11?"TAI":"XIU"});
+    document.getElementById('totalInput').value=""; UI.msg('appMsg',"Đã thêm",0); this.reset(); this.renderHist();
+  },
+  quick(v){ document.getElementById('totalInput').value=v; this.addRound(); },
+  reset(){ document.getElementById('pTai').textContent="TÀI 50%"; document.getElementById('pXiu').textContent="XỈU 50%"; document.getElementById('barTai').style.width="50%"; document.getElementById('barXiu').style.width="50%"; document.getElementById('predResult').classList.add('hidden'); },
+  renderHist(){
+    const h=history[currentGame], el=document.getElementById('histList');
+    if(!h.length) el.innerHTML="<div style='color:#aaa'>Trống</div>";
+    else el.innerHTML=h.slice(-20).map(a=>`<div class="h-item ${a.result.toLowerCase()}">${a.total} (${a.result[0]})</div>`).join('');
+  },
+  render(){ this.renderHist(); this.reset(); },
+  analyzeImage(){
+    currentUser=DB.getU(currentUser.id); if(currentUser.xu<5) return UI.msg('uploadMsg',"Đéo đủ 5 Xu",1);
+    const f=document.getElementById('imageInput'); if(!f.files.length) return UI.msg('uploadMsg',"Chưa chọn ảnh",1);
+    const btn=document.getElementById('btnUpload'); btn.disabled=true; btn.innerHTML="ĐANG QUÉT..."; UI.msg('uploadMsg',"Đang xử lý...",0);
+    const rd=new FileReader();
+    rd.onload=(e)=>{
+      const img=new Image();
+      img.onload=()=>{
+        setTimeout(()=>{
+          const cv=document.createElement('canvas'), ctx=cv.getContext('2d');
+          cv.width=img.width; cv.height=img.height; ctx.drawImage(img,0,0);
+          const data=ctx.getImageData(0,0,cv.width,cv.height).data;
+          let r=0,g=0;
+          for(let i=0;i<data.length;i+=4){ if(data[i]>150&&data[i+1]<100&&data[i+2]<100) r++; else if(data[i+1]>150||data[i+2]>150) g++; }
+          let tot=r+g, pred="", rate=0;
+          if(tot===0){ pred=Math.random()<0.5?"TÀI":"XỈU"; rate=50; }
+          else { let pT=(r/tot)*100; if(pT>50){pred="XỈU"; rate=Math.min(99,Math.round(pT));} else {pred="TÀI"; rate=Math.min(99,Math.round(100-pT));} }
+          DB.updateU(currentUser.id,{xu:currentUser.xu-5}); Auth.render();
+          btn.disabled=false; btn.innerHTML="TẢI ẢNH LÊN & QUÉT"; f.value="";
+          document.getElementById('predResult').classList.remove('hidden');
+          document.getElementById('predResult').innerHTML=`<div>KẾT QUẢ ẢNH</div><h2 style="color:${pred==='TÀI'?'#00e676':'#ff5252'};margin:10px 0">${pred}</h2><div style="color:#ffd166">Tự tin: ${rate}%</div>`;
+          UI.msg('uploadMsg',"Đã trừ 5 xu",0);
+        }, 1000);
+      }; img.src=e.target.result;
+    }; rd.readAsDataURL(f.files[0]);
+  },
+  predict(){
+    currentUser=DB.getU(currentUser.id); if(currentUser.xu<2) return UI.msg('appMsg',"Đéo đủ 2 Xu",1);
+    if(history[currentGame].length<3) return UI.msg('appMsg',"Cần ít nhất 3 phiên",1);
+    DB.updateU(currentUser.id,{xu:currentUser.xu-2}); Auth.render();
+    
+    const el=document.getElementById('predResult'); el.classList.remove('hidden'); el.innerHTML=`<div class="loading"></div> Đang phân tích...`;
+    setTimeout(()=>{
+      let res = {t:0,x:0,r:""};
+      if(currentGame==='sunwin') res=Algo.sunwin(history[currentGame]);
+      else if(currentGame==='hitclub') res=Algo.hitclub(history[currentGame]);
+      else if(currentGame==='b52') res=Algo.b52(history[currentGame]);
+      else if(currentGame==='md5') res=Algo.md5(history[currentGame]);
+      
+      let tot=res.t+res.x, pT=Math.round((res.t/tot)*100), pX=100-pT;
+      let pred = pT>pX?"TÀI":"XỈU", rate = pT>pX?pT:pX;
+      
+      document.getElementById('pTai').textContent=`TÀI ${pT}%`; document.getElementById('pXiu').textContent=`XỈU ${pX}%`;
+      document.getElementById('barTai').style.width=pT+"%"; document.getElementById('barXiu').style.width=pX+"%";
+      
+      el.innerHTML=`<div>KẾT QUẢ (${currentGame.toUpperCase()})</div><h2 style="color:${pred==='TÀI'?'#00e676':'#ff5252'};margin:10px 0">${pred}</h2><div style="color:#ffd166">Tự tin: ${rate}%</div><div style="font-size:0.8rem;color:#aaa;margin-top:5px">Thuật toán: ${res.r}</div>`;
+    }, 1000);
+  }
+};
+</script>
+</body>
+</html>
