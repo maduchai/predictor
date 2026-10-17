@@ -3,16 +3,16 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Test Lỗi</title>
+<title>Test Lỗi 2</title>
 <style>
   body{ background:#111; color:#fff; font-family:sans-serif; padding:20px; text-align:center; }
   input, button { width: 100%; padding: 10px; margin: 10px 0; box-sizing: border-box; }
-  #msg { color: yellow; font-weight: bold; margin-top: 20px; }
+  #msg { color: yellow; font-weight: bold; margin-top: 20px; font-size: 1.1rem;}
 </style>
 </head>
 <body>
 
-<h2>Test Nút Bấm</h2>
+<h2>Test Nút Bấm (Có Timeout)</h2>
 <input id="uName" placeholder="Tài khoản">
 <input id="uPass" placeholder="Mật khẩu">
 <button onclick="register()">BẤM ĐĂNG KÝ</button>
@@ -22,7 +22,6 @@
 <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
 
 <script>
-  // BẮT LỖI JAVASCRIPT ĐỂ HIỆN LÊN MÀN HÌNH
   window.onerror = function(msg, url, line) {
     alert("LỖI CODE JS:\n" + msg + "\nDòng: " + line);
   };
@@ -34,7 +33,7 @@
     storageBucket: "vip1-c45cb.firebasestorage.app",
     messagingSenderId: "191209527323",
     appId: "1:191209527323:web:b908c85ad00bfb6c2ac0be",
-    databaseURL: "https://vip1-c45cb-default-rtdb.firebaseio.com"
+    databaseURL: "https://vip1-c45cb-default-rtdb.asia-southeast1.firebasedatabase.app"
   };
 
   let db = null;
@@ -50,27 +49,27 @@
     const p = document.getElementById('uPass').value.trim();
     const msg = document.getElementById('msg');
 
-    if(!u || !p) {
-      msg.innerText = "Nhập đủ tài khoản và mật khẩu đi!";
-      return;
-    }
-    if(!db) {
-      msg.innerText = "Firebase chưa kết nối!";
-      return;
-    }
+    if(!u || !p) return msg.innerText = "Nhập đủ tài khoản và mật khẩu đi!";
+    if(!db) return msg.innerText = "Firebase chưa kết nối!";
 
-    msg.innerText = "Đang kết nối Firebase...";
+    msg.style.color = "yellow";
+    msg.innerText = "Đang gửi dữ liệu lên Firebase...";
 
-    db.ref('users').push({
-      username: u,
-      password: p,
-      xu: 0
-    }).then(() => {
+    // Tạo một lời hứa timeout 5 giây
+    let timeoutPromise = new Promise((_, reject) => {
+      setTimeout(() => reject(new Error("Quá 5 giây không phản hồi. Do mạng chặn hoặc sai URL!")), 5000);
+    });
+
+    // Đua giữa việc gửi data và timeout
+    Promise.race([
+      db.ref('users').push({ username: u, password: p, xu: 0 }),
+      timeoutPromise
+    ]).then(() => {
       msg.style.color = "#00e676";
-      msg.innerText = "ĐĂNG KÝ THÀNH CÔNG! Firebase đã hoạt động.";
+      msg.innerText = "THÀNH CÔNG RỰC RỠ! Firebase đã nhận data.";
     }).catch((error) => {
       msg.style.color = "#ff5252";
-      msg.innerText = "LỖI GHI DATA: " + error.message;
+      msg.innerText = "LỖI: " + error.message;
     });
   }
 </script>
