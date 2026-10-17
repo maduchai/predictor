@@ -1,95 +1,267 @@
-<!doctype html><html lang="vi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#080b1a"><title>ADRXIOSMOD • Admin</title>
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LARP Tài Xỉu · Predictor</title>
 <style>
-*{box-sizing:border-box}body{margin:0;min-height:100vh;background:radial-gradient(ellipse at top,#17183e,#080b1a 65%);color:#f4f5ff;font-family:system-ui,sans-serif}.wrap{width:min(720px,calc(100% - 26px));margin:auto;padding:25px 0 45px}.head{text-align:center;margin:15px 0 25px}.mark{width:70px;height:70px;margin:auto;border-radius:50%;display:grid;place-items:center;font-size:24px;font-weight:900;background:linear-gradient(135deg,#1ecff2,#7036e8);border:4px solid #8f83ff}.eyebrow{color:#18e2f5;letter-spacing:4px;font-size:11px;font-weight:800;margin-top:15px}h1{letter-spacing:2px}.card{background:linear-gradient(145deg,#182341f5,#11182df5);border:1px solid #29385c;border-radius:24px;padding:22px;margin:15px 0}.field{width:100%;padding:15px;margin:8px 0;border-radius:14px;background:#263653;color:white;border:1px solid #3b4b6b}.btn{padding:12px 15px;border-radius:13px;font-weight:800;background:#283957;color:#fff;border:1px solid #405171}.primary{background:linear-gradient(100deg,#2856e8,#922bd6);border:0}.danger{background:#6e253d;border:1px solid #9d3a56}.good{background:#15584f;border:1px solid #258d7d}.row{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:14px 0;border-bottom:1px solid #293653;flex-wrap:wrap}.muted{color:#a9b4ce;font-size:13px}.status{display:inline-block;padding:5px 9px;border-radius:20px;background:#2c3b5b;font-size:11px}.msg{color:#c4d4ff;min-height:22px}.hidden{display:none!important}.top{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.device-actions{display:flex;gap:7px;flex-wrap:wrap}.ip-result{padding:12px;border:1px solid #344765;border-radius:13px;background:#10182d;margin-top:10px;overflow-wrap:anywhere}@media(max-width:520px){.grid{grid-template-columns:1fr}.card{padding:16px}}
-</style></head><body><main class="wrap">
-<header class="head"><div class="mark">AD</div><div class="eyebrow">ADRXIOSMOD • CONTROL PANEL</div><h1>TRANG QUẢN TRỊ</h1><div class="muted">Duyệt và quản lý tài khoản demo</div></header>
-<section class="card" id="login"><h2>Đăng nhập Admin</h2><form id="loginForm"><input class="field" id="adminPass" type="password" placeholder="Mật khẩu Admin" autocomplete="current-password" required><button class="btn primary" type="submit">VÀO TRANG ADMIN</button></form><p class="msg" id="loginMsg"></p><p class="muted">Đây là mật khẩu demo phía trình duyệt, không an toàn để bảo vệ dữ liệu trên website công khai.</p></section>
-<section class="card hidden" id="panel">
-<div class="top"><div><h2>Quản lý tài khoản</h2><div class="muted">Tài khoản lưu trên cùng trình duyệt / thiết bị.</div></div><button class="btn" onclick="logoutAdmin()">Đăng xuất Admin</button></div>
-<p class="msg" id="panelMsg"></p><div id="list"></div><p class="muted">Duyệt: cho phép tài khoản đăng nhập. Chặn: thu hồi quyền. Xóa: xóa tài khoản khỏi dữ liệu cục bộ.</p>
-</section>
-<section class="card hidden" id="devicePanel">
-<h2>Thêm thiết bị</h2>
-<p class="muted">Lưu tên thiết bị, IP và ghi chú để quản lý thủ công trên trình duyệt hiện tại.</p>
-<form id="deviceForm">
-<input class="field" id="deviceName" placeholder="Tên thiết bị (VD: Điện thoại của Jack)" maxlength="80" required>
-<input class="field" id="deviceIp" placeholder="Địa chỉ IP (IPv4 hoặc IPv6)" maxlength="45" required>
-<input class="field" id="deviceNote" placeholder="Ghi chú (không bắt buộc)" maxlength="200">
-<div class="device-actions"><button class="btn primary" type="submit">THÊM THIẾT BỊ</button><button class="btn" type="button" onclick="fillCurrentIp()">LẤY IP CÔNG KHAI HIỆN TẠI</button></div>
-</form>
-<p class="msg" id="deviceMsg"></p>
-<div id="deviceList"></div>
-</section>
-<section class="card hidden" id="ipPanel">
-<h2>Kiểm tra IP</h2>
-<p class="muted">Tra cứu IP công khai qua dịch vụ bên ngoài. Thông tin vị trí chỉ ước lượng, không xác định chính xác địa chỉ nhà.</p>
-<form id="ipForm"><input class="field" id="lookupIp" placeholder="Nhập IP cần kiểm tra (để trống = IP hiện tại)" maxlength="45"><button class="btn primary" type="submit">KIỂM TRA IP</button></form>
-<div class="ip-result" id="ipResult" aria-live="polite">Chưa kiểm tra IP.</div>
-</section>
-<p class="muted" style="text-align:center"><a href="index.html" style="color:#54d9f5">← Quay lại website</a></p>
-</main><script>
-const ADMIN_PASSWORD='haimodvip', KEY='adrx_users', APPROVED='adrx_approved_users';
-const DEVICE_KEY='adrx_admin_devices';
-const $=id=>document.getElementById(id);
-function read(k){try{return JSON.parse(localStorage.getItem(k)||'{}')}catch(e){return {}}}
-function write(k,o){localStorage.setItem(k,JSON.stringify(o))}
-$('loginForm').addEventListener('submit',e=>{e.preventDefault();if($('adminPass').value!==ADMIN_PASSWORD){$('loginMsg').textContent='Mật khẩu Admin không đúng.';return}sessionStorage.setItem('adrx_admin_ok','1');showPanel()});
-function showPanel(){$('login').classList.add('hidden');['panel','devicePanel','ipPanel'].forEach(id=>$(id).classList.remove('hidden'));render();renderDevices()}
-function logoutAdmin(){sessionStorage.removeItem('adrx_admin_ok');['panel','devicePanel','ipPanel'].forEach(id=>$(id).classList.add('hidden'));$('login').classList.remove('hidden');$('adminPass').value=''}
-function esc(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
-function render(){let u=read(KEY),a=read(APPROVED),names=Object.keys(u),box=$('list');if(!names.length){box.innerHTML='<p class="muted">Chưa có tài khoản nào trên trình duyệt này.</p>';return}box.innerHTML=names.map(n=>'<div class="row"><div><strong>'+esc(n)+'</strong><div class="muted">Trạng thái: <span class="status">'+(a[n]===true?'ĐÃ DUYỆT':'CHỜ DUYỆT')+'</span></div></div><div><button class="btn good" onclick="approve(\''+encodeURIComponent(n)+'\',true)">Duyệt</button> <button class="btn" onclick="approve(\''+encodeURIComponent(n)+'\',false)">Chặn</button> <button class="btn danger" onclick="removeUser(\''+encodeURIComponent(n)+'\')">Xóa</button></div></div>').join('')}
-function approve(encoded,yes){let n=decodeURIComponent(encoded),a=read(APPROVED);if(yes)a[n]=true;else delete a[n];write(APPROVED,a);$('panelMsg').textContent=yes?'Đã duyệt tài khoản '+n+'.':'Đã chặn tài khoản '+n+'.';render()}
-function removeUser(encoded){let n=decodeURIComponent(encoded);if(!confirm('Xóa tài khoản '+n+'?'))return;let u=read(KEY),a=read(APPROVED);delete u[n];delete a[n];write(KEY,u);write(APPROVED,a);$('panelMsg').textContent='Đã xóa tài khoản '+n+'.';render()}
-
-function validIp(ip){
-  if(!ip || ip.length>45) return false;
-  // IPv4
-  if(ip.includes('.')){
-    const p=ip.split('.');
-    return p.length===4 && p.every(x=>/^\d{1,3}$/.test(x)&&Number(x)>=0&&Number(x)<=255);
+  :root{
+    --bg:#0d0f14; --panel:#151923; --panel2:#1c2130;
+    --line:#2a3142; --txt:#d6dbe6; --dim:#7b8499;
+    --cyan:#38e1d6; --green:#3ddc84; --red:#ff5c5c; --yel:#ffd166;
   }
-  // IPv6: strict enough for user-entered address, including compressed notation.
-  return ip.includes(':') && /^[0-9a-f:]+$/i.test(ip) && ip.split('::').length<=2 && ip.length<=39;
-}
-$('deviceForm').addEventListener('submit',e=>{
-  e.preventDefault();
-  const name=$('deviceName').value.trim(),ip=$('deviceIp').value.trim(),note=$('deviceNote').value.trim();
-  if(!validIp(ip)){$('deviceMsg').textContent='IP không hợp lệ. Hãy nhập IPv4 hoặc IPv6.';return}
-  const devices=read(DEVICE_KEY),id=(crypto.randomUUID?crypto.randomUUID():String(Date.now())+Math.random().toString(16).slice(2));
-  devices[id]={name,ip,note,createdAt:new Date().toISOString()};
-  write(DEVICE_KEY,devices);$('deviceForm').reset();$('deviceMsg').textContent='Đã thêm thiết bị.';renderDevices();
-});
-function renderDevices(){
-  const devices=read(DEVICE_KEY),entries=Object.entries(devices),box=$('deviceList');
-  if(!entries.length){box.innerHTML='<p class="muted">Chưa có thiết bị nào được thêm.</p>';return}
-  box.innerHTML=entries.reverse().map(([id,d])=>'<div class="row"><div><strong>'+esc(d.name)+'</strong><div class="muted">IP: '+esc(d.ip)+'</div><div class="muted">'+esc(d.note||'Không có ghi chú')+' • '+esc(new Date(d.createdAt).toLocaleString())+'</div></div><button class="btn danger" onclick="deleteDevice(\''+encodeURIComponent(id)+'\')">Xóa</button></div>').join('');
-}
-function deleteDevice(encoded){const id=decodeURIComponent(encoded),devices=read(DEVICE_KEY);if(!devices[id]||!confirm('Xóa thiết bị này?'))return;delete devices[id];write(DEVICE_KEY,devices);renderDevices();$('deviceMsg').textContent='Đã xóa thiết bị.'}
-async function fillCurrentIp(){
-  $('deviceMsg').textContent='Đang lấy IP công khai…';
-  try{const r=await fetch('https://api.ipify.org?format=json',{cache:'no-store'});if(!r.ok)throw new Error('request failed');const data=await r.json();$('deviceIp').value=data.ip;$('deviceMsg').textContent='Đã điền IP công khai của kết nối hiện tại.'}
-  catch(e){$('deviceMsg').textContent='Không lấy được IP. Hãy nhập thủ công hoặc thử lại.'}
-}
-$('ipForm').addEventListener('submit',async e=>{
-  e.preventDefault();
-  let ip=$('lookupIp').value.trim();
-  const out=$('ipResult');out.textContent='Đang kiểm tra IP…';
-  try{
-    if(!ip){const r=await fetch('https://api.ipify.org?format=json',{cache:'no-store'});if(!r.ok)throw new Error();ip=(await r.json()).ip;$('lookupIp').value=ip}
-    if(!validIp(ip)){out.textContent='IP không hợp lệ. Hãy nhập IPv4 hoặc IPv6.';return}
-    const r=await fetch('https://ipwho.is/'+encodeURIComponent(ip),{cache:'no-store'});
-    if(!r.ok)throw new Error();
-    const d=await r.json();
-    if(d.success===false){out.textContent='Dịch vụ không tra được IP này: '+esc(d.message||'không rõ nguyên nhân');return}
-    const rows=[
-      ['IP',d.ip],['Loại',d.type],['Quốc gia',d.country],['Khu vực',d.region],['Thành phố',d.city],
-      ['Nhà mạng/ISP',d.connection&&d.connection.isp],['Tổ chức',d.connection&&d.connection.org],
-      ['Múi giờ',d.timezone&&d.timezone.id],['Proxy',d.security&&d.security.proxy?'Có':'Không xác định/không phát hiện'],
-      ['Hosting',d.security&&d.security.hosting?'Có':'Không xác định/không phát hiện']
-    ];
-    out.innerHTML=rows.filter(x=>x[1]!==undefined&&x[1]!==null&&x[1]!=='').map(x=>'<div class="row"><span>'+esc(x[0])+'</span><strong>'+esc(x[1])+'</strong></div>').join('');
-    out.insertAdjacentHTML('beforeend','<p class="muted">Vị trí IP chỉ là ước lượng. Kết quả phụ thuộc dịch vụ tra cứu bên ngoài.</p>');
-  }catch(e){out.textContent='Không thể tra cứu lúc này. Kiểm tra kết nối mạng rồi thử lại.'}
-});
-if(sessionStorage.getItem('adrx_admin_ok')==='1')showPanel();
-</script></body></html>
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{
+    background:radial-gradient(1200px 600px at 50% -10%,#1a2030 0%,var(--bg) 60%);
+    color:var(--txt);font-family:'Segoe UI',system-ui,sans-serif;
+    min-height:100vh;padding:24px;display:flex;justify-content:center;
+  }
+  .app{width:100%;max-width:640px}
+  .banner{text-align:center;margin-bottom:20px}
+  .banner h1{font-size:1.4rem;letter-spacing:2px;color:var(--cyan);
+    text-shadow:0 0 18px rgba(56,225,214,.35);font-weight:800}
+  .banner p{color:var(--dim);font-size:.75rem;margin-top:4px;letter-spacing:1px}
+  .card{
+    background:linear-gradient(180deg,var(--panel) 0%,var(--panel2) 100%);
+    border:1px solid var(--line);border-radius:16px;padding:22px;
+    box-shadow:0 20px 50px rgba(0,0,0,.5),inset 0 1px 0 rgba(255,255,255,.03);
+    margin-bottom:16px;
+  }
+  h2{font-size:.88rem;letter-spacing:1.5px;color:var(--cyan);margin-bottom:14px;
+     text-transform:uppercase;display:flex;align-items:center;gap:8px}
+  h2::before{content:"";width:6px;height:6px;border-radius:50%;background:var(--cyan);
+    box-shadow:0 0 10px var(--cyan)}
+  input{
+    width:100%;background:#0b0e14;border:1px solid var(--line);color:var(--txt);
+    padding:11px 13px;border-radius:10px;font-size:.9rem;outline:none;transition:.15s;
+    font-family:inherit;
+  }
+  input:focus{border-color:var(--cyan);box-shadow:0 0 0 3px rgba(56,225,214,.12)}
+  .row{display:flex;gap:10px;margin-bottom:10px}
+  .row>*{flex:1}
+  button{
+    cursor:pointer;border:none;border-radius:10px;padding:11px 16px;
+    font-size:.86rem;font-weight:700;letter-spacing:.5px;transition:.15s;
+    font-family:inherit;color:#08110f;
+  }
+  button:active{transform:scale(.97)}
+  .btn-primary{background:linear-gradient(180deg,var(--cyan),#24b8ae)}
+  .btn-primary:hover{box-shadow:0 0 20px rgba(56,225,214,.4)}
+  .btn-green{background:linear-gradient(180deg,var(--green),#2bb56b)}
+  .btn-ghost{background:transparent;border:1px solid var(--line);color:var(--txt)}
+  .btn-ghost:hover{border-color:var(--cyan);color:var(--cyan)}
+  .btn-danger{background:linear-gradient(180deg,var(--red),#c93d3d);color:#fff}
+  .btn-sm{padding:7px 11px;font-size:.76rem;border-radius:8px}
+  .pred-box{
+    text-align:center;padding:28px 16px;border-radius:14px;margin:14px 0;
+    background:#0b0e14;border:1px solid var(--line);position:relative;overflow:hidden;
+  }
+  .pred-box::before{
+    content:"";position:absolute;inset:0;
+    background:radial-gradient(circle at 50% 0%,rgba(56,225,214,.08),transparent 60%);
+  }
+  .pred-label{font-size:.72rem;color:var(--dim);letter-spacing:2px;margin-bottom:8px}
+  .pred-value{font-size:2.8rem;font-weight:900;letter-spacing:5px;position:relative}
+  .pred-value.tai{color:var(--green);text-shadow:0 0 30px rgba(61,220,132,.5)}
+  .pred-value.xiu{color:var(--yel);text-shadow:0 0 30px rgba(255,209,102,.5)}
+  .pred-meta{font-size:.78rem;color:var(--dim);margin-top:14px;line-height:1.7;position:relative}
+  .pred-meta b{color:var(--txt)}
+  .conf-bar{height:6px;background:#0b0e14;border-radius:6px;margin-top:14px;overflow:hidden}
+  .conf-fill{height:100%;border-radius:6px;background:linear-gradient(90deg,var(--cyan),var(--green));
+    transition:width .5s ease;box-shadow:0 0 12px rgba(56,225,214,.5)}
+  .hist-list{max-height:300px;overflow-y:auto;display:flex;flex-direction:column;gap:6px}
+  .hist-item{
+    display:flex;justify-content:space-between;align-items:center;
+    padding:9px 13px;background:#0b0e14;border-radius:9px;border:1px solid var(--line);
+    font-size:.82rem;
+  }
+  .tag{padding:2px 10px;border-radius:20px;font-weight:700;font-size:.72rem;letter-spacing:1px}
+  .tag.tai{background:rgba(61,220,132,.15);color:var(--green)}
+  .tag.xiu{background:rgba(255,209,102,.15);color:var(--yel)}
+  .msg{padding:10px 13px;border-radius:10px;font-size:.85rem;margin-top:10px}
+  .msg.ok{background:rgba(61,220,132,.1);color:var(--green);border:1px solid rgba(61,220,132,.3)}
+  .msg.err{background:rgba(255,92,92,.1);color:var(--red);border:1px solid rgba(255,92,92,.3)}
+  .scroll::-webkit-scrollbar{width:6px}
+  .scroll::-webkit-scrollbar-thumb{background:var(--line);border-radius:10px}
+  .footer{text-align:center;color:var(--dim);font-size:.72rem;margin-top:18px;letter-spacing:.5px;line-height:1.8}
+  .footer a{color:var(--cyan);text-decoration:none}
+  .stat-row{display:flex;gap:10px;margin-top:12px}
+  .stat{flex:1;background:#0b0e14;border:1px solid var(--line);border-radius:10px;padding:10px;text-align:center}
+  .stat .num{font-size:1.1rem;font-weight:900;color:var(--cyan)}
+  .stat .lab{font-size:.65rem;color:var(--dim);letter-spacing:1px;margin-top:2px}
+</style>
+</head>
+<body>
+<div class="app">
+
+  <div class="banner">
+    <h1>◆ LARP TÀI XỈU ◆</h1>
+    <p>PATTERN PREDICTOR · KHÔNG PHẢI LỜI HỨA</p>
+  </div>
+
+  <!-- PREDICT -->
+  <div class="card">
+    <h2>Dự đoán phiên tới</h2>
+    <div class="pred-box">
+      <div class="pred-label">KẾT QUẢ DỰ ĐOÁN</div>
+      <div id="predValue" class="pred-value">—</div>
+      <div class="conf-bar"><div id="confFill" class="conf-fill" style="width:0%"></div></div>
+      <div id="predMeta" class="pred-meta">chưa có dữ liệu, nhập kết quả trước đã</div>
+    </div>
+    <button class="btn-primary" style="width:100%" onclick="App.predict()">🎯 Dự đoán</button>
+  </div>
+
+  <!-- INPUT -->
+  <div class="card">
+    <h2>Nhập kết quả phiên</h2>
+    <div class="row">
+      <input id="totalInput" type="number" min="3" max="18" placeholder="tổng 3 xúc xắc (3-18)">
+      <button class="btn-green" style="flex:0 0 auto" onclick="App.addRound()">Ghi</button>
+    </div>
+    <div class="row" style="margin-bottom:0">
+      <button class="btn-ghost btn-sm" onclick="App.quick(11)">+ Tài mẫu</button>
+      <button class="btn-ghost btn-sm" onclick="App.quick(9)">+ Xỉu mẫu</button>
+    </div>
+    <div id="appMsg"></div>
+  </div>
+
+  <!-- HISTORY -->
+  <div class="card">
+    <h2>Lịch sử phiên</h2>
+    <div class="stat-row">
+      <div class="stat"><div class="num" id="stTotal">0</div><div class="lab">TỔNG</div></div>
+      <div class="stat"><div class="num" id="stTai" style="color:var(--green)">0</div><div class="lab">TÀI</div></div>
+      <div class="stat"><div class="num" id="stXiu" style="color:var(--yel)">0</div><div class="lab">XỈU</div></div>
+    </div>
+    <div style="height:12px"></div>
+    <div id="histList" class="hist-list scroll"></div>
+    <div style="height:12px"></div>
+    <button class="btn-danger btn-sm" onclick="App.clearHistory()">Xóa toàn bộ lịch sử</button>
+  </div>
+
+  <div class="footer">
+    join our discord server: <a href="https://discord.gg/wgy5mpDKJq" target="_blank">discord.gg/wgy5mpDKJq</a><br>
+    made by @odil9 on discord
+  </div>
+
+</div>
+
+<script>
+const HIST_KEY = "larp_tx_hist";
+
+const Store = {
+  get(){ try{return JSON.parse(localStorage.getItem(HIST_KEY)||"[]")}catch{return[]} },
+  save(a){ localStorage.setItem(HIST_KEY, JSON.stringify(a)) }
+};
+
+const Predictor = {
+  window:20,
+  stats(hist){
+    if(!hist.length) return {streak:0,last:null,alt:.5,avg:10.5};
+    const last = hist[hist.length-1].result;
+    let streak=0;
+    for(let i=hist.length-1;i>=0;i--){ if(hist[i].result===last) streak++; else break; }
+    const recent = hist.slice(-this.window);
+    let sw=0;
+    for(let i=1;i<recent.length;i++) if(recent[i].result!==recent[i-1].result) sw++;
+    const alt = recent.length>1 ? sw/(recent.length-1) : .5;
+    const avg = recent.reduce((s,r)=>s+r.total,0)/recent.length;
+    return {streak,last,alt,avg};
+  },
+  predict(hist){
+    if(!hist.length){
+      const g = Math.random()<.5?"TAI":"XIU";
+      return {prediction:g,confidence:.5,reason:"chưa có data — coin flip",streak:0,avg:null,alt:null};
+    }
+    const {streak,last,alt,avg} = this.stats(hist);
+    let st=0,sx=0; const reasons=[];
+    if(streak>=3){
+      const brk = last==="TAI"?"XIU":"TAI";
+      brk==="TAI"?st+=.9:sx+=.9;
+      reasons.push(`streak ${last} x${streak} → dễ bẻ (${brk})`);
+    } else { last==="TAI"?st+=.15:sx+=.15; }
+    if(alt>.6){
+      const flip = last==="TAI"?"XIU":"TAI";
+      flip==="TAI"?st+=.7:sx+=.7;
+      reasons.push(`đảo phiên ${alt.toFixed(2)} → flip ${flip}`);
+    } else if(alt<.35){
+      last==="TAI"?st+=.5:sx+=.5;
+      reasons.push(`ít đảo ${alt.toFixed(2)} → theo ${last}`);
+    }
+    if(avg>=12){ sx+=.6; reasons.push(`avg ${avg.toFixed(1)} cao → về Xỉu`); }
+    else if(avg<=9){ st+=.6; reasons.push(`avg ${avg.toFixed(1)} thấp → về Tài`); }
+    st+=Math.random()*.05; sx+=Math.random()*.05;
+    const total = st+sx;
+    const pred = st>sx?"TAI":"XIU";
+    const conf = Math.max(st,sx)/total;
+    return {prediction:pred,confidence:+conf.toFixed(3),
+      reason: reasons.length?reasons.join(" · "):"tín hiệu phẳng",
+      streak, avg:+avg.toFixed(2), alt:+alt.toFixed(3)};
+  }
+};
+
+const UI = {
+  show(id,msg,type="ok"){
+    const el=document.getElementById(id);
+    if(!el) return;
+    el.innerHTML=`<div class="msg ${type}">${msg}</div>`;
+    setTimeout(()=>{ if(el.innerHTML.includes(msg)) el.innerHTML=""; },4000);
+  }
+};
+
+const App = {
+  hist:[],
+  init(){ this.hist = Store.get(); this.renderHistory(); },
+  quick(t){ document.getElementById("totalInput").value=t; this.addRound(); },
+  addRound(){
+    const inp=document.getElementById("totalInput");
+    const t=parseInt(inp.value,10);
+    if(isNaN(t)||t<3||t>18){ UI.show("appMsg","sai rồi, 3-18 thôi","err"); return; }
+    this.hist.push({total:t,result:t>=11?"TAI":"XIU",ts:Date.now()});
+    Store.save(this.hist);
+    inp.value="";
+    UI.show("appMsg",`đã ghi ${t} (${t>=11?"TÀI":"XỈU"})`,"ok");
+    this.renderHistory();
+  },
+  predict(){
+    const r=Predictor.predict(this.hist);
+    const v=document.getElementById("predValue");
+    v.textContent=r.prediction;
+    v.className="pred-value "+r.prediction.toLowerCase();
+    document.getElementById("confFill").style.width=(r.confidence*100).toFixed(0)+"%";
+    document.getElementById("predMeta").innerHTML=
+      `<b>${(r.confidence*100).toFixed(0)}%</b> tự tin · ${r.reason}<br>
+       streak: <b>${r.streak}</b> · avg: <b>${r.avg??"-"}</b> · đảo: <b>${r.alt??"-"}</b>`;
+  },
+  renderHistory(){
+    const el=document.getElementById("histList");
+    const tai=this.hist.filter(r=>r.result==="TAI").length;
+    const xiu=this.hist.length-tai;
+    document.getElementById("stTotal").textContent=this.hist.length;
+    document.getElementById("stTai").textContent=tai;
+    document.getElementById("stXiu").textContent=xiu;
+    if(!this.hist.length){
+      el.innerHTML=`<div style="color:var(--dim);font-size:.82rem;text-align:center;padding:20px">chưa có phiên nào</div>`;
+      return;
+    }
+    el.innerHTML=this.hist.slice().reverse().slice(0,80).map(r=>{
+      const d=new Date(r.ts);
+      const pad=n=>String(n).padStart(2,"0");
+      const t=`${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`;
+      return `<div class="hist-item">
+        <span style="color:var(--dim)">${t}</span>
+        <span>total <b>${r.total}</b></span>
+        <span class="tag ${r.result.toLowerCase()}">${r.result}</span>
+      </div>`;
+    }).join("");
+  },
+  clearHistory(){
+    if(!confirm("xóa hết lịch sử?")) return;
+    this.hist=[]; Store.save([]); this.renderHistory();
+  }
+};
+
+App.init();
+</script>
+</body>
+</html>
