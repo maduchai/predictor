@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ADMIN · Hai×bo</title>
+<style>
+  :root{ --bg:#050a0f; --panel:#0a141e; --panel2:#0e1c28; --line:#14324a; --txt:#e0f7fa; --dim:#6b92a8; --cyan:#00e5ff; --green:#00e676; --red:#ff5252; --yel:#ffd166; --purple:#b57bff; }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{ background:radial-gradient(circle at 50% -20%, #0f2a3f 0%, var(--bg) 70%); color:var(--txt); font-family:system-ui,sans-serif; padding:20px; display:flex; justify-content:center; min-height:100vh; }
+  .app{ width:100%; max-width:1000px; }
+  .header{ text-align:center; margin-bottom:30px; }
+  .header h1{ color:var(--cyan); font-size:2rem; text-shadow:0 0 20px rgba(0,229,255,0.4); }
+  .card{ background:linear-gradient(180deg,var(--panel) 0%, var(--panel2) 100%); padding:22px; border-radius:14px; border:1px solid var(--line); margin-bottom:20px; box-shadow:0 10px 30px rgba(0,0,0,0.5); }
+  h2{ color:var(--cyan); margin-bottom:15px; font-size:1.1rem; text-transform:uppercase; display:flex; align-items:center; gap:8px;}
+  h2::before{ content:""; width:6px; height:6px; border-radius:50%; background:var(--cyan); box-shadow:0 0 10px var(--cyan); }
+  input{ width:100%; padding:12px; margin-bottom:10px; background:#060f16; border:1px solid var(--line); color:var(--txt); border-radius:8px; font-family:inherit; }
+  input:focus{ border-color:var(--cyan); outline:none; }
+  button{ background:linear-gradient(135deg, #00b8d4, var(--cyan)); color:#000; border:none; padding:12px 20px; border-radius:8px; cursor:pointer; font-weight:800; transition:0.2s; }
+  button:hover{ box-shadow:0 0 15px rgba(0,229,255,0.4); }
+  .btn-sm{ padding:8px 12px; font-size:0.8rem; }
+  .btn-green{ background:linear-gradient(135deg, #00b248, var(--green)); } .btn-green:hover{ box-shadow:0 0 15px rgba(0,230,118,0.4); }
+  .btn-red{ background:linear-gradient(135deg, #d32f2f, var(--red)); color:#fff; } .btn-red:hover{ box-shadow:0 0 15px rgba(255,82,82,0.4); }
+  table{ width:100%; border-collapse:collapse; margin-top:10px; font-size:0.9rem; }
+  th,td{ padding:12px; text-align:left; border-bottom:1px solid var(--line); }
+  th{ color:var(--cyan); font-size:0.8rem; text-transform:uppercase; }
+  .hidden{ display:none!important; }
+  .msg{ margin-top:10px; font-size:0.85rem; color:var(--red); font-weight:bold; }
+  .header-bar{ display:flex; justify-content:space-between; align-items:center; background:#060f16; padding:15px 20px; border-radius:10px; margin-bottom:20px; border:1px solid var(--line); }
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="header"><h1>ADMIN DASHBOARD</h1></div>
+
+  <div id="authView" class="card" style="max-width:400px; margin:0 auto;">
+    <h2>Đăng Nhập Quản Trị</h2>
+    <input id="adminPass" type="password" placeholder="Nhập mật khẩu Admin...">
+    <button onclick="Admin.login()" style="width:100%">Vào Hệ Thống</button>
+    <div id="authMsg" class="msg"></div>
+  </div>
+
+  <div id="adminPanel" class="hidden">
+    <div class="header-bar">
+      <div style="color:var(--cyan); font-weight:bold; letter-spacing:1px">HỆ THỐNG QUẢN LÝ</div>
+      <div>
+        <button class="btn-sm" onclick="Admin.changePass()" style="background:#b57bff; color:#fff; margin-right:10px">Đổi Pass</button>
+        <button class="btn-sm btn-red" onclick="location.reload()">Đăng xuất</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Duyệt Nạp Tiền</h2>
+      <table>
+        <thead><tr><th>User</th><th>Phương Thức</th><th>Thông Tin</th><th>Mệnh Giá</th><th>Trạng thái</th
