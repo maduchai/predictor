@@ -19,14 +19,12 @@
   .btn-g{ background:var(--green); color:#000; } 
   .btn-c{ background:var(--cyan); color:#000;}
   .btn-sm { padding: 5px 10px; font-size: 0.8rem; }
-  
   table{ width:100%; border-collapse:collapse; margin-top:10px; font-size:0.85rem; text-align:left; }
   th,td{ padding:10px; border-bottom:1px solid #551111; }
   th{ color:var(--gold); font-size:0.8rem; text-transform:uppercase;}
   .hidden{ display:none!important; }
   .status-pending { color: #ffd700; font-weight: bold; }
   .status-done { color: #00e676; font-weight: bold; }
-  
   .header-bar { display:flex; justify-content:space-between; align-items:center; background:#0a0000; padding:10px 20px; border-radius:8px; margin-bottom:20px; border:1px solid var(--red); flex-wrap:wrap; gap:10px;}
 </style>
 </head>
@@ -34,7 +32,6 @@
 <div class="app">
   <div class="header"><h1>ADMIN DASHBOARD</h1></div>
 
-  <!-- ĐĂNG NHẬP -->
   <div id="authView" class="card" style="max-width:400px; margin:0 auto;">
     <h2>Đăng Nhập</h2>
     <input id="adminPass" type="password" placeholder="Mật khẩu...">
@@ -42,9 +39,7 @@
     <div id="loginMsg" style="color:var(--red); font-weight:bold; text-align:center; margin-top:10px;"></div>
   </div>
 
-  <!-- BẢNG ĐIỀU KHIỂN -->
   <div id="adminPanel" class="hidden">
-    
     <div class="header-bar">
       <div style="color:var(--red); font-weight:bold; letter-spacing:1px;">HỆ THỐNG QUẢN LÝ</div>
       <div style="display:flex; gap:10px;">
@@ -53,30 +48,19 @@
       </div>
     </div>
 
-    <!-- DUYỆT NẠP -->
     <div class="card">
       <h2>Duyệt Nạp Tiền (Tự Động Cập Nhật)</h2>
       <table>
-        <thead>
-          <tr>
-            <th>Mã TB</th><th>Hình thức</th><th>IP / Tỉnh</th><th>Thiết bị</th><th>Thông tin</th><th>Hành động</th>
-          </tr>
-        </thead>
-        <tbody id="depList">
-          <tr><td colspan="6" style="text-align:center; color:#888;">Đang tải dữ liệu...</td></tr>
-        </tbody>
+        <thead><tr><th>Mã TB</th><th>Hình thức</th><th>IP / Tỉnh</th><th>Thiết bị</th><th>Thông tin</th><th>Hành động</th></tr></thead>
+        <tbody id="depList"><tr><td colspan="6" style="text-align:center; color:#888;">Đang tải dữ liệu...</td></tr></tbody>
       </table>
     </div>
 
-    <!-- TẠO KEY -->
     <div class="card">
       <h2>Tạo Key Kích Hoạt</h2>
       <div style="display:flex; gap:10px; margin-bottom:10px;">
         <select id="keyDuration" style="flex:1;">
-          <option value="1">1 Ngày (25k)</option>
-          <option value="7">1 Tuần (75k)</option>
-          <option value="30">1 Tháng (200k)</option>
-          <option value="0">Vĩnh Viễn (450k)</option>
+          <option value="1">1 Ngày (25k)</option><option value="7">1 Tuần (75k)</option><option value="30">1 Tháng (200k)</option><option value="0">Vĩnh Viễn (450k)</option>
         </select>
         <input type="number" id="keyDeviceLimit" value="1" min="1" style="flex:1;" title="Số thiết bị được dùng">
         <button class="btn-c" onclick="createKey()" style="flex:1;">Tạo Key</button>
@@ -84,25 +68,16 @@
       <div id="keyResult" style="background:#000; padding:15px; border:1px dashed var(--gold); color:var(--gold); text-align:center; font-size:1.2rem; font-weight:bold; display:none; letter-spacing:1px;"></div>
     </div>
 
-    <!-- QUẢN LÝ KEY -->
     <div class="card">
       <h2>Danh Sách Key Đã Tạo</h2>
       <table>
-        <thead>
-          <tr>
-            <th>Mã Key</th><th>Hạn Sử Dụng</th><th>Thiết bị (Đã dùng / Tối đa)</th><th>Trạng Thái</th><th>Hành động</th>
-          </tr>
-        </thead>
-        <tbody id="keyList">
-          <tr><td colspan="5" style="text-align:center; color:#888;">Đang tải dữ liệu...</td></tr>
-        </tbody>
+        <thead><tr><th>Mã Key</th><th>Hạn Sử Dụng</th><th>Thiết bị (Đã dùng / Tối đa)</th><th>Trạng Thái</th><th>Hành động</th></tr></thead>
+        <tbody id="keyList"><tr><td colspan="5" style="text-align:center; color:#888;">Đang tải dữ liệu...</td></tr></tbody>
       </table>
     </div>
-
   </div>
 </div>
 
-<!-- FIREBASE SDK -->
 <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
 
@@ -122,71 +97,38 @@
   const db = firebase.database();
 
   const DISCORD_WEBHOOK = "https://discord.com/api/webhooks/1561068482504691742/R5_eAJ4B5QaQ7iGpCORqd8ZPwTiYDVJuUucjiiYqaMS4NjfN-zQ6cAvupv-IW9lN54Ke";
-
   const getPass = () => localStorage.getItem('admin_password') || "admin123";
 
   function login() {
-    const pass = document.getElementById('adminPass').value;
-    if(pass === getPass()) {
+    if(document.getElementById('adminPass').value === getPass()) {
       document.getElementById('authView').classList.add('hidden');
       document.getElementById('adminPanel').classList.remove('hidden');
       loadDeposits();
       loadKeys();
-    } else {
-      document.getElementById('loginMsg').innerText = "Sai mật khẩu!";
-    }
+    } else { document.getElementById('loginMsg').innerText = "Sai mật khẩu!"; }
   }
 
   function changePassword() {
     const oldPass = prompt("Nhập mật khẩu hiện tại:");
     if(oldPass !== getPass()) return alert("Mật khẩu cũ sai!");
-
     const newPass = prompt("Nhập mật khẩu MỚI:");
-    if(newPass && newPass.trim() !== "") {
-      localStorage.setItem('admin_password', newPass.trim());
-      alert("Đổi mật khẩu thành công! Lần sau dùng pass mới.");
-    }
+    if(newPass && newPass.trim() !== "") { localStorage.setItem('admin_password', newPass.trim()); alert("Đổi mật khẩu thành công!"); }
   }
 
   function createKey() {
     const days = parseInt(document.getElementById('keyDuration').value);
     const maxDevices = parseInt(document.getElementById('keyDeviceLimit').value) || 1;
-    
     const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
     let key = "HB-";
-    for(let i=0; i<12; i++) {
-      if(i === 4 || i === 8) key += "-";
-      key += chars.charAt(Math.floor(Math.random() * chars.length));
-    }
+    for(let i=0; i<12; i++) { if(i === 4 || i === 8) key += "-"; key += chars.charAt(Math.floor(Math.random() * chars.length)); }
     
-    let expireTime = 0;
-    if(days > 0) expireTime = Date.now() + (days * 24 * 60 * 60 * 1000);
-
-    const keyData = {
-      duration: days === 0 ? "Vĩnh viễn" : days + " Ngày",
-      expire: expireTime,
-      maxDevices: maxDevices,
-      usedDevices: {}, // Mảng lưu các thiết bị đã dùng key này
-      createdAt: new Date().toLocaleString('vi-VN'),
-      timestamp: Date.now()
-    };
-
-    db.ref('keys/' + key).set(keyData).then(() => {
-      let el = document.getElementById('keyResult');
-      el.style.display = "block";
-      el.innerText = key;
-      
+    let expireTime = days === 0 ? 0 : Date.now() + (days * 24 * 60 * 60 * 1000);
+    db.ref('keys/' + key).set({ duration: days === 0 ? "Vĩnh viễn" : days + " Ngày", expire: expireTime, maxDevices: maxDevices, usedDevices: {}, createdAt: new Date().toLocaleString('vi-VN'), timestamp: Date.now() })
+    .then(() => {
+      let el = document.getElementById('keyResult'); el.style.display = "block"; el.innerText = key;
       fetch(DISCORD_WEBHOOK, {
         method: "POST", headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          username: "Admin Hai×bo",
-          embeds: [{
-            title: "🔑 ĐÃ TẠO KEY MỚI!",
-            color: 16776960,
-            description: `**Key:** \`${key}\`\n**Hạn:** ${keyData.duration}\n**Giới hạn:** ${maxDevices} thiết bị`,
-            timestamp: new Date().toISOString()
-          }]
-        })
+        body: JSON.stringify({ username: "Admin Hai×bo", embeds: [{ title: "🔑 ĐÃ TẠO KEY MỚI!", color: 16776960, description: `**Key:** \`${key}\`\n**Hạn:** ${days === 0 ? "Vĩnh viễn" : days + " Ngày"}\n**Giới hạn:** ${maxDevices} thiết bị`, timestamp: new Date().toISOString() }] })
       });
     });
   }
@@ -195,91 +137,64 @@
     const keyList = document.getElementById('keyList');
     db.ref('keys').on('value', snap => {
       keyList.innerHTML = "";
-      if(!snap.exists()) {
-        keyList.innerHTML = "<tr><td colspan='5' style='text-align:center;'>Chưa có key nào</td></tr>";
-        return;
-      }
-
-      const data = snap.val();
-      const arr = Object.keys(data).map(k => ({ key: k, ...data[k] })).sort((a,b)=>b.timestamp - a.timestamp);
-
+      if(!snap.exists()) { keyList.innerHTML = "<tr><td colspan='5' style='text-align:center;'>Chưa có key nào</td></tr>"; return; }
+      const arr = Object.keys(snap.val()).map(k => ({ key: k, ...snap.val()[k] })).sort((a,b)=>b.timestamp - a.timestamp);
       arr.forEach(item => {
         const isExpired = item.expire !== 0 && item.expire < Date.now();
-        const statusHtml = isExpired 
-          ? `<span style="color:#ff5252">Hết hạn</span>` 
-          : `<span style="color:#00e676">Hoạt động</span>`;
-        
+        const statusHtml = isExpired ? `<span style="color:#ff5252">Hết hạn</span>` : `<span style="color:#00e676">Hoạt động</span>`;
         const usedCount = item.usedDevices ? Object.keys(item.usedDevices).length : 0;
         const maxDev = item.maxDevices || 1;
         const deviceStatus = usedCount >= maxDev ? `<span style="color:#ff5252">${usedCount}/${maxDev} (Đầy)</span>` : `<span style="color:#00e5ff">${usedCount}/${maxDev}</span>`;
-          
-        keyList.innerHTML += `
-          <tr>
-            <td style="color:var(--gold); font-weight:bold; user-select:all">${item.key}</td>
-            <td>${item.duration}</td>
-            <td>${deviceStatus}</td>
-            <td>${statusHtml}</td>
-            <td><button class="btn-sm" style="background:#551111;" onclick="deleteKey('${item.key}')">Xóa</button></td>
-          </tr>
-        `;
+        keyList.innerHTML += `<tr><td style="color:var(--gold); font-weight:bold; user-select:all">${item.key}</td><td>${item.duration}</td><td>${deviceStatus}</td><td>${statusHtml}</td><td><button class="btn-sm" style="background:#551111;" onclick="deleteKey('${item.key}')">Xóa</button></td></tr>`;
       });
     });
   }
 
-  function deleteKey(key) {
-    if(confirm("Mày có chắc muốn xóa vĩnh viễn key: " + key + " ?")) {
-      db.ref('keys/' + key).remove().then(() => {
-        alert("Đã xóa key!");
-      });
-    }
-  }
+  function deleteKey(key) { if(confirm("Xóa key: " + key + " ?")) db.ref('keys/' + key).remove(); }
 
   function loadDeposits() {
     const depList = document.getElementById('depList');
     db.ref('deposits').on('value', snap => {
       depList.innerHTML = "";
-      if(!snap.exists()) {
-        depList.innerHTML = "<tr><td colspan='6' style='text-align:center;'>Chưa có đơn nào</td></tr>";
-        return;
-      }
-
-      const data = snap.val();
-      const arr = Object.keys(data).map(k => ({ id: k, ...data[k] })).sort((a,b)=>b.timestamp - a.timestamp);
-
+      if(!snap.exists()) { depList.innerHTML = "<tr><td colspan='6' style='text-align:center;'>Chưa có đơn nào</td></tr>"; return; }
+      const arr = Object.keys(snap.val()).map(k => ({ id: k, ...snap.val()[k] })).sort((a,b)=>b.timestamp - a.timestamp);
       arr.forEach(dep => {
         const btn = dep.status === 'pending' ? `<button class="btn-g btn-sm" onclick="approveDeposit('${dep.id}')">Duyệt</button>` : '<span class="status-done">Đã duyệt</span>';
-        let info = dep.method === 'Thẻ Cào' ? `${dep.type} - ${parseInt(dep.amount).toLocaleString()}đ` : `Nội dung: ${dep.deviceCode}`;
-        
-        depList.innerHTML += `
-          <tr>
-            <td style="color:var(--gold); font-weight:bold;">${dep.deviceCode}</td>
-            <td>${dep.method}</td>
-            <td><b>IP:</b> ${dep.ip}<br><small style="color:#aaa;">${dep.location}</small></td>
-            <td>${dep.device}</td>
-            <td>${info}</td>
-            <td>${btn}</td>
-          </tr>
-        `;
+        let info = dep.method === 'Thẻ Cào' ? `${dep.type} - ${parseInt(dep.amount).toLocaleString()}đ` : `Nội dung: ${dep.deviceCode} (${parseInt(dep.amount).toLocaleString()}đ)`;
+        depList.innerHTML += `<tr><td style="color:var(--gold); font-weight:bold;">${dep.deviceCode}</td><td>${dep.method}</td><td><b>IP:</b> ${dep.ip}<br><small style="color:#aaa;">${dep.location}</small></td><td>${dep.device}</td><td>${info}</td><td>${btn}</td></tr>`;
       });
     });
   }
 
+  // DUYỆT CỘNG TIỀN VÀO ĐÚNG MÃ THIẾT BỊ
   function approveDeposit(id) {
     if(!confirm("Xác nhận đã nhận được tiền và duyệt đơn này?")) return;
     
-    db.ref('deposits/' + id).update({ status: 'approved' }).then(() => {
-      fetch(DISCORD_WEBHOOK, {
-        method: "POST", headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          username: "Admin Hai×bo",
-          embeds: [{
-            title: "✅ ĐÃ DUYỆT NẠP TIỀN!",
-            color: 65280,
-            description: `Đơn nạp mã **${id}** đã được cộng tiền.`,
-            timestamp: new Date().toISOString()
-          }]
-        })
-      });
+    db.ref('deposits/' + id).once('value').then(snap => {
+      if(!snap.exists()) return;
+      let dep = snap.val();
+      if(dep.status !== 'pending') return;
+
+      let devCode = dep.deviceCode;
+      let amount = parseInt(dep.amount) || 0;
+
+      if(amount > 0) {
+        // Lấy số dư hiện tại của thiết bị đó
+        db.ref('users/' + devCode + '/balance').once('value').then(balSnap => {
+          let currentBal = balSnap.val() || 0;
+          // Cộng tiền và cập nhật trạng thái
+          db.ref('users/' + devCode + '/balance').set(currentBal + amount).then(() => {
+            db.ref('deposits/' + id).update({ status: 'approved' }).then(() => {
+              fetch(DISCORD_WEBHOOK, {
+                method: "POST", headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ username: "Admin Hai×bo", embeds: [{ title: "✅ ĐÃ DUYỆT NẠP TIỀN!", color: 65280, description: `Đơn mã **${id}** đã cộng **${amount.toLocaleString()}đ** vào thiết bị **${devCode}**.`, timestamp: new Date().toISOString() }] })
+              });
+            });
+          });
+        });
+      } else {
+        db.ref('deposits/' + id).update({ status: 'approved' });
+      }
     });
   }
 </script>
