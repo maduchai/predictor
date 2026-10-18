@@ -3,10 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Demo Hiệu Ứng Tool</title>
+    <title>Haixbo AI Predictor</title>
     <style>
-        /* ĐÃ XÓA PHẦN ÉP XOAY BODY TỰ ĐỘNG Ở ĐÂY ĐỂ TRÁNH LỖI GIAO DIỆN */
-
         /* Thiết lập giao diện cơ bản */
         body {
             background-color: #111;
@@ -40,7 +38,7 @@
             text-transform: uppercase;
         }
 
-        /* Giao diện form nhập key */
+        /* Giao diện khung */
         .container {
             background: #222;
             padding: 20px;
@@ -51,7 +49,7 @@
             max-width: 400px;
             text-align: center;
             box-sizing: border-box;
-            transition: all 0.3s ease; /* Thêm hiệu ứng mượt khi xoay */
+            transition: all 0.3s ease;
         }
 
         input[type="text"] {
@@ -66,7 +64,7 @@
         }
 
         button {
-            padding: 10px 20px;
+            padding: 12px 20px;
             background: #00ff00;
             border: none;
             border-radius: 5px;
@@ -74,9 +72,11 @@
             cursor: pointer;
             width: 95%;
             color: black;
+            font-size: 16px;
+            margin-top: 10px;
         }
 
-        /* 2. ẨN KẾT QUẢ */
+        /* 2. CLASS ẨN TUYỆT ĐỐI */
         .hidden {
             display: none !important;
         }
@@ -85,9 +85,7 @@
         .result-box {
             margin-top: 20px;
             padding: 15px;
-            /* Nền trong suốt 40% */
             background: rgba(51, 51, 51, 0.4) !important; 
-            /* Làm mờ hậu cảnh phía sau */
             backdrop-filter: blur(10px); 
             -webkit-backdrop-filter: blur(10px);
             border: 1px dashed #ffcc00;
@@ -98,87 +96,138 @@
         .xoay-ngang {
             transform: rotate(90deg) !important;
             transform-origin: center center !important;
-            width: 90vh !important; /* Đảo ngược chiều rộng */
-            height: 90vw !important; /* Đảo ngược chiều cao */
+            width: 90vh !important; 
+            height: 90vw !important; 
             position: fixed !important;
             top: 50% !important;
             left: 50% !important;
             margin-top: -45vw !important;
             margin-left: -45vh !important;
             z-index: 9999 !important;
-            background: #111 !important; /* Nền đen để dễ nhìn khi xoay */
+            background: #111 !important; 
+        }
+        
+        /* Hiệu ứng Loading */
+        .loader {
+            border: 5px solid #333;
+            border-top: 5px solid #00ff00;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 20px auto;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
         }
     </style>
 </head>
 <body>
 
-    <!-- KHỐI 1: TRANG NHẬP KEY -->
+    <!-- BƯỚC 1: TRANG NHẬP KEY -->
     <div class="container" id="keyPage">
         <h2 class="rainbow-text">Nhập Key Để Vào Tool</h2>
-        <p style="color: gray; font-size: 12px;">(Kết quả sẽ bị ẩn ở bước này)</p>
+        <p style="color: gray; font-size: 12px;">(Vui lòng nhập key để kích hoạt)</p>
         
         <input type="text" id="keyInput" placeholder="Nhập Key Đã Mua...">
         <button onclick="checkKey()">Xác Nhận Key</button>
-        
-        <!-- Nút giả lập mua key -->
-        <div style="margin-top: 20px; padding-top: 20px; border-top: 1px solid #444;">
-            <p style="color: #ffcc00;">Tự động mua key</p>
-            <button style="background: #ffcc00; color: black;" onclick="showResult()">MUA NGAY (Demo)</button>
-        </div>
     </div>
 
-    <!-- KHỐI 2: KẾT QUẢ (BỊ ẨN LÚC ĐẦU) -->
+    <!-- BƯỚC 2: TRANG CHUYỂN HƯỚNG SANG WEB TÀI XỈU -->
+    <div class="container hidden" id="step2Page">
+        <h2 class="rainbow-text">Kích Hoạt Thành Công!</h2>
+        <p style="color: #00ff00; font-size: 14px;">Bước tiếp theo: Hãy bấm vào nút bên dưới để sang web Tài Xỉu. Tool sẽ tự động bắt cầu và hiện kết quả sau 3 giây.</p>
+        
+        <!-- Nút này sẽ gọi hàm mở web và hiện kết quả -->
+        <button style="background: #ffcc00; color: black;" onclick="goToGame()">👉 VÀO WEB TÀI XỈU NGAY 👈</button>
+    </div>
+
+    <!-- BƯỚC 3: TRANG LOADING (ĐANG PHÂN TÍCH) -->
+    <div class="container hidden" id="loadingPage">
+        <h2 class="rainbow-text">Đang Phân Tích Cầu...</h2>
+        <div class="loader"></div>
+        <p style="color: #ccc;">Hệ thống AI đang quét dữ liệu từ web Tài Xỉu...</p>
+    </div>
+
+    <!-- BƯỚC 4: TRANG KẾT QUẢ DỰ ĐOÁN -->
     <div class="container hidden" id="resultPage">
         <h2 class="rainbow-text">Kết Quả Dự Đoán</h2>
         
         <div class="result-box">
-            <h1 style="color: red; font-size: 50px; margin: 0;">TÀI</h1>
+            <p style="margin-top: 0; color: #ccc;">Ván tiếp theo:</p>
+            <h1 id="resultText" style="color: red; font-size: 50px; margin: 0; text-shadow: 0 0 20px red;">TÀI</h1>
         </div>
 
         <!-- NÚT XOAY NGANG/DỌC -->
-        <button id="btnXoay" style="margin-top: 15px; background: #00ffff; color: black;" onclick="toggleXoay()">
+        <button id="btnXoay" style="background: #00ffff; color: black;" onclick="toggleXoay()">
             🔄 Xoay Ngang
         </button>
         
-        <button style="margin-top: 10px; background: #555; color: white;" onclick="resetPage()">Quay Lại Trang Nhập Key</button>
+        <button style="margin-top: 10px; background: #555; color: white;" onclick="resetPage()">Quay Lại Đầu</button>
     </div>
 
     <script>
-        // Hàm giả lập kiểm tra key
+        // BƯỚC 1: Kiểm tra key
         function checkKey() {
-            let key = document.getElementById('keyInput').value;
+            let key = document.getElementById('keyInput').value.trim();
             if (key === "") {
-                alert("Vui lòng nhập key (Bạn có thể bấm MUA NGAY để xem demo).");
-            } else {
-                showResult();
-            }
-        }
-
-        // Hàm ẩn trang nhập key và hiện kết quả
-        function showResult() {
+                alert("Vui lòng nhập Key để vào tool!");
+                return; 
+            } 
+            // Nếu đã nhập key -> Ẩn trang 1, hiện trang 2
             document.getElementById('keyPage').classList.add('hidden');
-            document.getElementById('resultPage').classList.remove('hidden');
+            document.getElementById('step2Page').classList.remove('hidden');
         }
 
-        // Hàm quay lại trang ban đầu
+        // BƯỚC 2: Mở web tài xỉu và bắt đầu chạy loading
+        function goToGame() {
+            // ========================================================
+            // MÀY SỬA CÁI LINK GOOGLE DƯỚI ĐÂY THÀNH LINK WEB TÀI XỈU CỦA MÀY NHÉ
+            let linkWebTaiXiu = "https://www.google.com"; 
+            window.open(linkWebTaiXiu, '_blank'); // Mở tab mới
+            // ========================================================
+
+            // Ẩn trang 2, hiện trang Loading
+            document.getElementById('step2Page').classList.add('hidden');
+            document.getElementById('loadingPage').classList.remove('hidden');
+
+            // Đợi 3 giây (3000ms) giả vờ phân tích rồi hiện kết quả
+            setTimeout(() => {
+                document.getElementById('loadingPage').classList.add('hidden');
+                document.getElementById('resultPage').classList.remove('hidden');
+                
+                // Random Tài / Xỉu cho nó tự nhiên (Mày có thể xóa hàm này nếu muốn fix cứng 1 kết quả)
+                let resultElement = document.getElementById('resultText');
+                if (Math.random() > 0.5) {
+                    resultElement.innerText = "TÀI";
+                    resultElement.style.color = "red";
+                    resultElement.style.textShadow = "0 0 20px red";
+                } else {
+                    resultElement.innerText = "XỈU";
+                    resultElement.style.color = "blue";
+                    resultElement.style.textShadow = "0 0 20px blue";
+                }
+
+            }, 3000);
+        }
+
+        // BƯỚC 4: Quay lại từ đầu
         function resetPage() {
-            // Reset lại trạng thái xoay nếu đang xoay
             document.getElementById('resultPage').classList.remove('xoay-ngang');
             document.getElementById('btnXoay').innerText = "🔄 Xoay Ngang";
             
             document.getElementById('resultPage').classList.add('hidden');
             document.getElementById('keyPage').classList.remove('hidden');
+            document.getElementById('keyInput').value = "";
         }
 
-        // HÀM XỬ LÝ XOAY NGANG / DỌC
+        // Xử lý xoay
         function toggleXoay() {
             var khung = document.getElementById('resultPage');
             var btn = document.getElementById('btnXoay');
-            
-            // Bật/tắt class xoay-ngang
             khung.classList.toggle('xoay-ngang');
             
-            // Đổi chữ trên nút
             if (khung.classList.contains('xoay-ngang')) {
                 btn.innerText = "🔄 Xoay Dọc";
             } else {
