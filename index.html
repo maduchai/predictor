@@ -1,650 +1,190 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Hai×bo · Tool AI Tài Xỉu</title>
-<style>
-  @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&display=swap');
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Demo Hiệu Ứng Tool</title>
+    <style>
+        /* ĐÃ XÓA PHẦN ÉP XOAY BODY TỰ ĐỘNG Ở ĐÂY ĐỂ TRÁNH LỖI GIAO DIỆN */
 
-  body { 
-    background: #000; 
-    color: #fff; 
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
-    display: flex; 
-    justify-content: center; 
-    padding: 20px; 
-    min-height: 100vh; 
-    margin: 0; 
-    overflow-x: hidden;
-  }
-  
-  .app { width: 100%; max-width: 520px; position: relative; z-index: 10; }
-  
-  /* NỀN MA TRẬN XANH */
-  #matrix-canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; opacity: 0.4; }
+        /* Thiết lập giao diện cơ bản */
+        body {
+            background-color: #111;
+            color: white;
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            margin: 0;
+            padding: 20px;
+            min-height: 100vh;
+            box-sizing: border-box;
+        }
 
-  /* DÒNG CẢNH BÁO TRÊN CÙNG */
-  .warning-banner {
-    background: rgba(255, 215, 0, 0.2);
-    border: 1px solid #ffd700;
-    color: #ffd700;
-    text-align: center;
-    padding: 12px;
-    border-radius: 10px;
-    font-weight: 900;
-    font-size: 0.85rem;
-    margin-bottom: 20px;
-    box-shadow: 0 0 15px rgba(255, 215, 0, 0.3);
-    text-transform: uppercase;
-    animation: pulseWarning 2s infinite alternate;
-  }
-  @keyframes pulseWarning {
-    0% { opacity: 0.7; }
-    100% { opacity: 1; text-shadow: 0 0 10px #ffd700; }
-  }
+        /* 1. HIỆU ỨNG CHỮ 7 MÀU */
+        @keyframes rainbowText {
+            0%   { color: #ff0000; text-shadow: 0 0 10px #ff0000; }
+            17%  { color: #ff7f00; text-shadow: 0 0 10px #ff7f00; }
+            33%  { color: #ffff00; text-shadow: 0 0 10px #ffff00; }
+            50%  { color: #00ff00; text-shadow: 0 0 10px #00ff00; }
+            67%  { color: #0000ff; text-shadow: 0 0 10px #0000ff; }
+            83%  { color: #4b0082; text-shadow: 0 0 10px #4b0082; }
+            100% { color: #9400d3; text-shadow: 0 0 10px #9400d3; }
+        }
 
-  /* SỐ DƯ GÓC MÀN HÌNH */
-  #floatingBalance { 
-    position: fixed; top: 15px; right: 15px; 
-    background: linear-gradient(135deg, rgba(0, 230, 118, 0.9), rgba(0, 150, 70, 0.9)); 
-    color: #000; padding: 10px 20px; border-radius: 30px; font-weight: 900; font-size: 1.1rem; 
-    z-index: 2147483647; box-shadow: 0 5px 15px rgba(0, 230, 118, 0.4); border: 2px solid #fff;
-    backdrop-filter: blur(10px);
-  }
+        .rainbow-text {
+            animation: rainbowText 3s linear infinite;
+            font-weight: bold;
+            text-align: center;
+            text-transform: uppercase;
+        }
 
-  /* CARD GIAO DIỆN KÍNH MỜ */
-  .card { 
-    background: rgba(15, 20, 15, 0.75); 
-    padding: 25px; 
-    border-radius: 16px; 
-    border: 1px solid rgba(0, 230, 118, 0.3); 
-    margin-bottom: 20px; 
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8), inset 0 0 20px rgba(0, 230, 118, 0.05); 
-    position: relative; 
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-  }
-  
-  h2 { 
-    color: #00e676; 
-    text-shadow: 0 0 10px rgba(0, 230, 118, 0.5); 
-    font-size: 1.2rem; 
-    text-transform: uppercase; 
-    border-bottom: 1px solid rgba(0, 230, 118, 0.2); 
-    padding-bottom: 12px; 
-    margin-bottom: 20px; 
-    text-align: center;
-    font-family: 'Orbitron', sans-serif;
-    letter-spacing: 1px;
-  }
-  
-  input, select { 
-    width: 100%; 
-    padding: 14px; 
-    margin-bottom: 15px; 
-    background: rgba(0, 0, 0, 0.6); 
-    border: 1px solid rgba(0, 230, 118, 0.3); 
-    color: #fff; 
-    border-radius: 10px; 
-    box-sizing: border-box; 
-    outline: none;
-    font-size: 0.95rem;
-    transition: all 0.3s ease;
-  }
-  input:focus, select:focus { 
-    border-color: #00e676; 
-    box-shadow: 0 0 15px rgba(0, 230, 118, 0.3); 
-    background: rgba(0, 20, 10, 0.8);
-  }
-  
-  button { 
-    width: 100%; 
-    padding: 15px; 
-    border: none; 
-    border-radius: 12px; 
-    font-weight: 800; 
-    font-size: 1rem; 
-    cursor: pointer; 
-    margin-bottom: 12px; 
-    transition: all 0.3s ease;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-  }
-  button:active { transform: scale(0.97); }
-  
-  .btn-main { background: linear-gradient(135deg, #00e676, #008f4c); color: #000; box-shadow: 0 5px 15px rgba(0, 230, 118, 0.3); }
-  .btn-green { background: linear-gradient(135deg, #00b359, #008f4c); color: #fff; box-shadow: 0 5px 15px rgba(0, 179, 89, 0.3); }
-  .btn-purple { background: linear-gradient(135deg, #b57bff, #8f5ce0); color: #fff; box-shadow: 0 5px 15px rgba(181, 123, 255, 0.3); }
-  
-  .game-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px; }
-  .game-btn { 
-    background: rgba(0, 0, 0, 0.5); 
-    border: 1px solid rgba(255, 255, 255, 0.1); 
-    padding: 15px; 
-    border-radius: 12px; 
-    display: flex; 
-    flex-direction: column; 
-    align-items: center; 
-    cursor: pointer; 
-    transition: all 0.3s ease; 
-  }
-  .game-btn:hover { 
-    border-color: #00e676; 
-    background: rgba(0, 230, 118, 0.1); 
-    box-shadow: 0 0 20px rgba(0, 230, 118, 0.2); 
-    transform: translateY(-3px);
-  }
-  .game-btn img { width: 70px; height: 70px; object-fit: contain; margin-bottom: 10px; border-radius: 12px; }
-  .game-btn span { font-weight: bold; color: #fff; font-size: 1rem; }
-  
-  .hidden { display: none !important; }
-  
-  .msg { padding: 12px; border-radius: 8px; font-size: 0.9rem; font-weight: bold; margin-top: 15px; text-align: center; }
-  .msg.err { background: rgba(255, 82, 82, 0.15); color: #ff5252; border: 1px solid #ff5252; }
-  .msg.ok { background: rgba(0, 230, 118, 0.15); color: #00e676; border: 1px solid #00e676; }
-  
-  .bank-box { background: rgba(0, 230, 118, 0.05); padding: 15px; border: 1px dashed rgba(0, 230, 118, 0.4); border-radius: 10px; margin-bottom: 15px; line-height: 1.8; font-size: 0.95rem; }
-  .card-box { background: rgba(181, 123, 255, 0.05); padding: 15px; border: 1px dashed rgba(181, 123, 255, 0.4); border-radius: 10px; margin-bottom: 15px; }
-  .autobuy-box { background: rgba(255, 215, 0, 0.05); padding: 15px; border: 1px dashed rgba(255, 215, 0, 0.4); border-radius: 10px; margin-bottom: 15px; }
-  
-  .bank-code-box { background: rgba(0, 230, 118, 0.1); border: 1px solid #00e676; padding: 15px; border-radius: 10px; margin-bottom: 15px; text-align: center; }
-  .bank-code-box b { font-size: 1.4rem; color: #00e676; letter-spacing: 2px; text-shadow: 0 0 10px rgba(0, 230, 118, 0.5); }
+        /* Giao diện form nhập key */
+        .container {
+            background: #222;
+            padding: 20px;
+            border-radius: 10px;
+            border: 1px solid #00ff00;
+            box-shadow: 0 0 15px rgba(0, 255, 0, 0.2);
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
+            box-sizing: border-box;
+            transition: all 0.3s ease; /* Thêm hiệu ứng mượt khi xoay */
+        }
 
-  .tiktok-icon { 
-    position: absolute; top: -15px; right: 15px; padding: 8px 15px; 
-    background: #000; border-radius: 30px; border: 1px solid #ff007f; 
-    display: flex; align-items: center; gap: 8px; 
-    box-shadow: 0 0 15px rgba(255, 0, 127, 0.4); 
-    text-decoration: none; color: #fff; font-size: 0.8rem; font-weight: bold; z-index: 10;
-  }
-  .tiktok-icon svg { width: 18px; height: 18px; fill: #fff; }
+        input[type="text"] {
+            width: 90%;
+            padding: 10px;
+            margin: 15px 0;
+            border: 1px solid #555;
+            border-radius: 5px;
+            background: #000;
+            color: #fff;
+            text-align: center;
+        }
 
-  /* KHU VỰC GAME VÀ TOOL */
-  #gameOverlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: 99998; background: #000; display: none; flex-direction: column; }
-  #gameFrame { width: 100%; height: 100%; border: none; flex: 1; }
-  
-  #closeGameBtn { 
-    position: absolute; top: 15px; left: 15px; 
-    background: rgba(255, 0, 0, 0.5); color: white; 
-    padding: 8px 15px; border-radius: 8px; z-index: 99999; 
-    font-weight: bold; cursor: pointer; border: 1px solid rgba(255,0,0,0.8); 
-    font-size: 12px; width: auto; margin: 0; backdrop-filter: blur(5px);
-  }
-  
-  .float-tool-btn { 
-    position: fixed; top: 100px; right: 20px; width: 50px; height: 50px; 
-    background: rgba(0, 230, 118, 0.7); border-radius: 50%; border: 2px solid #00e676; 
-    box-shadow: 0 0 20px #00e676; z-index: 2147483647; display: flex; align-items: center; 
-    justify-content: center; font-size: 24px; cursor: pointer; backdrop-filter: blur(5px);
-    transition: 0.3s;
-  }
-  .float-tool-btn:hover { transform: scale(1.1); }
-  
-  /* TOOL DỰ ĐOÁN SIÊU TRONG SUỐT */
-  .float-tool-box { 
-    position: fixed; top: 160px; right: 20px; 
-    background: transparent; /* NỀN TRONG SUỐT 100% */
-    border: none; 
-    z-index: 2147483647; 
-    display: none; 
-    text-align: center; 
-    text-shadow: 1px 1px 2px #000, -1px -1px 2px #000, 1px -1px 2px #000, -1px 1px 2px #000; /* Bóng đổ cho chữ dễ đọc */
-    transition: all 0.3s ease;
-  }
+        button {
+            padding: 10px 20px;
+            background: #00ff00;
+            border: none;
+            border-radius: 5px;
+            font-weight: bold;
+            cursor: pointer;
+            width: 95%;
+            color: black;
+        }
 
-  /* LAYOUT DỌC (Mặc định) */
-  .float-tool-box.vertical {
-    display: flex; flex-direction: column; align-items: center; justify-content: center;
-    width: 120px;
-  }
-  .float-tool-box.vertical .light-row { flex-direction: column; margin-bottom: 10px; }
-  
-  /* LAYOUT NGANG */
-  .float-tool-box.horizontal {
-    display: flex; flex-direction: row; align-items: center; justify-content: space-around;
-    width: 220px; gap: 10px; padding: 5px;
-  }
-  .float-tool-box.horizontal .light-row { flex-direction: column; margin-bottom: 0; }
+        /* 2. ẨN KẾT QUẢ */
+        .hidden {
+            display: none !important;
+        }
 
-  .light-row { display: flex; align-items: center; justify-content: center; gap: 5px; }
-  .light { width: 22px; height: 22px; border-radius: 50%; border: 1px solid rgba(255,255,255,0.3); }
-  .light.red { background: #300; } .light.green { background: #030; }
-  .light.active-red { animation: flashRed 0.4s 4 alternate; }
-  @keyframes flashRed { 0% { background: #ff0000; box-shadow: 0 0 25px #ff0000; } 100% { background: #500; box-shadow: none; } }
-  .light.active-green { animation: flashGreen 0.4s 4 alternate; }
-  @keyframes flashGreen { 0% { background: #00ff00; box-shadow: 0 0 25px #00ff00; } 100% { background: #050; box-shadow: none; } }
-  
-  .label { font-size: 16px; font-weight: 900; }
-  .label.tai { color: #ff3333; } .label.xiu { color: #00e676; }
-  .ai-text { font-size: 12px; color: #00e5ff; font-weight: 900; margin-top: 8px; }
-  
-  /* NÚT XOAY TOOL */
-  .toggle-layout-btn {
-    position: absolute; top: -15px; right: -15px;
-    width: 30px; height: 30px; border-radius: 50%;
-    background: #00e676; color: #000; font-weight: bold; font-size: 16px;
-    display: flex; align-items: center; justify-content: center;
-    cursor: pointer; z-index: 10; box-shadow: 0 0 10px #00e676;
-    margin: 0; padding: 0;
-  }
+        /* 3. LÀM DỰ ĐOÁN TRONG SUỐT */
+        .result-box {
+            margin-top: 20px;
+            padding: 15px;
+            /* Nền trong suốt 40% */
+            background: rgba(51, 51, 51, 0.4) !important; 
+            /* Làm mờ hậu cảnh phía sau */
+            backdrop-filter: blur(10px); 
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px dashed #ffcc00;
+            border-radius: 8px;
+        }
 
-  .key-stock-box { text-align: center; color: #aaa; font-size: 0.9rem; margin-top: 15px; padding: 12px; border: 1px dashed rgba(255,255,255,0.2); border-radius: 10px; background: rgba(0,0,0,0.4);}
-  .key-stock-box b { color: #00e676; font-size: 1.3rem; text-shadow: 0 0 10px rgba(0,230,118,0.5); }
-</style>
+        /* 4. CSS XOAY NGANG / DỌC BẰNG NÚT BẤM */
+        .xoay-ngang {
+            transform: rotate(90deg) !important;
+            transform-origin: center center !important;
+            width: 90vh !important; /* Đảo ngược chiều rộng */
+            height: 90vw !important; /* Đảo ngược chiều cao */
+            position: fixed !important;
+            top: 50% !important;
+            left: 50% !important;
+            margin-top: -45vw !important;
+            margin-left: -45vh !important;
+            z-index: 9999 !important;
+            background: #111 !important; /* Nền đen để dễ nhìn khi xoay */
+        }
+    </style>
 </head>
 <body>
-<canvas id="matrix-canvas"></canvas>
-<div id="floatingBalance">Số dư: 0đ</div>
 
-<div class="app" id="mainApp">
-  <h1 style="text-align:center; color:#00e676; text-shadow:0 0 20px #00e676; font-family:'Orbitron', sans-serif; font-size: 2rem; margin-bottom: 20px;">Hai×bo AI STORE</h1>
-
-  <!-- DÒNG CẢNH BÁO THEO YÊU CẦU -->
-  <div class="warning-banner">
-    ⚠️ TOOL CHỈ HỖ TRỢ 80% VÀ BẬT TỪ GIÂY 02 LÚC SẮP MỞ BÁT ⚠️
-  </div>
-
-  <div id="authView" class="card">
-    <a href="https://www.tiktok.com/@nousser64?_r=1&_t=ZS-9AeEvdyWy8G" target="_blank" class="tiktok-icon">
-      <svg viewBox="0 0 24 24"><path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64 2.93 2.93 0 0 1 .88.13V9.4a6.84 6.84 0 0 0-1-.05A6.33 6.33 0 0 0 5 20.1a6.34 6.34 0 0 0 10.86-4.43v-7a8.16 8.16 0 0 0 4.77 1.52v-3.4a4.85 4.85 0 0 1-1-.1z"></path></svg>
-      (Bấm vào icon mua IB Admin)
-    </a>
-
-    <h2>Nhập Key Để Vào Tool</h2>
-    <input id="keyInput" type="password" placeholder="Nhập Key Đã Mua...">
-    <button class="btn-main" onclick="checkKey()">XÁC NHẬN KEY</button>
-    <div id="authMsg" class="msg err hidden"></div>
-
-    <hr style="border-color: rgba(0, 230, 118, 0.2); margin: 25px 0;">
-
-    <h2>Tự Động Mua Key</h2>
-    <div class="autobuy-box">
-      <select id="buyDuration" style="margin-bottom:10px;">
-        <option value="1|25000">Key 1 Ngày - 25.000đ</option>
-        <option value="7|75000">Key 1 Tuần - 75.000đ</option>
-        <option value="30|200000">Key 1 Tháng - 200.000đ</option>
-        <option value="0|450000">Key Vĩnh Viễn - 450.000đ</option>
-      </select>
-      <button class="btn-main" style="background:linear-gradient(135deg, #ffd700, #ff8c00); color:#000; box-shadow: 0 5px 15px rgba(255, 215, 0, 0.3);" onclick="autoBuyKey()">MUA NGAY</button>
-      <div id="buyMsg" class="msg hidden"></div>
-      <div id="boughtKeyDisplay" style="background:#000; padding:12px; border-radius:8px; border:1px dashed #00e676; color:#00e676; font-size:1.2rem; font-weight:bold; text-align:center; margin-top:15px; display:none; user-select:all;"></div>
-    </div>
-
-    <div class="key-stock-box">Kho Key Hiện Tại: <b id="stockCount">Đang tải...</b> Key</div>
-
-    <hr style="border-color: rgba(0, 230, 118, 0.2); margin: 25px 0;">
-
-    <h2>Nạp Tiền Mua Key</h2>
-    <div class="bank-box">
-      <p style="color:#00e676; font-weight:bold; margin-bottom:8px;">1. Chuyển Khoản Ngân Hàng</p>
-      <p>Ngân hàng: <b>LPBank</b></p>
-      <p>Số TK: <b>0868866580</b></p>
-      <p>Chủ TK: <b>MA VAN HUNG</b></p>
-    </div>
-    
-    <div class="bank-code-box">
-      <p>Nội dung CK (Mã thiết bị của bạn):</p>
-      <b id="deviceBankCode">Đang tạo...</b>
-    </div>
-    
-    <input id="bankAmount" type="number" placeholder="Nhập số tiền đã chuyển (Tối thiểu 10k)...">
-    <button class="btn-green" onclick="depositBank()">XÁC NHẬN ĐÃ CHUYỂN KHOẢN</button>
-
-    <br><br>
-    
-    <div class="card-box">
-      <p style="color:#b57bff; font-weight:bold; margin-bottom:8px;">2. Nạp Thẻ Cào</p>
-      <div style="display:flex; gap:10px;">
-        <select id="cardType" style="flex:1;"><option>Viettel</option><option>Vina</option><option>Mobi</option></select>
-        <select id="cardAmount" style="flex:1;"><option value="20000">20.000đ</option><option value="50000">50.000đ</option><option value="100000">100.000đ</option><option value="200000">200.000đ</option><option value="500000">500.000đ</option></select>
-      </div>
-      <input id="cardSerial" placeholder="Số Serial (10-15 số)" maxlength="15">
-      <input id="cardPin" placeholder="Mã thẻ (PIN) (10-15 số)" maxlength="15">
-      <button class="btn-purple" id="btnCard" onclick="depositCard()">GỬI THẺ CÀO</button>
-    </div>
-    <div id="depMsg" class="msg hidden"></div>
-  </div>
-
-  <div id="mainView" class="hidden">
-    <div class="card">
-      <h2>Chọn Game Để Vào</h2>
-      <div class="game-grid">
-        <div class="game-btn" onclick="openGame('sun')">
-          <img src="https://cdnlogo.com/logos/s/63/sunwin.png" onerror="this.src='https://via.placeholder.com/70x70/000/00e676?text=Sunwin'">
-          <span>Sunwin</span>
+    <!-- KHỐI 1: TRANG NHẬP KEY -->
+    <div class="container" id="keyPage">
+        <h2 class="rainbow-text">Nhập Key Để Vào Tool</h2>
+        <p style="color: gray; font-size: 12px;">(Kết quả sẽ bị ẩn ở bước này)</p>
+        
+        <input type="text" id="keyInput" placeholder="Nhập Key Đã Mua...">
+        <button onclick="checkKey()">Xác Nhận Key</button>
+        
+        <!-- Nút giả lập mua key -->
+        <div style="margin-top: 20px; padding-top: 20px; border-top: 1px solid #444;">
+            <p style="color: #ffcc00;">Tự động mua key</p>
+            <button style="background: #ffcc00; color: black;" onclick="showResult()">MUA NGAY (Demo)</button>
         </div>
-        <div class="game-btn" onclick="openGame('lc79')">
-          <img src="https://via.placeholder.com/70x70/000/00e676?text=LC79" alt="LC79">
-          <span>LC79</span>
-        </div>
-        <div class="game-btn" onclick="openGame('b52')">
-          <img src="https://i-b52.site/wp-content/uploads/2024/08/logo-b52-club-1.png" onerror="this.src='https://via.placeholder.com/70x70/000/00e676?text=B52'">
-          <span>B52 Club</span>
-        </div>
-        <div class="game-btn" onclick="openGame('iwin')">
-          <img src="https://via.placeholder.com/70x70/000/00e676?text=iWin" alt="iWin">
-          <span>iWin Club</span>
-        </div>
-      </div>
-      <button style="background:rgba(255,255,255,0.1); color:#fff; margin-top:10px; border:1px solid rgba(255,255,255,0.2);" onclick="location.reload()">Đăng Xuất</button>
     </div>
-  </div>
-</div>
 
-<div id="gameOverlay">
-  <button id="closeGameBtn" onclick="closeGame()">✕ Thoát</button>
-  <iframe id="gameFrame" src="about:blank" allowfullscreen></iframe>
-</div>
+    <!-- KHỐI 2: KẾT QUẢ (BỊ ẨN LÚC ĐẦU) -->
+    <div class="container hidden" id="resultPage">
+        <h2 class="rainbow-text">Kết Quả Dự Đoán</h2>
+        
+        <div class="result-box">
+            <h1 style="color: red; font-size: 50px; margin: 0;">TÀI</h1>
+        </div>
 
-<div id="floatBtn" class="float-tool-btn hidden" onclick="toggleTool()">🎮</div>
+        <!-- NÚT XOAY NGANG/DỌC -->
+        <button id="btnXoay" style="margin-top: 15px; background: #00ffff; color: black;" onclick="toggleXoay()">
+            🔄 Xoay Ngang
+        </button>
+        
+        <button style="margin-top: 10px; background: #555; color: white;" onclick="resetPage()">Quay Lại Trang Nhập Key</button>
+    </div>
 
-<!-- TOOL DỰ ĐOÁN (CÓ NÚT XOAY DỌC/NGANG) -->
-<div id="toolBox" class="float-tool-box vertical">
-  <button class="toggle-layout-btn" onclick="toggleLayout()" title="Xoay Ngang/Dọc">↔️</button>
-  
-  <div id="contentLayout" style="display:flex; width:100%; justify-content:space-around; align-items:center;">
-    <div class="light-row"><div id="lightTai" class="light red"></div><span class="label tai">TÀI</span></div>
-    <div class="light-row"><div id="lightXiu" class="light green"></div><span class="label xiu">XỈU</span></div>
-  </div>
-  
-  <div class="ai-text" id="aiStatus" style="width:100%; text-align:center;">AI: Chờ...</div>
-</div>
-
-<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
-
-<script>
-  // HIỆU ỨNG MA TRẬN
-  const canvas = document.getElementById('matrix-canvas'); const ctx = canvas.getContext('2d');
-  canvas.width = window.innerWidth; canvas.height = window.innerHeight;
-  const chars = "IWINLC79B52SUNWIN0123456789@#$%".split(""); const fontSize = 16;
-  const columns = canvas.width / fontSize; const drops = [];
-  for(let x = 0; x < columns; x++) drops[x] = 1;
-  function drawMatrix() {
-    ctx.fillStyle = "rgba(0, 0, 0, 0.05)"; ctx.fillRect(0, 0, canvas.width, canvas.height);
-    ctx.fillStyle = "#00e676"; ctx.font = fontSize + "px monospace";
-    for(let i = 0; i < drops.length; i++) {
-      const text = chars[Math.floor(Math.random() * chars.length)];
-      ctx.fillText(text, i * fontSize, drops[i] * fontSize);
-      if(drops[i] * fontSize > canvas.height && Math.random() > 0.975) drops[i] = 0;
-      drops[i]++;
-    }
-  }
-  setInterval(drawMatrix, 50);
-  window.addEventListener('resize', () => { canvas.width = window.innerWidth; canvas.height = window.innerHeight; });
-
-  window.onerror = function(msg) { alert("Lỗi Script: " + msg); };
-
-  const firebaseConfig = {
-    apiKey: "AIzaSyAaQg91q7wMeQ4kXyCnOQuolvN_KmJoHBI",
-    authDomain: "vip1-c45cb.firebaseapp.com",
-    projectId: "vip1-c45cb",
-    storageBucket: "vip1-c45cb.firebasestorage.app",
-    messagingSenderId: "191209527323",
-    appId: "1:191209527323:web:b908c85ad00bfb6c2ac0be",
-    databaseURL: "https://vip1-c45cb-default-rtdb.asia-southeast1.firebasedatabase.app"
-  };
-  let db = null; try { firebase.initializeApp(firebaseConfig); db = firebase.database(); } catch(e) {}
-
-  const DISCORD_WEBHOOK = "https://discord.com/api/webhooks/1561068482504691742/R5_eAJ4B5QaQ7iGpCORqd8ZPwTiYDVJuUucjiiYqaMS4NjfN-zQ6cAvupv-IW9lN54Ke";
-  let isToolOpen = false, deviceCode = "", deviceInfo = { ip: "", location: "", device: "" };
-  let userBalance = 0, userRef = null;
-  let gameInterval = null;
-  
-  // BIẾN LƯU LỊCH SỬ CẦU (Dành cho Thuật Toán AI)
-  let historyResults = []; 
-  let isHorizontal = false;
-
-  function updateBalanceUI() { document.getElementById('floatingBalance').innerText = "Số dư: " + userBalance.toLocaleString() + "đ"; }
-
-  async function getDeviceData() {
-    let savedCode = localStorage.getItem('haibo_device_code');
-    if (!savedCode) {
-      savedCode = "HB-" + Math.floor(100000 + Math.random() * 900000);
-      localStorage.setItem('haibo_device_code', savedCode);
-    }
-    deviceCode = savedCode;
-    document.getElementById('deviceBankCode').innerText = deviceCode;
-
-    userRef = db.ref('users/' + deviceCode);
-    userRef.once('value').then(snap => { if(!snap.exists()) { userRef.set({ balance: 0, createdAt: Date.now() }); } });
-    userRef.child('balance').on('value', snap => { userBalance = snap.val() || 0; updateBalanceUI(); });
-
-    try {
-      const res = await fetch('https://ipapi.co/json/');
-      const data = await res.json();
-      let dev = "PC";
-      if(/android/i.test(navigator.userAgent)) dev = "Android";
-      else if(/iPhone|iPad/i.test(navigator.userAgent)) dev = "iOS";
-      deviceInfo = { ip: data.ip || "Lỗi IP", location: (data.city || "?") + ", " + (data.region || "?"), device: dev };
-      
-      userRef.update({ ip: deviceInfo.ip, location: deviceInfo.location, device: deviceInfo.device, lastActive: Date.now() });
-    } catch(e) { deviceInfo = { ip: "Lỗi mạng", location: "Lỗi mạng", device: "Không rõ" }; }
-  }
-  getDeviceData();
-
-  function listenKeyStock() {
-    if(!db) return;
-    db.ref('keys').on('value', snap => {
-      if(snap.exists()) {
-        const keysObj = snap.val(); let activeCount = 0; const now = Date.now();
-        for (let k in keysObj) { if (keysObj[k].expire === 0 || keysObj[k].expire > now) { activeCount++; } }
-        document.getElementById('stockCount').innerText = activeCount;
-      } else { document.getElementById('stockCount').innerText = "0"; }
-    });
-  }
-  listenKeyStock();
-
-  function sendDiscordNotify(action, amount, detail) {
-    if(!DISCORD_WEBHOOK) return;
-    fetch(DISCORD_WEBHOOK, {
-      method: "POST", headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ username: "Hai×bo System", embeds: [{ title: `🚨 YÊU CẦU ${action.toUpperCase()}`, color: 65280, fields: [{ name: "Mã TB", value: deviceCode, inline: true }, { name: "Số tiền", value: amount.toLocaleString() + "đ", inline: true }, { name: "IP", value: deviceInfo.ip || "Lỗi", inline: true }, { name: "Khu vực", value: deviceInfo.location || "Lỗi", inline: true }, { name: "Chi tiết", value: detail, inline: false }], timestamp: new Date().toISOString() }] })
-    }).catch(e=>console.log(e));
-  }
-
-  function checkKey() {
-    const input = document.getElementById('keyInput').value.trim();
-    if(!db) return alert("Firebase chưa kết nối!");
-    db.ref('keys/' + input).once('value').then(snap => {
-      if(snap.exists()) {
-        const data = snap.val();
-        if(data.expire > Date.now() || data.expire === 0) {
-          const maxDev = data.maxDevices || 1; const usedDevs = data.usedDevices || {};
-          if (usedDevs[deviceCode]) { grantAccess(); } 
-          else if (Object.keys(usedDevs).length < maxDev) {
-            db.ref('keys/' + input + '/usedDevices/' + deviceCode).set(true).then(() => grantAccess());
-          } else { let m = document.getElementById('authMsg'); m.classList.remove('hidden'); m.innerText = "Key này đã đạt giới hạn thiết bị!"; }
-        } else { let m = document.getElementById('authMsg'); m.classList.remove('hidden'); m.innerText = "Key đã hết hạn!"; }
-      } else { let m = document.getElementById('authMsg'); m.classList.remove('hidden'); m.innerText = "Key không tồn tại!"; }
-    });
-  }
-
-  function grantAccess() {
-    document.getElementById('authView').classList.add('hidden');
-    document.getElementById('mainView').classList.remove('hidden');
-  }
-
-  function autoBuyKey() {
-    if(!db || !userRef) return;
-    const [days, price] = document.getElementById('buyDuration').value.split('|').map(Number);
-    const msg = document.getElementById('buyMsg'); const keyDisplay = document.getElementById('boughtKeyDisplay');
-    if(userBalance < price) { msg.className = 'msg err'; msg.classList.remove('hidden'); msg.innerText = "Số dư không đủ!"; return; }
-
-    userRef.child('balance').set(userBalance - price).then(() => {
-      const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"; let newKey = "HB-";
-      for(let i=0; i<12; i++) { if(i === 4 || i === 8) newKey += "-"; newKey += chars.charAt(Math.floor(Math.random() * chars.length)); }
-      let expireTime = days === 0 ? 0 : Date.now() + (days * 24 * 60 * 60 * 1000);
-
-      db.ref('keys/' + newKey).set({ duration: days === 0 ? "Vĩnh viễn" : days + " Ngày", expire: expireTime, maxDevices: 1, usedDevices: {}, createdAt: new Date().toLocaleString('vi-VN'), timestamp: Date.now() })
-      .then(() => {
-        msg.className = 'msg ok'; msg.classList.remove('hidden'); msg.innerText = "Mua thành công!";
-        keyDisplay.style.display = "block"; keyDisplay.innerText = newKey;
-        sendDiscordNotify("Mua Key", price, `Đã xuất key ${newKey}`);
-      });
-    });
-  }
-
-  function depositCard() {
-    if(!db) return;
-    const type = document.getElementById('cardType').value; const amount = parseInt(document.getElementById('cardAmount').value);
-    const serial = document.getElementById('cardSerial').value.trim(); const pin = document.getElementById('cardPin').value.trim();
-    const msg = document.getElementById('depMsg');
-    if(!serial || !pin) { msg.className = 'msg err'; msg.classList.remove('hidden'); msg.innerText = "Nhập đủ Serial/PIN!"; return; }
-
-    db.ref('deposits').push().set({ method: 'Thẻ Cào', type: type, amount: amount, serial: serial, pin: pin, deviceCode: deviceCode, ip: deviceInfo.ip, location: deviceInfo.location, device: deviceInfo.device, time: new Date().toLocaleString('vi-VN'), status: 'pending', timestamp: Date.now() })
-    .then(() => {
-      msg.className = 'msg ok'; msg.classList.remove('hidden'); msg.innerText = "Đã gửi thẻ! Chờ Admin duyệt.";
-      document.getElementById('cardSerial').value = ""; document.getElementById('cardPin').value = "";
-      sendDiscordNotify("Nạp Thẻ", amount, `${type} - Seri: ${serial}`);
-    }).catch(e => { msg.className = 'msg err'; msg.classList.remove('hidden'); msg.innerText = "Lỗi Firebase: " + e.message; });
-  }
-
-  function depositBank() {
-    if(!db) return;
-    const amount = parseInt(document.getElementById('bankAmount').value);
-    if(!amount || amount < 10000) { let m = document.getElementById('depMsg'); m.className = 'msg err'; m.classList.remove('hidden'); m.innerText = "Tối thiểu 10.000đ!"; return; }
-
-    db.ref('deposits').push().set({ method: 'Chuyển Khoản', amount: amount, deviceCode: deviceCode, ip: deviceInfo.ip, location: deviceInfo.location, device: deviceInfo.device, time: new Date().toLocaleString('vi-VN'), status: 'pending', timestamp: Date.now() })
-    .then(() => {
-      let m = document.getElementById('depMsg'); m.className = 'msg ok'; m.classList.remove('hidden'); m.innerText = "Đã ghi nhận! Chờ Admin check bill.";
-      document.getElementById('bankAmount').value = "";
-      sendDiscordNotify("Chuyển Khoản", amount, `Nội dung: ${deviceCode}`);
-    }).catch(e => { let m = document.getElementById('depMsg'); m.className = 'msg err'; m.classList.remove('hidden'); m.innerText = "Lỗi Firebase: " + e.message; });
-  }
-
-  // XỬ LÝ MỞ GAME VÀ THUẬT TOÁN CHẠY 65s
-  function openGame(game) {
-    if(game === 'b52' || game === 'iwin') {
-      alert("Hệ thống B52 và iWin đang bảo trì, vui lòng quay lại sau!");
-      return;
-    }
-
-    document.getElementById('mainApp').style.display = 'none'; 
-    document.getElementById('gameOverlay').style.display = 'flex'; 
-    document.getElementById('floatBtn').classList.remove('hidden');
-    
-    const frame = document.getElementById('gameFrame');
-    if(game === 'sun') frame.src = "https://web.sunhot.win/?affId=Sunwin";
-    else if(game === 'lc79') frame.src = "https://play.lc79d.vin/";
-
-    // Reset thuật toán
-    historyResults = [];
-    if(gameInterval) clearInterval(gameInterval);
-    
-    // Chạy AI ngay lập tức
-    runAI(); 
-    
-    // Cứ 65s nháy kết quả 1 lần
-    gameInterval = setInterval(() => {
-      runAI(); 
-    }, 65000);
-  }
-
-  function closeGame() {
-    document.getElementById('mainApp').style.display = 'block'; 
-    document.getElementById('gameOverlay').style.display = 'none';
-    document.getElementById('floatBtn').classList.add('hidden'); 
-    document.getElementById('toolBox').style.display = 'none';
-    document.getElementById('gameFrame').src = "about:blank"; 
-    isToolOpen = false;
-    if(gameInterval) clearInterval(gameInterval); 
-  }
-
-  function toggleTool() {
-    isToolOpen = !isToolOpen; 
-    document.getElementById('toolBox').style.display = isToolOpen ? (isHorizontal ? 'flex' : 'flex') : 'none';
-  }
-
-  // HÀM ĐỔI LAYOUT DỌC/NGANG
-  function toggleLayout() {
-    const box = document.getElementById('toolBox');
-    isHorizontal = !isHorizontal;
-    if(isHorizontal) {
-      box.classList.remove('vertical');
-      box.classList.add('horizontal');
-      document.getElementById('contentLayout').style.flexDirection = 'row';
-    } else {
-      box.classList.remove('horizontal');
-      box.classList.add('vertical');
-      document.getElementById('contentLayout').style.flexDirection = 'column';
-    }
-  }
-
-  // ================== THUẬT TOÁN AI DỰ ĐOÁN ==================
-  function runAI() {
-    if(!isToolOpen) return; 
-
-    const tai = document.getElementById('lightTai'), xiu = document.getElementById('lightXiu'), aiStatus = document.getElementById('aiStatus');
-    tai.className = 'light red'; xiu.className = 'light green'; aiStatus.innerText = "AI: Đang phân tích..."; aiStatus.style.color = "#ffd700";
-
-    // Giả lập thời gian quét (1.5 giây)
-    setTimeout(() => {
-      let predict = "TAI";
-      let confidence = 50; // Mức cơ bản
-      let reason = "";
-
-      // Thuật toán:
-      // 1. Nếu chưa đủ lịch sử (dưới 3 phiên), dùng random theo timestamp
-      if (historyResults.length < 3) {
-         predict = (Date.now() % 2 === 0) ? "TAI" : "XIU";
-         confidence = Math.floor(Math.random() * 15) + 55; // 55 - 69%
-         reason = "Khởi tạo dữ liệu";
-      } 
-      // 2. Phân tích cầu
-      else {
-        let last = historyResults[historyResults.length - 1];
-        let last2 = historyResults[historyResults.length - 2];
-        let last3 = historyResults[historyResults.length - 3];
-
-        // Bắt cầu bệt (3 phiên giống nhau)
-        if (last === "TAI" && last2 === "TAI" && last3 === "TAI") {
-           predict = "XIU"; // Bẻ cầu
-           confidence = Math.floor(Math.random() * 11) + 70; // 70 - 80%
-           reason = "Bẻ cầu bệt Tài";
+    <script>
+        // Hàm giả lập kiểm tra key
+        function checkKey() {
+            let key = document.getElementById('keyInput').value;
+            if (key === "") {
+                alert("Vui lòng nhập key (Bạn có thể bấm MUA NGAY để xem demo).");
+            } else {
+                showResult();
+            }
         }
-        else if (last === "XIU" && last2 === "XIU" && last3 === "XIU") {
-           predict = "TAI"; // Bẻ cầu
-           confidence = Math.floor(Math.random() * 11) + 70; // 70 - 80%
-           reason = "Bẻ cầu bệt Xỉu";
-        }
-        // Bắt cầu 1-1 (T-X-T hoặc X-T-X)
-        else if (last !== last2 && last2 !== last3 && last !== last3) {
-           predict = (last === "TAI") ? "XIU" : "TAI";
-           confidence = Math.floor(Math.random() * 11) + 65; // 65 - 75%
-           reason = "Đảo cầu 1-1";
-        }
-        // Bám cầu (2 phiên giống nhau)
-        else {
-           predict = last;
-           confidence = Math.floor(Math.random() * 11) + 60; // 60 - 70%
-           reason = "Bám cầu";
-        }
-      }
 
-      // Lưu kết quả vào lịch sử
-      historyResults.push(predict);
-      if(historyResults.length > 10) historyResults.shift();
+        // Hàm ẩn trang nhập key và hiện kết quả
+        function showResult() {
+            document.getElementById('keyPage').classList.add('hidden');
+            document.getElementById('resultPage').classList.remove('hidden');
+        }
 
-      // Kẹp chặt tỉ lệ % trong khoảng 50% - 80%
-      if(confidence < 50) confidence = 50;
-      if(confidence > 80) confidence = 80;
+        // Hàm quay lại trang ban đầu
+        function resetPage() {
+            // Reset lại trạng thái xoay nếu đang xoay
+            document.getElementById('resultPage').classList.remove('xoay-ngang');
+            document.getElementById('btnXoay').innerText = "🔄 Xoay Ngang";
+            
+            document.getElementById('resultPage').classList.add('hidden');
+            document.getElementById('keyPage').classList.remove('hidden');
+        }
 
-      // Cập nhật giao diện
-      if(predict === "TAI") {
-        tai.classList.add('active-red'); 
-        aiStatus.innerText = `AI: TÀI (${confidence}%)`; 
-        aiStatus.style.color = "#ff3333";
-        setTimeout(() => { tai.classList.remove('active-red'); }, 1600);
-      } else {
-        xiu.classList.add('active-green'); 
-        aiStatus.innerText = `AI: XỈU (${confidence}%)`; 
-        aiStatus.style.color = "#00e676";
-        setTimeout(() => { xiu.classList.remove('active-green'); }, 1600);
-      }
-    }, 1500); 
-  }
-</script>
+        // HÀM XỬ LÝ XOAY NGANG / DỌC
+        function toggleXoay() {
+            var khung = document.getElementById('resultPage');
+            var btn = document.getElementById('btnXoay');
+            
+            // Bật/tắt class xoay-ngang
+            khung.classList.toggle('xoay-ngang');
+            
+            // Đổi chữ trên nút
+            if (khung.classList.contains('xoay-ngang')) {
+                btn.innerText = "🔄 Xoay Dọc";
+            } else {
+                btn.innerText = "🔄 Xoay Ngang";
+            }
+        }
+    </script>
 </body>
 </html>
