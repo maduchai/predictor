@@ -8,76 +8,39 @@
   @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&display=swap');
   @keyframes candy-glow { 0% { text-shadow: 0 0 10px #ff3333, 0 0 20px #ff0000; } 100% { text-shadow: 0 0 20px #ff3333, 0 0 40px #ff0000; } }
   
-  :root { 
-    --bg: #0a0000; 
-    --panel: rgba(30, 0, 0, 0.85); 
-    --red: #ff3333; 
-    --green: #00e676; 
-    --txt: #fff; 
-  }
-  
+  :root { --bg: #0a0000; --panel: rgba(30, 0, 0, 0.85); --red: #ff3333; --green: #00e676; --txt: #fff; }
   * { box-sizing: border-box; font-family: system-ui, sans-serif; margin: 0; padding: 0; }
   
+  /* NỀN CODE CHẢY */
   #matrix-canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; opacity: 0.6; }
   
-  body { 
-    background: radial-gradient(circle at 50% -20%, #330000 0%, var(--bg) 80%); 
-    color: var(--txt); display: flex; justify-content: center; padding: 20px; min-height: 100vh; 
-    position: relative;
-  }
-  
+  body { background: radial-gradient(circle at 50% -20%, #330000 0%, var(--bg) 80%); color: var(--txt); display: flex; justify-content: center; padding: 20px; min-height: 100vh; position: relative; }
   .app { width: 100%; max-width: 800px; position: relative; z-index: 1; }
   .header { text-align: center; margin-bottom: 20px; }
   .header h1 { color: var(--red); animation: candy-glow 2s infinite alternate; font-family: 'Orbitron', sans-serif; font-size: 2.2rem; letter-spacing: 3px; }
   
-  .card { 
-    background: var(--panel); padding: 20px; border-radius: 16px; 
-    border: 1px solid rgba(255, 51, 51, 0.5); 
-    margin-bottom: 20px; box-shadow: 0 10px 30px rgba(255, 0, 0, 0.2); 
-    backdrop-filter: blur(5px);
-  }
-  
+  .card { background: var(--panel); padding: 20px; border-radius: 16px; border: 1px solid rgba(255, 51, 51, 0.5); margin-bottom: 20px; box-shadow: 0 10px 30px rgba(255, 0, 0, 0.2); backdrop-filter: blur(5px); }
   h2 { font-size: 1rem; color: var(--red); border-bottom: 1px solid rgba(255, 51, 51, 0.3); padding-bottom: 10px; margin-bottom: 15px; text-transform: uppercase; }
   
-  input, select { 
-    width: 100%; padding: 12px; margin-bottom: 10px; background: rgba(0,0,0,0.6); 
-    border: 1px solid rgba(255, 51, 51, 0.3); color: #fff; border-radius: 8px; outline: none; font-family: inherit; 
-  }
+  input, select { width: 100%; padding: 12px; margin-bottom: 10px; background: rgba(0,0,0,0.6); border: 1px solid rgba(255, 51, 51, 0.3); color: #fff; border-radius: 8px; outline: none; font-family: inherit; }
   input:focus, select:focus { border-color: var(--red); box-shadow: 0 0 10px rgba(255, 51, 51, 0.5); }
   
-  button { 
-    width: 100%; padding: 14px; border: none; border-radius: 30px; font-weight: 900; font-size: 1rem; 
-    cursor: pointer; transition: 0.2s; margin-bottom: 10px; font-family: inherit; 
-    background: linear-gradient(180deg, #ff6b6b, #ff3333); color: #fff; 
-    text-shadow: 0 1px 2px rgba(0,0,0,0.5); box-shadow: 0 4px 15px rgba(255, 51, 51, 0.4);
-    border: 1px solid #ff9999;
-  }
+  button { width: 100%; padding: 14px; border: none; border-radius: 30px; font-weight: 900; font-size: 1rem; cursor: pointer; transition: 0.2s; margin-bottom: 10px; font-family: inherit; background: linear-gradient(180deg, #ff6b6b, #ff3333); color: #fff; text-shadow: 0 1px 2px rgba(0,0,0,0.5); box-shadow: 0 4px 15px rgba(255, 51, 51, 0.4); border: 1px solid #ff9999; }
   button:hover { background: linear-gradient(180deg, #ff8888, #ff5252); transform: scale(1.02); }
   
   .btn-green { background: linear-gradient(180deg, #00e676, #00b359); box-shadow: 0 4px 15px rgba(0,230,118,0.4); border: 1px solid #66ffa6; }
   .btn-green:hover { background: linear-gradient(180deg, #33ff99, #00cc66); }
   .btn-red { background: linear-gradient(180deg, #ff5252, #cc0000); }
   .btn-purple { background: linear-gradient(180deg, #b57bff, #8f5ce0); box-shadow: 0 4px 15px rgba(181,123,255,0.4); border: 1px solid #d9b3ff;}
+  .btn-yel { background: linear-gradient(180deg, #ffd700, #e6b800); color: #000; border: 1px solid #ffed99; }
 
   .row{ display:flex; gap:10px; margin-bottom:10px; } .row>*{flex:1;}
   
   .games{ display:grid; grid-template-columns:repeat(4,1fr); gap:10px; margin-bottom:20px; }
   @media(max-width:600px){ .games{ grid-template-columns:repeat(2,1fr); } }
-  
-  .game { 
-    background:rgba(0,0,0,0.6); border:1px solid #551111; padding:5px; 
-    border-radius:10px; text-align:center; cursor:pointer; 
-    font-size:0.85rem; color:#aaa; transition:0.2s; display: flex; flex-direction: column; align-items: center;
-    overflow: hidden;
-  }
-  .game img { 
-    width: 100%; height: 60px; object-fit: cover; 
-    border-radius: 6px; margin-bottom: 5px; border: 1px solid #333;
-  }
-  .game.active { 
-    border-color:var(--red); background:rgba(255,51,51,0.2); color:#fff; 
-    box-shadow:0 0 10px var(--red); 
-  }
+  .game { background:rgba(0,0,0,0.6); border:1px solid #551111; padding:5px; border-radius:10px; text-align:center; cursor:pointer; font-size:0.85rem; color:#aaa; transition:0.2s; display: flex; flex-direction: column; align-items: center; overflow: hidden; }
+  .game img { width: 100%; height: 60px; object-fit: cover; border-radius: 6px; margin-bottom: 5px; border: 1px solid #333; }
+  .game.active { border-color:var(--red); background:rgba(255,51,51,0.2); color:#fff; box-shadow:0 0 10px var(--red); }
   .game.active img { border-color: var(--red); }
 
   .bar-bg{ height:15px; background:#000; border-radius:8px; display:flex; overflow:hidden; border:1px solid var(--red); margin-bottom:10px;}
@@ -93,19 +56,11 @@
   .msg.err { background: rgba(255,82,82,0.2); color: #ff5252; border: 1px solid #ff5252; }
   .msg.ok { background: rgba(0,230,118,0.2); color: var(--green); border: 1px solid var(--green); }
   
-  .header-bar { 
-    display: flex; justify-content: space-between; align-items: center; 
-    background: rgba(20,0,0,0.9); padding: 15px; border-radius: 12px; 
-    border: 1px solid rgba(255, 51, 51, 0.5); margin-bottom: 20px; flex-wrap:wrap; gap:10px;
-    box-shadow: 0 5px 15px rgba(255,0,0,0.1);
-  }
+  .header-bar { display: flex; justify-content: space-between; align-items: center; background: rgba(20,0,0,0.9); padding: 15px; border-radius: 12px; border: 1px solid rgba(255, 51, 51, 0.5); margin-bottom: 20px; flex-wrap:wrap; gap:10px; box-shadow: 0 5px 15px rgba(255,0,0,0.1); }
   .balance { color: #ffd700; font-weight: bold; font-size: 1.2rem; text-shadow: 0 0 10px rgba(255,215,0,0.5); }
-  
   .bank-box { background: rgba(255, 51, 51, 0.1); padding: 15px; border: 1px dashed var(--red); border-radius: 8px; margin-bottom: 15px; line-height: 1.6; }
-  
   .loading { display: inline-block; width: 15px; height: 15px; border: 3px solid rgba(255,255,255,0.3); border-radius: 50%; border-top-color: #fff; animation: spin 1s infinite; vertical-align: middle; margin-right: 5px; }
   @keyframes spin { to { transform: rotate(360deg); } }
-  
   .warning-text { text-align: center; color: #ffd700; font-size: 0.85rem; font-weight: bold; margin-bottom: 15px; text-shadow: 0 0 5px #ffd700; }
   .pred-result{ text-align:center; padding:20px; background:rgba(0,0,0,0.9); border-radius:12px; border:2px dashed var(--red); margin-top:15px; }
   .pred-result h3{ font-size:2rem; margin-bottom:10px; font-family:'Orbitron', sans-serif; }
@@ -117,7 +72,6 @@
 
 <div class="app">
   <div class="header"><h1>Hai×bo</h1></div>
-  
   <div class="warning-text">⚠️ Tool Chỉ Hỗ Trợ 80-90% (Không phải 100%) ⚠️</div>
 
   <div id="authView" class="card" style="max-width:400px; margin:0 auto;">
@@ -150,7 +104,6 @@
     <div class="card">
       <h2>Chọn Nền Tảng</h2>
       <div class="games">
-        <!-- ẢNH BÌA GAME ĐÃ ĐƯỢC CẬP NHẬT -->
         <div class="game active" onclick="Game.select('sunwin', this)">
           <img src="https://cdnlogo.com/logos/s/63/sunwin.png" alt="Sunwin" onerror="this.src='https://via.placeholder.com/100x60/ff3333/ffffff?text=Sunwin'">
           <span>Sunwin</span>
@@ -180,6 +133,13 @@
         <button class="btn-green" onclick="Predictor.quick(11)">+ Tài</button>
         <button class="btn-red" onclick="Predictor.quick(9)">+ Xỉu</button>
       </div>
+
+      <!-- KHUNG NHẬP MD5 -->
+      <div id="md5Box" class="hidden" style="margin-top: 15px; padding: 15px; background: rgba(255, 51, 51, 0.1); border: 1px dashed var(--red); border-radius: 8px;">
+        <p style="font-size: 0.85rem; margin-bottom: 8px; color: var(--yellow);">⚠️ Nhập mã MD5 (30-40 ký tự) để phân tích:</p>
+        <input id="md5Code" placeholder="VD: d41d8cd98f00b204e9800998ecf8427e...">
+      </div>
+
       <div id="appMsg" class="msg hidden"></div>
       <h2 style="margin-top:20px">Lịch Sử</h2>
       <div class="hist" id="histList"></div>
@@ -197,6 +157,15 @@
       </div>
       <button class="btn-purple" onclick="Predictor.predict()" style="width:100%;">PHÂN TÍCH (2 Xu)</button>
       <div id="predResult" class="pred-result hidden"></div>
+    </div>
+
+    <!-- DỰ ĐOÁN BẰNG ẢNH -->
+    <div class="card">
+      <h2>Dự Đoán Bằng Ảnh (AI Scan - 5 Xu)</h2>
+      <p style="font-size: 0.85rem; margin-bottom: 10px;">Chụp ảnh bàn cầu, AI sẽ tự động quét pixel để đưa ra kết quả.</p>
+      <input type="file" id="imageInput" accept="image/*">
+      <button class="btn-yel" id="btnUpload" onclick="Predictor.analyzeImage()">TẢI ẢNH LÊN & QUÉT</button>
+      <div id="uploadMsg" class="msg hidden"></div>
     </div>
 
     <div class="card">
@@ -389,11 +358,23 @@
   };
 
   const Game = {
-    select(g, el) { currentGame = g; document.querySelectorAll('.game').forEach(x=>x.classList.remove('active')); el.classList.add('active'); Predictor.render(); },
+    select(g, el) { 
+      currentGame = g; 
+      document.querySelectorAll('.game').forEach(x=>x.classList.remove('active')); 
+      el.classList.add('active'); 
+      
+      if(g === 'md5') {
+        document.getElementById('md5Box').classList.remove('hidden');
+      } else {
+        document.getElementById('md5Box').classList.add('hidden');
+      }
+      
+      Predictor.render(); 
+    },
     render() { Predictor.render(); }
   };
 
-  // THUẬT TOÁN TÀI XỈU (CẬP NHẬT MD5 30-40 KÝ TỰ)
+  // THUẬT TOÁN TÀI XỈU
   const Algorithms = {
     sunwin(hist){
       let countTai = hist.filter(x => x.result === 'TAI').length; let countXiu = hist.length - countTai; let reason = "Sunwin: Phân tích cơ bản.";
@@ -413,29 +394,32 @@
       return { countTai, countXiu, reason };
     },
     md5(hist){
-      // Thuật toán MD5 sử dụng chuỗi băm 30-40 ký tự
       let countTai = hist.filter(x => x.result === 'TAI').length;
       let countXiu = hist.length - countTai;
-      let reason = "MD5: Phân tích Hash băm 32 ký tự.";
+      let reason = "MD5: Phân tích chuỗi Hash.";
       
-      // Tạo chuỗi MD5 giả lập từ thời gian hiện tại
-      const now = new Date().getTime().toString();
-      let hash = '';
-      const chars = '0123456789abcdef';
-      // Tạo chuỗi 32 ký tự (chuẩn MD5) hoặc ngẫu nhiên từ 30-40 ký tự
-      const length = 32; // Có thể thay đổi từ 30 đến 40
-      for (let i = 0; i < length; i++) {
-        hash += chars[Math.floor(Math.random() * chars.length)];
-      }
+      const md5Input = document.getElementById('md5Code').value.trim();
       
-      // Lấy 2 ký tự cuối để quyết định
-      const lastChar = hash.charCodeAt(hash.length - 1);
-      if (lastChar % 2 === 0) {
-        countTai += 2;
-        reason = `MD5: Hash ${hash.slice(0, 8)}... (chẵn) → Tài.`;
+      if(md5Input.length >= 30 && md5Input.length <= 40) {
+        let sum = 0;
+        for (let i = 0; i < md5Input.length; i++) {
+          sum += md5Input.charCodeAt(i);
+        }
+        
+        if (sum % 2 === 0) {
+          countTai += 3;
+          reason = "MD5: Tổng ASCII chẵn → Tài.";
+        } else {
+          countXiu += 3;
+          reason = "MD5: Tổng ASCII lẻ → Xỉu.";
+        }
       } else {
-        countXiu += 2;
-        reason = `MD5: Hash ${hash.slice(0, 8)}... (lẻ) → Xỉu.`;
+        const now = new Date().getTime().toString(); 
+        let hash = 0;
+        for (let i = 0; i < now.length; i++) { hash = ((hash << 5) - hash) + now.charCodeAt(i); hash |= 0; }
+        if(Math.abs(hash) % 2 === 0) { countTai += 2; reason = "MD5: Hash thời gian (chẵn) → Tài."; } 
+        else { countXiu += 2; reason = "MD5: Hash thời gian (lẻ) → Xỉu."; }
+        reason += " (Chưa nhập mã MD5 hợp lệ)";
       }
       
       return { countTai, countXiu, reason };
@@ -487,6 +471,76 @@
             <div style="font-size:0.8rem; color:#888; margin-top:5px;">Thuật toán: ${res.reason}</div>`;
         }, 1000);
       });
+    },
+    analyzeImage() {
+      if(!currentUser || currentUser.xu < 5) return UI.msg('uploadMsg', "Đéo đủ 5 Xu", 1);
+      const f = document.getElementById('imageInput'); 
+      if(!f.files.length) return UI.msg('uploadMsg', "Chưa chọn ảnh", 1);
+      
+      const btn = document.getElementById('btnUpload'); 
+      btn.disabled = true; 
+      btn.innerHTML = "ĐANG QUÉT..."; 
+      UI.msg('uploadMsg', "Đang xử lý...", 0);
+      
+      const rd = new FileReader();
+      rd.onload = (e) => {
+        const img = new Image();
+        img.onload = () => {
+          const cv = document.createElement('canvas'), ctx = cv.getContext('2d');
+          cv.width = img.width; cv.height = img.height; ctx.drawImage(img, 0, 0);
+          const data = ctx.getImageData(0, 0, cv.width, cv.height).data;
+          
+          let taiPixels = 0, xiuPixels = 0;
+          
+          // PHÂN TÍCH MÀU THEO TỪNG GAME
+          for(let i = 0; i < data.length; i += 4) {
+            const r = data[i], g = data[i+1], b = data[i+2];
+            
+            // Check xem pixel này có phải màu Trắng không (Xỉu chung cho mọi game)
+            const isWhite = (r > 180 && g > 180 && b > 180);
+            
+            if (isWhite) {
+              xiuPixels++;
+            } else {
+              // Nếu không phải trắng, check xem là game nào
+              if (currentGame === 'b52') {
+                // B52: Xanh (Green/Blue) là Tài
+                if (g > 100 || b > 100) taiPixels++;
+              } else {
+                // Các game khác: Đen (Black/Dark) là Tài
+                if (r < 80 && g < 80 && b < 80) taiPixels++;
+              }
+            }
+          }
+          
+          let tot = taiPixels + xiuPixels, pred = "", rate = 0;
+          
+          if(tot === 0) { 
+            pred = Math.random() < 0.5 ? "TÀI" : "XỈU"; 
+            rate = 50; 
+          } else { 
+            let pT = (taiPixels / tot) * 100; 
+            if(pT > 50) { pred = "TÀI"; rate = Math.min(99, Math.round(pT)); } 
+            else { pred = "XỈU"; rate = Math.min(99, Math.round(100 - pT)); } 
+          }
+          
+          db.ref('users/' + currentUser.id).update({xu: currentUser.xu - 5}).then(() => {
+            currentUser.xu -= 5;
+            Auth.render();
+            btn.disabled = false; 
+            btn.innerHTML = "TẢI ẢNH LÊN & QUÉT"; 
+            f.value = "";
+            document.getElementById('predResult').classList.remove('hidden');
+            document.getElementById('predResult').innerHTML = `
+              <div style="font-size:0.85rem; color:#ccc;">KẾT QUẢ TỪ ẢNH (${currentGame.toUpperCase()})</div>
+              <h3 style="color:${pred === 'TÀI' ? 'var(--green)' : 'var(--red)'}">${pred}</h3>
+              <div style="color:var(--yel); font-weight:bold;">Độ Tự Tin: ${rate}%</div>`;
+            UI.msg('uploadMsg', "Đã trừ 5 xu", 0);
+          });
+        }; 
+        img.src = e.target.result;
+      }; 
+      rd.readAsDataURL(f.files[0]);
     }
   };
 </script>
