@@ -3,98 +3,49 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Hai×bo · Đỏ Candy</title>
+<title>Hai×bo · Predictor Candy</title>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&display=swap');
-
-  @keyframes candy-glow {
-    0% { text-shadow: 0 0 10px #ff3333, 0 0 20px #ff0000; }
-    100% { text-shadow: 0 0 20px #ff3333, 0 0 40px #ff0000; }
-  }
-
-  :root { 
-    --bg: #0a0000; 
-    --panel: rgba(30, 0, 0, 0.85); 
-    --red: #ff3333; 
-    --pink: #ff007f; 
-    --green: #00e676; 
-    --txt: #fff; 
-  }
-
+  @keyframes candy-glow { 0% { text-shadow: 0 0 10px #ff3333, 0 0 20px #ff0000; } 100% { text-shadow: 0 0 20px #ff3333, 0 0 40px #ff0000; } }
+  :root { --bg: #0a0000; --panel: rgba(30, 0, 0, 0.85); --red: #ff3333; --pink: #ff007f; --green: #00e676; --txt: #fff; }
   * { box-sizing: border-box; font-family: system-ui, sans-serif; margin: 0; padding: 0; }
   
-  /* NỀN CODE CHẢY */
-  #matrix-canvas {
-    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-    z-index: -1; opacity: 0.4;
-  }
-
-  body { 
-    background: radial-gradient(circle at 50% -20%, #330000 0%, var(--bg) 80%); 
-    color: var(--txt); display: flex; justify-content: center; padding: 20px; min-height: 100vh; 
-    position: relative;
-  }
-
-  .app { width: 100%; max-width: 600px; position: relative; z-index: 1; }
-
+  #matrix-canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; opacity: 0.4; }
+  body { background: radial-gradient(circle at 50% -20%, #330000 0%, var(--bg) 80%); color: var(--txt); display: flex; justify-content: center; padding: 20px; min-height: 100vh; position: relative; }
+  .app { width: 100%; max-width: 800px; position: relative; z-index: 1; }
   .header { text-align: center; margin-bottom: 20px; }
-  .header h1 { 
-    color: var(--red); animation: candy-glow 2s infinite alternate; 
-    font-family: 'Orbitron', sans-serif; font-size: 2.2rem; letter-spacing: 3px; 
-  }
-  
-  .card { 
-    background: var(--panel); padding: 20px; border-radius: 16px; 
-    border: 1px solid rgba(255, 51, 51, 0.5); 
-    margin-bottom: 20px; box-shadow: 0 10px 30px rgba(255, 0, 0, 0.2); 
-    backdrop-filter: blur(5px);
-  }
-  
+  .header h1 { color: var(--red); animation: candy-glow 2s infinite alternate; font-family: 'Orbitron', sans-serif; font-size: 2.2rem; letter-spacing: 3px; }
+  .card { background: var(--panel); padding: 20px; border-radius: 16px; border: 1px solid rgba(255, 51, 51, 0.5); margin-bottom: 20px; box-shadow: 0 10px 30px rgba(255, 0, 0, 0.2); backdrop-filter: blur(5px); }
   h2 { font-size: 1rem; color: var(--red); border-bottom: 1px solid rgba(255, 51, 51, 0.3); padding-bottom: 10px; margin-bottom: 15px; text-transform: uppercase; }
-  
-  input, select { 
-    width: 100%; padding: 12px; margin-bottom: 10px; background: rgba(0,0,0,0.6); 
-    border: 1px solid rgba(255, 51, 51, 0.3); color: #fff; border-radius: 8px; outline: none; font-family: inherit; 
-  }
+  input, select { width: 100%; padding: 12px; margin-bottom: 10px; background: rgba(0,0,0,0.6); border: 1px solid rgba(255, 51, 51, 0.3); color: #fff; border-radius: 8px; outline: none; font-family: inherit; }
   input:focus, select:focus { border-color: var(--red); box-shadow: 0 0 10px rgba(255, 51, 51, 0.5); }
-  
-  /* NÚT KẸO NGỌT */
-  button { 
-    width: 100%; padding: 14px; border: none; border-radius: 30px; font-weight: 900; font-size: 1rem; 
-    cursor: pointer; transition: 0.2s; margin-bottom: 10px; font-family: inherit; 
-    background: linear-gradient(180deg, #ff6b6b, #ff3333); color: #fff; 
-    text-shadow: 0 1px 2px rgba(0,0,0,0.5); box-shadow: 0 4px 15px rgba(255, 51, 51, 0.4);
-    border: 1px solid #ff9999;
-  }
+  button { width: 100%; padding: 14px; border: none; border-radius: 30px; font-weight: 900; font-size: 1rem; cursor: pointer; transition: 0.2s; margin-bottom: 10px; font-family: inherit; background: linear-gradient(180deg, #ff6b6b, #ff3333); color: #fff; text-shadow: 0 1px 2px rgba(0,0,0,0.5); box-shadow: 0 4px 15px rgba(255, 51, 51, 0.4); border: 1px solid #ff9999; }
   button:hover { background: linear-gradient(180deg, #ff8888, #ff5252); transform: scale(1.02); }
-  
   .btn-green { background: linear-gradient(180deg, #00e676, #00b359); box-shadow: 0 4px 15px rgba(0,230,118,0.4); border: 1px solid #66ffa6; }
   .btn-green:hover { background: linear-gradient(180deg, #33ff99, #00cc66); }
   .btn-red { background: linear-gradient(180deg, #ff5252, #cc0000); }
-  .btn-yel { background: linear-gradient(180deg, #ffd700, #e6b800); color: #000; border: 1px solid #ffed99; }
-
+  .btn-purple { background: linear-gradient(180deg, #b57bff, #8f5ce0); box-shadow: 0 4px 15px rgba(181,123,255,0.4); border: 1px solid #d9b3ff;}
+  .row{ display:flex; gap:10px; margin-bottom:10px; } .row>*{flex:1;}
+  .games{ display:grid; grid-template-columns:repeat(4,1fr); gap:10px; margin-bottom:20px; }
+  .game{ background:rgba(0,0,0,0.6); border:1px solid #551111; padding:10px; border-radius:8px; text-align:center; cursor:pointer; font-size:0.9rem; color:#aaa; transition:0.2s;}
+  .game.active{ border-color:var(--red); background:rgba(255,51,51,0.2); color:#fff; box-shadow:0 0 10px var(--red);}
+  .bar-bg{ height:15px; background:#000; border-radius:8px; display:flex; overflow:hidden; border:1px solid var(--red); margin-bottom:10px;}
+  .bar-tai{ background:#00e676; height:100%; transition:0.5s;} .bar-xiu{ background:#ff5252; height:100%; transition:0.5s;}
+  .hist{ display:flex; flex-wrap:wrap; gap:5px; margin-top:10px; }
+  .h-item{ padding:5px 10px; border-radius:5px; background:#000; border:1px solid #551111; font-weight:bold;}
+  .h-item.tai{ color:#00e676; border-color:#00e676;} .h-item.xiu{ color:#ff5252; border-color:#ff5252;}
   .hidden { display: none !important; }
-  
   .msg { padding: 10px; border-radius: 8px; font-size: 0.85rem; font-weight: bold; margin-top: 10px; text-align: center; }
   .msg.err { background: rgba(255,82,82,0.2); color: #ff5252; border: 1px solid #ff5252; }
   .msg.ok { background: rgba(0,230,118,0.2); color: var(--green); border: 1px solid var(--green); }
-  
-  .header-bar { 
-    display: flex; justify-content: space-between; align-items: center; 
-    background: rgba(20,0,0,0.9); padding: 15px; border-radius: 12px; 
-    border: 1px solid rgba(255, 51, 51, 0.5); margin-bottom: 20px; 
-    box-shadow: 0 5px 15px rgba(255,0,0,0.1);
-  }
+  .header-bar { display: flex; justify-content: space-between; align-items: center; background: rgba(20,0,0,0.9); padding: 15px; border-radius: 12px; border: 1px solid rgba(255, 51, 51, 0.5); margin-bottom: 20px; flex-wrap:wrap; gap:10px; box-shadow: 0 5px 15px rgba(255,0,0,0.1); }
   .balance { color: #ffd700; font-weight: bold; font-size: 1.2rem; text-shadow: 0 0 10px rgba(255,215,0,0.5); }
-  
   .bank-box { background: rgba(255, 51, 51, 0.1); padding: 15px; border: 1px dashed var(--red); border-radius: 8px; margin-bottom: 15px; line-height: 1.6; }
-  
   .loading { display: inline-block; width: 15px; height: 15px; border: 3px solid rgba(255,255,255,0.3); border-radius: 50%; border-top-color: #fff; animation: spin 1s infinite; vertical-align: middle; margin-right: 5px; }
   @keyframes spin { to { transform: rotate(360deg); } }
-  
-  .status-box { margin-top: 15px; padding: 15px; background: #000; border-radius: 8px; border: 1px solid var(--red); text-align: center; box-shadow: inset 0 0 10px rgba(255,0,0,0.2); }
-  
-  .warning-text { text-align: center; color: #ffd700; font-size: 0.85rem; font-weight: bold; margin-top: 15px; text-shadow: 0 0 5px #ffd700; }
+  .warning-text { text-align: center; color: #ffd700; font-size: 0.85rem; font-weight: bold; margin-bottom: 15px; text-shadow: 0 0 5px #ffd700; }
+  .pred-result{ text-align:center; padding:20px; background:rgba(0,0,0,0.9); border-radius:12px; border:2px dashed var(--red); margin-top:15px; }
+  .pred-result h3{ font-size:2rem; margin-bottom:10px; font-family:'Orbitron', sans-serif; }
 </style>
 </head>
 <body>
@@ -106,12 +57,14 @@
   
   <div class="warning-text">⚠️ Tool Chỉ Hỗ Trợ 80-90% (Không phải 100%) ⚠️</div>
 
-  <div id="authView" class="card">
+  <div id="authView" class="card" style="max-width:400px; margin:0 auto;">
     <h2>Đăng Nhập / Đăng Ký</h2>
     <input id="uName" placeholder="Tài khoản">
     <input id="uPass" type="password" placeholder="Mật khẩu">
-    <button onclick="Auth.login()">ĐĂNG NHẬP</button>
-    <button class="btn-green" onclick="Auth.register()">ĐĂNG KÝ</button>
+    <div class="row">
+      <button onclick="Auth.login()">ĐĂNG NHẬP</button>
+      <button class="btn-green" onclick="Auth.register()">ĐĂNG KÝ</button>
+    </div>
     <div id="authMsg" class="msg hidden"></div>
   </div>
 
@@ -119,53 +72,71 @@
     <div class="header-bar">
       <div>Chào, <b id="uiName" style="color:var(--red)"></b></div>
       <div class="balance">🍬 <span id="uiXu">0</span> Xu</div>
-      <button class="btn-red" style="width:auto; padding:8px 12px; font-size:0.8rem; margin:0;" onclick="location.reload()">Thoát</button>
+      <div style="display:flex; gap:10px;">
+        <button class="btn-green" style="padding:8px; font-size:0.85rem; width:auto;" onclick="Auth.refresh()">🔄 Làm Mới</button>
+        <button class="btn-red" style="padding:8px; font-size:0.85rem; width:auto;" onclick="location.reload()">Thoát</button>
+      </div>
     </div>
 
-    <!-- ĐIỂM DANH HÀNG NGÀY -->
     <div class="card">
       <h2>Điểm Danh Hàng Ngày</h2>
-      <p style="font-size:0.9rem; margin-bottom:10px; color:#ccc;">Điểm danh mỗi ngày để nhận ngay <b>2 Xu</b> miễn phí!</p>
       <button class="btn-green" id="btnCheckIn" onclick="Auth.checkIn()">🍬 ĐIỂM DANH NHẬN 2 XU</button>
       <div id="checkMsg" class="msg hidden"></div>
     </div>
 
-    <!-- TRA CỨU TIKTOK -->
     <div class="card">
-      <h2>Kiểm Tra Trạng Thái Acc TikTok</h2>
-      <input id="checkLink" placeholder="Nhập username TikTok (VD: @tiktok)...">
-      <button class="btn-yel" id="btnCheck" onclick="Tracker.startCheck()">🔍 CHECK TRẠNG THÁI THẬT</button>
-      <div id="checkStatus" class="status-box hidden">
-        <div id="checkResult" style="font-size:1.1rem; font-weight:bold; margin-bottom:5px;">Đang khởi tạo...</div>
+      <h2>Chọn Nền Tảng</h2>
+      <div class="games">
+        <div class="game active" onclick="Game.select('sunwin', this)">Sunwin</div>
+        <div class="game" onclick="Game.select('hitclub', this)">Hitclub</div>
+        <div class="game" onclick="Game.select('b52', this)">B52</div>
+        <div class="game" onclick="Game.select('md5', this)">MD5</div>
       </div>
     </div>
 
-    <!-- GỬI LỆNH DAME -->
     <div class="card">
-      <h2>Gửi Lệnh Dame</h2>
-      <p style="font-size:0.85rem; color:#ffd700; margin-bottom:10px;">📢 Ghi chú: Tài Khoản Riêng Tư là 50k vì khó die.</p>
-      <input id="targetLink" placeholder="Nhập link hoặc username TikTok...">
-      <button id="btnDame" onclick="Dame.execute()">🚀 DAME NGAY (Trừ 20k / 50k)</button>
-      <div id="dameMsg" class="msg hidden"></div>
+      <h2>Dự đoán cầu</h2>
+      <div class="row">
+        <input id="totalInput" type="number" placeholder="Tổng (3-18)">
+        <button class="btn-green" style="flex:0 0 auto" onclick="Predictor.addRound()">Ghi</button>
+      </div>
+      <div class="row">
+        <button class="btn-green" onclick="Predictor.quick(11)">+ Tài</button>
+        <button class="btn-red" onclick="Predictor.quick(9)">+ Xỉu</button>
+      </div>
+      <div id="appMsg" class="msg hidden"></div>
+      <h2 style="margin-top:20px">Lịch Sử</h2>
+      <div class="hist" id="histList"></div>
     </div>
 
-    <!-- NẠP TIỀN -->
     <div class="card">
-      <h2>Nạp Tiền</h2>
-      <div class="row" style="display:flex; gap:10px; margin-bottom:10px;">
-        <select id="depMethod" onchange="UI.toggleMethod()" style="flex:1; margin:0;">
+      <h2>Tỉ Lệ Thắng & Dự Đoán</h2>
+      <div class="bar-bg">
+        <div class="bar-tai" id="barTai" style="width:50%"></div>
+        <div class="bar-xiu" id="barXiu" style="width:50%"></div>
+      </div>
+      <div style="display:flex; justify-content:space-between; font-weight:bold; margin-bottom:15px;">
+        <span id="pTai" style="color:var(--green)">TÀI 50%</span>
+        <span id="pXiu" style="color:var(--red)">XỈU 50%</span>
+      </div>
+      <button class="btn-purple" onclick="Predictor.predict()" style="width:100%;">PHÂN TÍCH (2 Xu)</button>
+      <div id="predResult" class="pred-result hidden"></div>
+    </div>
+
+    <div class="card">
+      <h2>Nạp Xu</h2>
+      <div class="row">
+        <select id="depMethod" onchange="UI.toggleMethod()">
           <option value="card">Thẻ Cào</option>
           <option value="bank">Chuyển Khoản</option>
         </select>
-        <select id="depAmount" style="flex:1; margin:0;">
-          <option value="20000">20.000đ</option>
-          <option value="50000">50.000đ</option>
-          <option value="100000">100.000đ</option>
-          <option value="200000">200.000đ</option>
-          <option value="500000">500.000đ</option>
+        <select id="depAmount">
+          <option value="20000">20.000đ (20x)</option>
+          <option value="50000">50.000đ (50x)</option>
+          <option value="100000">100.000đ (100x)</option>
+          <option value="200000">200.000đ (200x)</option>
         </select>
       </div>
-
       <div id="formCard">
         <select id="cardType" style="margin-bottom:10px;">
           <option value="Viettel">Viettel</option>
@@ -174,9 +145,8 @@
         </select>
         <input id="cardSerial" placeholder="Số Serial (10-15 số)" maxlength="15">
         <input id="cardPin" placeholder="Mã thẻ (PIN) (10-15 số)" maxlength="15">
-        <button class="btn-green" onclick="Dame.depositCard()">GỬI THẺ CÀO</button>
+        <button class="btn-green" onclick="Auth.depositCard()">GỬI THẺ CÀO</button>
       </div>
-
       <div id="formBank" class="hidden">
         <div class="bank-box">
           <p>Ngân hàng: <b>LPBank</b></p>
@@ -184,7 +154,7 @@
           <p>Chủ TK: <b>MA VAN HUNG</b></p>
           <p>Nội dung CK: <b id="bankCode" style="color:#ffd166">...</b></p>
         </div>
-        <button class="btn-green" onclick="Dame.depositBank()">XÁC NHẬN ĐÃ CHUYỂN</button>
+        <button class="btn-green" onclick="Auth.depositBank()">XÁC NHẬN ĐÃ CHUYỂN</button>
       </div>
       <div id="depMsg" class="msg hidden"></div>
     </div>
@@ -195,23 +165,16 @@
 <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
 
 <script>
-  // ================== HIỆU ỨNG CODE CHẢY ==================
+  // HIỆU ỨNG CODE CHẢY
   const canvas = document.getElementById('matrix-canvas');
   const ctx = canvas.getContext('2d');
-  canvas.width = window.innerWidth;
-  canvas.height = window.innerHeight;
-
-  const chars = "TIKTOKDAME0123456789@#$%".split("");
-  const fontSize = 16;
-  const columns = canvas.width / fontSize;
-  const drops = [];
+  canvas.width = window.innerWidth; canvas.height = window.innerHeight;
+  const chars = "TAIXIU0123456789@#$%".split("");
+  const fontSize = 16, columns = canvas.width / fontSize, drops = [];
   for(let x = 0; x < columns; x++) drops[x] = 1;
-
   function drawMatrix() {
-    ctx.fillStyle = "rgba(10, 0, 0, 0.05)";
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
-    ctx.fillStyle = "#ff3333"; // Màu đỏ
-    ctx.font = fontSize + "px monospace";
+    ctx.fillStyle = "rgba(10, 0, 0, 0.05)"; ctx.fillRect(0, 0, canvas.width, canvas.height);
+    ctx.fillStyle = "#ff3333"; ctx.font = fontSize + "px monospace";
     for(let i = 0; i < drops.length; i++) {
       const text = chars[Math.floor(Math.random() * chars.length)];
       ctx.fillText(text, i * fontSize, drops[i] * fontSize);
@@ -220,12 +183,8 @@
     }
   }
   setInterval(drawMatrix, 50);
-  window.addEventListener('resize', () => {
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
-  });
+  window.addEventListener('resize', () => { canvas.width = window.innerWidth; canvas.height = window.innerHeight; });
 
-  // ================== BẮT LỖI ==================
   window.onerror = function(msg, url, line) { alert("LỖI JS: " + msg + "\nDòng: " + line); };
 
   const firebaseConfig = {
@@ -246,7 +205,7 @@
     fetch(DISCORD_WEBHOOK, {
       method: "POST", headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        username: "Hai×bo System",
+        username: "Hai×bo Predictor",
         embeds: [{ title: title, color: 16711680, fields: [
           { name: "User", value: user, inline: true },
           { name: "Số tiền", value: amount.toLocaleString() + "đ", inline: true },
@@ -256,7 +215,7 @@
     }).catch(e => console.log(e));
   }
 
-  let currentUser = null;
+  let currentUser = null, currentGame = 'sunwin', history = { sunwin: [], hitclub: [], b52: [], md5: [] };
   let userIP = "Đang lấy...";
   fetch('https://api.ipify.org?format=json').then(r=>r.json()).then(d=>userIP=d.ip).catch(()=>userIP="Lỗi IP");
 
@@ -264,8 +223,7 @@
     msg(id, txt, isErr) {
       const el = document.getElementById(id);
       el.innerHTML = txt; el.className = `msg ${isErr ? 'err' : 'ok'}`;
-      el.classList.remove('hidden');
-      setTimeout(() => el.classList.add('hidden'), 5000);
+      el.classList.remove('hidden'); setTimeout(() => el.classList.add('hidden'), 5000);
     },
     toggleMethod() {
       const m = document.getElementById('depMethod').value;
@@ -276,207 +234,160 @@
 
   const Auth = {
     register() {
-      const u = document.getElementById('uName').value.trim();
-      const p = document.getElementById('uPass').value.trim();
+      const u = document.getElementById('uName').value.trim(), p = document.getElementById('uPass').value.trim();
       if(!u || !p) return UI.msg('authMsg', "Nhập đủ tên/pass", 1);
-
       db.ref('users').once('value').then(snap => {
         let users = snap.val() || {};
         if(Object.values(users).find(x => x.username === u)) return UI.msg('authMsg', "Tên đã tồn tại", 1);
-
         const newRef = db.ref('users').push();
-        newRef.set({
-          id: newRef.key, username: u, password: p, xu: 0, 
-          bankCode: 'DAME' + Math.floor(1000 + Math.random() * 9000), ip: userIP,
-          lastCheckIn: ""
-        }).then(() => UI.msg('authMsg', "Đăng ký thành công!", 0));
+        newRef.set({ id: newRef.key, username: u, password: p, xu: 0, bankCode: 'HB' + Math.floor(1000 + Math.random() * 9000), ip: userIP, lastCheckIn: "" })
+        .then(() => UI.msg('authMsg', "Đăng ký thành công!", 0));
       });
     },
     login() {
-      const u = document.getElementById('uName').value.trim();
-      const p = document.getElementById('uPass').value.trim();
+      const u = document.getElementById('uName').value.trim(), p = document.getElementById('uPass').value.trim();
       db.ref('users').once('value').then(snap => {
         let user = Object.values(snap.val() || {}).find(x => x.username === u && x.password === p);
         if(!user) return UI.msg('authMsg', "Sai tài khoản/pass", 1);
-
         currentUser = user;
         document.getElementById('authView').classList.add('hidden');
         document.getElementById('mainView').classList.remove('hidden');
         Auth.render();
       });
     },
-    render() {
+    refresh() {
+      if(!currentUser) return;
       db.ref('users/' + currentUser.id).once('value').then(snap => {
-        if(snap.exists()) {
-          currentUser = snap.val();
-          document.getElementById('uiName').textContent = currentUser.username;
-          document.getElementById('uiXu').textContent = (currentUser.xu || 0).toLocaleString();
-          document.getElementById('bankCode').textContent = currentUser.bankCode;
-          
-          // Cập nhật trạng thái nút điểm danh
-          const today = new Date().toLocaleDateString('vi-VN');
-          const btnCheckIn = document.getElementById('btnCheckIn');
-          if (currentUser.lastCheckIn === today) {
-            btnCheckIn.disabled = true;
-            btnCheckIn.textContent = "✅ ĐÃ ĐIỂM DANH HÔM NAY";
-            btnCheckIn.style.opacity = "0.6";
-          } else {
-            btnCheckIn.disabled = false;
-            btnCheckIn.textContent = "🍬 ĐIỂM DANH NHẬN 2 XU";
-            btnCheckIn.style.opacity = "1";
-          }
-        }
+        if(snap.exists()) { currentUser = snap.val(); Auth.render(); UI.msg('appMsg', "Đã làm mới số dư!", 0); }
       });
+    },
+    render() {
+      if(!currentUser) return;
+      document.getElementById('uiName').textContent = currentUser.username;
+      document.getElementById('uiXu').textContent = (currentUser.xu || 0).toLocaleString();
+      document.getElementById('bankCode').textContent = currentUser.bankCode;
+      
+      const today = new Date().toLocaleDateString('vi-VN'), btnCheckIn = document.getElementById('btnCheckIn');
+      if (currentUser.lastCheckIn === today) {
+        btnCheckIn.disabled = true; btnCheckIn.textContent = "✅ ĐÃ ĐIỂM DANH HÔM NAY"; btnCheckIn.style.opacity = "0.6";
+      } else {
+        btnCheckIn.disabled = false; btnCheckIn.textContent = "🍬 ĐIỂM DANH NHẬN 2 XU"; btnCheckIn.style.opacity = "1";
+      }
+      Game.render();
     },
     checkIn() {
       if(!currentUser) return;
       const today = new Date().toLocaleDateString('vi-VN');
       if(currentUser.lastCheckIn === today) return;
-
-      db.ref('users/' + currentUser.id).update({
-        xu: (currentUser.xu || 0) + 2,
-        lastCheckIn: today
-      }).then(() => {
-        currentUser.xu = (currentUser.xu || 0) + 2;
-        currentUser.lastCheckIn = today;
-        Auth.render();
-        UI.msg('checkMsg', "Điểm danh thành công! Nhận ngay 2 Xu 🍬", 0);
-      });
-    }
-  };
-
-  const Tracker = {
-    startCheck: function() {
-      let username = document.getElementById('checkLink').value.trim();
-      if(username.startsWith('@')) username = username.substring(1);
-      
-      const statusBox = document.getElementById('checkStatus');
-      const result = document.getElementById('checkResult');
-      const btn = document.getElementById('btnCheck');
-      
-      if(!username) return alert("Nhập username cần check đi mày!");
-      
-      statusBox.classList.remove('hidden');
-      btn.disabled = true;
-      btn.innerHTML = `⏳ ĐANG CHECK THẬT...`;
-      
-      result.style.color = "#ffd700";
-      result.innerHTML = `Đang kết nối đến máy chủ TikTok...`;
-
-      const url = `https://www.tiktok.com/@${username}`;
-      const proxy = `https://api.allorigins.win/get?url=${encodeURIComponent(url)}`;
-
-      fetch(proxy)
-        .then(response => {
-          if (!response.ok) throw new Error("Lỗi mạng");
-          return response.json();
-        })
-        .then(data => {
-          const html = data.contents;
-          const jsonStr = html.match(/<script id="__UNIVERSAL_DATA_FOR_REHYDRATION__" type="application\/json">([^<]*)<\/script>/);
-          
-          if (jsonStr && jsonStr[1]) {
-            const json = JSON.parse(jsonStr[1]);
-            const userInfo = json.__DEFAULT_SCOPE__['webapp.user-detail'];
-            
-            if(userInfo && userInfo.userInfo && userInfo.userInfo.user) {
-              result.style.color = "#00e676";
-              result.innerHTML = `🟢 Trạng thái: ĐANG SỐNG (Bình thường) <br><span style="font-size:0.8rem;color:#fff">Tên: ${userInfo.userInfo.user.nickname}</span>`;
-            } else {
-              result.style.color = "#ff5252";
-              result.innerHTML = `🔴 Trạng thái: ĐÃ DIE (Hoặc bị khóa)`;
-            }
-          } else {
-            result.style.color = "#ffd700";
-            result.innerHTML = `🟡 Không tìm thấy. Acc có thể đã DIE hoặc Proxy bị chặn.`;
-          }
-          
-          btn.disabled = false;
-          btn.innerHTML = `🔍 CHECK LẠI TRẠNG THÁI`;
-        })
-        .catch(err => {
-          result.style.color = "#ff5252";
-          result.innerHTML = `🔴 LỖI KẾT NỐI: ${err.message}. Thử lại sau!`;
-          btn.disabled = false;
-          btn.innerHTML = `🔍 CHECK LẠI TRẠNG THÁI`;
-        });
-    }
-  };
-
-  const Dame = {
-    execute() {
-      const target = document.getElementById('targetLink').value.trim();
-      if(!target) return UI.msg('dameMsg', "Nhập link hoặc username cần dame!", 1);
-      
-      let price = 20000;
-      if(target.toLowerCase().includes("private") || target.toLowerCase().includes("riengtu")) {
-        price = 50000;
-      }
-
-      if((currentUser.xu || 0) < price) return UI.msg('dameMsg', `Số dư không đủ ${price.toLocaleString()}đ! Nạp thêm đi.`, 1);
-
-      const btn = document.getElementById('btnDame');
-      btn.innerHTML = `<span class="loading"></span> ĐANG GỬI LỆNH...`;
-      btn.disabled = true;
-
-      db.ref('users/' + currentUser.id).update({ xu: currentUser.xu - price }).then(() => {
-        currentUser.xu -= price;
-        Auth.render();
-
-        const newOrder = db.ref('dame_orders').push();
-        newOrder.set({
-          id: newOrder.key, userId: currentUser.id, username: currentUser.username,
-          target: target, price: price, status: 'processing', time: Date.now()
-        }).then(() => {
-          notifyDiscord("🚨 CÓ LỆNH DAME MỚI", currentUser.username, price, "Target: " + target);
-          
-          setTimeout(() => {
-            UI.msg('dameMsg', `✅ Đã tiếp nhận lệnh dame cho [${target}]. Giá: ${price.toLocaleString()}đ. Chờ Admin xử lý!`, 0);
-            btn.innerHTML = `🚀 DAME NGAY (Trừ 20k / 50k)`;
-            btn.disabled = false;
-            document.getElementById('targetLink').value = "";
-          }, 1500);
-        });
+      db.ref('users/' + currentUser.id).update({ xu: (currentUser.xu || 0) + 2, lastCheckIn: today }).then(() => {
+        currentUser.xu = (currentUser.xu || 0) + 2; currentUser.lastCheckIn = today;
+        Auth.render(); UI.msg('checkMsg', "Điểm danh thành công! Nhận ngay 2 Xu 🍬", 0);
       });
     },
     depositCard() {
       if(!currentUser) return;
-      const type = document.getElementById('cardType').value;
-      const amount = parseInt(document.getElementById('depAmount').value);
-      const serial = document.getElementById('cardSerial').value.trim();
-      const pin = document.getElementById('cardPin').value.trim();
-
+      const type = document.getElementById('cardType').value, amount = parseInt(document.getElementById('depAmount').value);
+      const serial = document.getElementById('cardSerial').value.trim(), pin = document.getElementById('cardPin').value.trim();
       if(!serial || !pin) return UI.msg('depMsg', "Nhập đủ Serial và Mã thẻ", 1);
-      if(serial.length < 10 || serial.length > 15 || pin.length < 10 || pin.length > 15) {
-        return UI.msg('depMsg', "Serial và PIN phải từ 10-15 số!", 1);
-      }
+      if(serial.length < 10 || serial.length > 15 || pin.length < 10 || pin.length > 15) return UI.msg('depMsg', "Serial và PIN phải từ 10-15 số!", 1);
 
       const newDep = db.ref('deposits').push();
       let infoText = `${type} - S:${serial} - P:${pin}`;
-      
-      newDep.set({
-        id: newDep.key, userId: currentUser.id, username: currentUser.username,
-        amount: amount, method: 'Thẻ Cào', info: infoText, 
-        status: 'pending', created_at: Date.now()
-      }).then(() => {
+      newDep.set({ id: newDep.key, userId: currentUser.id, username: currentUser.username, amount: amount, method: 'Thẻ Cào', info: infoText, status: 'pending', created_at: Date.now() })
+      .then(() => {
         notifyDiscord("💳 NẠP THẺ CÀO MỚI", currentUser.username, amount, infoText);
         UI.msg('depMsg', "Đã gửi thẻ cào, chờ Admin duyệt!", 0);
-        document.getElementById('cardSerial').value = "";
-        document.getElementById('cardPin').value = "";
+        document.getElementById('cardSerial').value = ""; document.getElementById('cardPin').value = "";
       });
     },
     depositBank() {
       if(!currentUser) return;
       const amount = parseInt(document.getElementById('depAmount').value);
-
       const newDep = db.ref('deposits').push();
-      newDep.set({
-        id: newDep.key, userId: currentUser.id, username: currentUser.username,
-        amount: amount, method: 'Bank', info: `Nội dung: ${currentUser.bankCode}`, 
-        status: 'pending', created_at: Date.now()
-      }).then(() => {
+      newDep.set({ id: newDep.key, userId: currentUser.id, username: currentUser.username, amount: amount, method: 'Bank', info: `Nội dung: ${currentUser.bankCode}`, status: 'pending', created_at: Date.now() })
+      .then(() => {
         notifyDiscord("💰 CHUYỂN KHOẢN MỚI", currentUser.username, amount, `Mã CK: ${currentUser.bankCode}`);
         UI.msg('depMsg', "Đã ghi nhận, chờ Admin check bill!", 0);
+      });
+    }
+  };
+
+  const Game = {
+    select(g, el) { currentGame = g; document.querySelectorAll('.game').forEach(x=>x.classList.remove('active')); el.classList.add('active'); Predictor.render(); },
+    render() { Predictor.render(); }
+  };
+
+  const Algorithms = {
+    sunwin(hist){
+      let countTai = hist.filter(x => x.result === 'TAI').length; let countXiu = hist.length - countTai; let reason = "Sunwin: Phân tích cơ bản.";
+      let last3 = hist.slice(-3).map(h => h.result);
+      if(last3.length === 3 && last3.every(r => r === 'TAI')) { countXiu += 4; reason = "Sunwin: Cầu bệt Tài 3 phiên, ép Xỉu."; }
+      else if(last3.length === 3 && last3.every(r => r === 'XIU')) { countTai += 4; reason = "Sunwin: Cầu bệt Xỉu 3 phiên, ép Tài."; }
+      return { countTai, countXiu, reason };
+    },
+    hitclub(hist){
+      let countTai = hist.filter(x => x.result === 'TAI').length; let countXiu = hist.length - countTai; let last = hist[hist.length-1].result; let reason = "Hitclub: Bám xu hướng cầu.";
+      if(last === 'TAI') { countTai += 2; reason = "Hitclub: Cửa Tài mạnh, bám Tài."; } else { countXiu += 2; reason = "Hitclub: Cửa Xỉu mạnh, bám Xỉu."; }
+      return { countTai, countXiu, reason };
+    },
+    b52(hist){
+      let countTai = hist.filter(x => x.result === 'TAI').length; let countXiu = hist.length - countTai; let last = hist[hist.length-1].result; let reason = "B52: Bẻ cầu liên tục.";
+      if(last === 'TAI') { countXiu += 4; reason = "B52: Phiên trước Tài, bẻ Xỉu."; } else { countTai += 4; reason = "B52: Phiên trước Xỉu, bẻ Tài."; }
+      return { countTai, countXiu, reason };
+    },
+    md5(hist){
+      let countTai = hist.filter(x => x.result === 'TAI').length; let countXiu = hist.length - countTai; let reason = "MD5: Băm thời gian (Hash).";
+      const now = new Date().getTime().toString(); let hash = 0;
+      for (let i = 0; i < now.length; i++) { hash = ((hash << 5) - hash) + now.charCodeAt(i); hash |= 0; }
+      if(Math.abs(hash) % 2 === 0) { countTai += 2; reason = "MD5: Hash chẵn, Tài."; } else { countXiu += 2; reason = "MD5: Hash lẻ, Xỉu."; }
+      return { countTai, countXiu, reason };
+    }
+  };
+
+  const Predictor = {
+    addRound() {
+      const t = parseInt(document.getElementById('totalInput').value);
+      if(isNaN(t) || t < 3 || t > 18) return UI.msg('appMsg', "Phải từ 3-18", 1);
+      history[currentGame].push({total: t, result: t >= 11 ? "TAI" : "XIU"});
+      document.getElementById('totalInput').value = ""; UI.msg('appMsg', "Đã thêm", 0); this.reset(); this.renderHist();
+    },
+    quick(v) { document.getElementById('totalInput').value = v; this.addRound(); },
+    reset() { 
+      document.getElementById('pTai').textContent = "TÀI 50%"; document.getElementById('pXiu').textContent = "XỈU 50%"; 
+      document.getElementById('barTai').style.width = "50%"; document.getElementById('barXiu').style.width = "50%"; 
+      document.getElementById('predResult').classList.add('hidden'); 
+    },
+    renderHist() {
+      const h = history[currentGame], el = document.getElementById('histList');
+      if(!h.length) el.innerHTML = "<div style='color:#aaa'>Trống</div>";
+      else el.innerHTML = h.slice(-20).map(a => `<div class="h-item ${a.result.toLowerCase()}">${a.total} (${a.result[0]})</div>`).join('');
+    },
+    render() { this.renderHist(); this.reset(); },
+    predict() {
+      if(!currentUser || currentUser.xu < 2) return UI.msg('appMsg', "Đéo đủ 2 Xu", 1);
+      if(history[currentGame].length < 3) return UI.msg('appMsg', "Cần ít nhất 3 phiên", 1);
+      
+      db.ref('users/' + currentUser.id).update({xu: currentUser.xu - 2}).then(() => {
+        currentUser.xu -= 2; Auth.render();
+        const el = document.getElementById('predResult'); el.classList.remove('hidden'); el.innerHTML = `<div class="loading"></div> Đang phân tích...`;
+        setTimeout(() => {
+          let res = {countTai: 0, countXiu: 0, reason: ""};
+          if(currentGame === 'sunwin') res = Algorithms.sunwin(history[currentGame]);
+          else if(currentGame === 'hitclub') res = Algorithms.hitclub(history[currentGame]);
+          else if(currentGame === 'b52') res = Algorithms.b52(history[currentGame]);
+          else if(currentGame === 'md5') res = Algorithms.md5(history[currentGame]);
+          
+          let tot = res.countTai + res.countXiu, pT = Math.round((res.countTai / tot) * 100), pX = 100 - pT;
+          let pred = pT > pX ? "TÀI" : "XỈU", rate = pT > pX ? pT : pX;
+          
+          document.getElementById('pTai').textContent = `TÀI ${pT}%`; document.getElementById('pXiu').textContent = `XỈU ${pX}%`;
+          document.getElementById('barTai').style.width = pT + "%"; document.getElementById('barXiu').style.width = pX + "%";
+          
+          el.innerHTML = `<div style="font-size:0.85rem; color:#ccc;">KẾT QUẢ (${currentGame.toUpperCase()})</div>
+            <h3 style="color:${pred === 'TÀI' ? 'var(--green)' : 'var(--red)'}">${pred}</h3>
+            <div style="color:var(--yel); font-weight:bold;">Độ Tự Tin: ${rate}%</div>
+            <div style="font-size:0.8rem; color:#888; margin-top:5px;">Thuật toán: ${res.reason}</div>`;
+        }, 1000);
       });
     }
   };
