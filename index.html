@@ -3,64 +3,60 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Hai×bo · Tool AI Tài Xỉu</title>
+<title>Hai×bo · Tool Tài Xỉu</title>
 <style>
-  body { background: #0a0a0f; color: #fff; font-family: system-ui, sans-serif; display: flex; justify-content: center; padding: 20px; min-height: 100vh; margin: 0; }
-  .app { width: 100%; max-width: 500px; }
-  .card { background: #15151e; padding: 20px; border-radius: 12px; border: 1px solid #333; margin-bottom: 20px; box-shadow: 0 5px 15px rgba(0,0,0,0.5); position: relative;}
-  h2 { color: #00e5ff; font-size: 1.1rem; text-transform: uppercase; border-bottom: 1px solid #333; padding-bottom: 10px; margin-bottom: 15px; text-align: center;}
-  input, select { width: 100%; padding: 12px; margin-bottom: 10px; background: #000; border: 1px solid #333; color: #fff; border-radius: 8px; box-sizing: border-box; outline: none;}
+  body { background: #000; color: #fff; font-family: system-ui, sans-serif; display: flex; justify-content: center; padding: 20px; min-height: 100vh; margin: 0; overflow-x: hidden;}
+  .app { width: 100%; max-width: 500px; position: relative; z-index: 10; }
+  
+  /* NỀN MA TRẬN XANH */
+  #matrix-canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; opacity: 0.3; }
+
+  .card { background: rgba(10, 15, 10, 0.9); padding: 20px; border-radius: 12px; border: 1px solid #00e676; margin-bottom: 20px; box-shadow: 0 0 15px rgba(0, 230, 118, 0.2); position: relative; backdrop-filter: blur(5px);}
+  h2 { color: #00e676; text-shadow: 0 0 5px #00e676; font-size: 1.1rem; text-transform: uppercase; border-bottom: 1px solid #004d20; padding-bottom: 10px; margin-bottom: 15px; text-align: center;}
+  
+  input, select { width: 100%; padding: 12px; margin-bottom: 10px; background: #000; border: 1px solid #004d20; color: #fff; border-radius: 8px; box-sizing: border-box; outline: none;}
+  input:focus, select:focus { border-color: #00e676; box-shadow: 0 0 10px rgba(0,230,118,0.3); }
+  
   button { width: 100%; padding: 14px; border: none; border-radius: 8px; font-weight: bold; font-size: 1rem; cursor: pointer; margin-bottom: 10px; transition: 0.2s;}
-  .btn-main { background: linear-gradient(90deg, #00e5ff, #0055ff); color: #fff; }
-  .btn-main:hover { box-shadow: 0 0 15px rgba(0,229,255,0.5); }
+  .btn-main { background: linear-gradient(90deg, #00e676, #008f4c); color: #000; }
+  .btn-main:hover { box-shadow: 0 0 15px rgba(0,230,118,0.5); }
   .btn-green { background: #00e676; color: #000; }
   .btn-purple { background: linear-gradient(90deg, #b57bff, #8f5ce0); color: #fff; }
-  .btn-sun { background: linear-gradient(90deg, #ff007f, #ff3333); color: #fff; margin-top: 10px; }
-  .btn-b52 { background: linear-gradient(90deg, #ffd700, #ff8c00); color: #000; }
+  
+  /* LOGO GAME GRID */
+  .game-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px; }
+  .game-btn { background: rgba(0,0,0,0.6); border: 1px solid #333; padding: 10px; border-radius: 8px; display: flex; flex-direction: column; align-items: center; cursor: pointer; transition: 0.2s; }
+  .game-btn:hover { border-color: #00e676; background: rgba(0,230,118,0.1); box-shadow: 0 0 10px rgba(0,230,118,0.3); }
+  .game-btn img { width: 60px; height: 60px; object-fit: contain; margin-bottom: 5px; border-radius: 8px;}
+  .game-btn span { font-weight: bold; color: #fff; font-size: 0.9rem; }
+  
   .hidden { display: none !important; }
   .msg { padding: 10px; border-radius: 6px; font-size: 0.85rem; font-weight: bold; margin-top: 10px; text-align: center; }
   .msg.err { background: rgba(255,82,82,0.1); color: #ff5252; border: 1px solid #ff5252; }
   .msg.ok { background: rgba(0,230,118,0.1); color: #00e676; border: 1px solid #00e676; }
   
-  .bank-box { background: rgba(0,229,255,0.05); padding: 15px; border: 1px dashed #00e5ff; border-radius: 8px; margin-bottom: 15px; line-height: 1.6; font-size: 0.9rem; }
+  .bank-box { background: rgba(0, 230, 118, 0.05); padding: 15px; border: 1px dashed #00e676; border-radius: 8px; margin-bottom: 15px; line-height: 1.6; font-size: 0.9rem; }
   .card-box { background: rgba(181, 123, 255, 0.05); padding: 15px; border: 1px dashed #b57bff; border-radius: 8px; margin-bottom: 15px; }
   
-  .price-list { background: #000; padding: 10px; border-radius: 8px; border: 1px solid #333; margin-bottom: 15px; font-size: 0.85rem; }
+  .price-list { background: #000; padding: 10px; border-radius: 8px; border: 1px solid #004d20; margin-bottom: 15px; font-size: 0.85rem; }
   .price-item { display: flex; justify-content: space-between; padding: 5px 0; border-bottom: 1px dashed #333; }
-  .price-item span:last-child { color: #ffd700; font-weight: bold; }
+  .price-item span:last-child { color: #00e676; font-weight: bold; }
 
-  .bank-code-box { background: rgba(255, 215, 0, 0.1); border: 1px solid #ffd700; padding: 10px; border-radius: 8px; margin-bottom: 15px; text-align: center;}
-  .bank-code-box b { font-size: 1.2rem; color: #ffd700; letter-spacing: 2px; text-shadow: 0 0 5px #ffd700;}
+  .bank-code-box { background: rgba(0, 230, 118, 0.1); border: 1px solid #00e676; padding: 10px; border-radius: 8px; margin-bottom: 15px; text-align: center;}
+  .bank-code-box b { font-size: 1.2rem; color: #00e676; letter-spacing: 2px; text-shadow: 0 0 5px #00e676;}
 
   .tiktok-icon { position: absolute; top: -15px; right: -15px; padding: 5px 10px; background: #000; border-radius: 20px; border: 1px solid #ff007f; display: flex; align-items: center; gap: 8px; box-shadow: 0 0 10px rgba(255, 0, 127, 0.5); text-decoration: none; color: #fff; font-size: 0.75rem; font-weight: bold; z-index: 10;}
   .tiktok-icon svg { width: 16px; height: 16px; fill: #fff; }
 
-  /* CSS CHO IFRAME & TOOL NỔI */
+  /* KHU VỰC GAME VÀ TOOL */
   #gameOverlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: 99998; background: #000; display: none; flex-direction: column; }
   #gameFrame { width: 100%; height: 100%; border: none; flex: 1; }
   
-  #closeGameBtn { 
-    position: absolute; top: 10px; left: 10px; background: rgba(255, 0, 0, 0.4); color: white; 
-    padding: 4px 8px; border-radius: 4px; z-index: 99999; font-weight: bold; cursor: pointer; 
-    border: 1px solid rgba(255,0,0,0.6); font-size: 10px; width: auto; margin: 0;
-  }
+  #closeGameBtn { position: absolute; top: 10px; left: 10px; background: rgba(255, 0, 0, 0.4); color: white; padding: 4px 8px; border-radius: 4px; z-index: 99999; font-weight: bold; cursor: pointer; border: 1px solid rgba(255,0,0,0.6); font-size: 10px; width: auto; margin: 0; }
   
-  /* NÚT NỔI VÀ TOOL */
-  .float-tool-btn { 
-    position: fixed; top: 100px; right: 20px; width: 40px; height: 40px; 
-    background: rgba(0, 85, 255, 0.6); border-radius: 50%; border: 1px solid #00e5ff; 
-    box-shadow: 0 0 10px #00e5ff; z-index: 2147483647; /* Z-INDEX CAO NHẤT */
-    display: flex; align-items: center; justify-content: center; font-size: 18px; 
-    cursor: pointer; backdrop-filter: blur(2px);
-  }
+  .float-tool-btn { position: fixed; top: 100px; right: 20px; width: 40px; height: 40px; background: rgba(0, 230, 118, 0.6); border-radius: 50%; border: 1px solid #00e676; box-shadow: 0 0 10px #00e676; z-index: 2147483647; display: flex; align-items: center; justify-content: center; font-size: 18px; cursor: pointer; backdrop-filter: blur(2px); }
+  .float-tool-box { position: fixed; top: 150px; right: 20px; width: 110px; background: rgba(5,10,5,0.8); border: 1px solid #00e676; border-radius: 8px; padding: 10px; z-index: 2147483647; display: none; text-align: center; backdrop-filter: blur(3px);}
   
-  .float-tool-box { 
-    position: fixed; top: 150px; right: 20px; width: 120px; 
-    background: transparent; border: none; border-radius: 0; padding: 0; 
-    z-index: 2147483647; /* Z-INDEX CAO NHẤT */
-    display: none; text-align: center; 
-  }
-
   .light-row { display: flex; align-items: center; justify-content: center; gap: 8px; margin-bottom: 12px; }
   .light { width: 20px; height: 20px; border-radius: 50%; border: 1px solid rgba(255,255,255,0.3); }
   .light.red { background: #300; } .light.green { background: #030; }
@@ -71,15 +67,15 @@
   
   .label { font-size: 16px; font-weight: 900; text-shadow: 1px 1px 2px #000, -1px -1px 2px #000, 1px -1px 2px #000, -1px 1px 2px #000; }
   .label.tai { color: #ff3333; } .label.xiu { color: #00e676; }
-  .session-box { background: rgba(0,0,0,0.5); padding: 5px 8px; border-radius: 4px; border: 1px solid rgba(255,255,255,0.2); margin-top: 5px; display: inline-block; backdrop-filter: blur(2px);}
-  .session-code { font-size: 14px; font-weight: bold; color: #ffd700; text-shadow: 1px 1px 2px #000; }
-  .ai-text { font-size: 10px; color: #00e5ff; font-weight: bold; margin-top: 5px; text-shadow: 1px 1px 2px #000; }
+  .ai-text { font-size: 10px; color: #00e676; font-weight: bold; margin-top: 5px; text-shadow: 1px 1px 2px #000; }
 </style>
 </head>
 <body>
 
+<canvas id="matrix-canvas"></canvas>
+
 <div class="app" id="mainApp">
-  <h1 style="text-align:center; color:#00e5ff; text-shadow:0 0 10px #00e5ff;">Hai×bo AI STORE</h1>
+  <h1 style="text-align:center; color:#00e676; text-shadow:0 0 10px #00e676; font-family:monospace;">Hai×bo AI STORE</h1>
 
   <div id="authView" class="card">
     <a href="https://www.tiktok.com/@nousser64?_r=1&_t=ZS-9AeEvdyWy8G" target="_blank" class="tiktok-icon">
@@ -92,7 +88,7 @@
     <button class="btn-main" onclick="checkKey()">XÁC NHẬN KEY</button>
     <div id="authMsg" class="msg err hidden"></div>
 
-    <hr style="border-color: #333; margin: 25px 0;">
+    <hr style="border-color: #004d20; margin: 25px 0;">
 
     <h2>Bảng Giá Key</h2>
     <div class="price-list">
@@ -104,7 +100,7 @@
 
     <h2>Nạp Tiền Mua Key</h2>
     <div class="bank-box">
-      <p style="color:#00e5ff; font-weight:bold; margin-bottom:5px;">1. Chuyển Khoản Ngân Hàng</p>
+      <p style="color:#00e676; font-weight:bold; margin-bottom:5px;">1. Chuyển Khoản Ngân Hàng (Tối thiểu 10k)</p>
       <p>Ngân hàng: <b>LPBank</b></p>
       <p>Số TK: <b>0868866580</b></p>
       <p>Chủ TK: <b>MA VAN HUNG</b></p>
@@ -114,6 +110,8 @@
       <p>Nội dung CK (Mã thiết bị của bạn):</p>
       <b id="deviceBankCode">Đang tạo...</b>
     </div>
+    
+    <input id="bankAmount" type="number" placeholder="Nhập số tiền đã chuyển (Tối thiểu 10k)...">
     <button class="btn-green" onclick="depositBank()">XÁC NHẬN ĐÃ CHUYỂN KHOẢN</button>
 
     <br><br>
@@ -142,8 +140,24 @@
   <div id="mainView" class="hidden">
     <div class="card">
       <h2>Chọn Game Để Vào</h2>
-      <button class="btn-sun" onclick="openGame('sun')">VÀO SUNWIN</button>
-      <button class="btn-b52" onclick="openGame('b52')">VÀO B52</button>
+      <div class="game-grid">
+        <div class="game-btn" onclick="openGame('sun')">
+          <img src="https://cdnlogo.com/logos/s/63/sunwin.png" onerror="this.src='https://via.placeholder.com/60x60/000/00e676?text=Sunwin'">
+          <span>Sunwin</span>
+        </div>
+        <div class="game-btn" onclick="openGame('b52')">
+          <img src="https://i-b52.site/wp-content/uploads/2024/08/logo-b52-club-1.png" onerror="this.src='https://via.placeholder.com/60x60/000/00e676?text=B52'">
+          <span>B52 Club</span>
+        </div>
+        <div class="game-btn" onclick="openGame('lc79')">
+          <img src="https://via.placeholder.com/60x60/000/00e676?text=LC79" alt="LC79">
+          <span>LC79</span>
+        </div>
+        <div class="game-btn" onclick="openGame('iwin')">
+          <img src="https://via.placeholder.com/60x60/000/00e676?text=iWin" alt="iWin">
+          <span>iWin Club</span>
+        </div>
+      </div>
       <button style="background:#333; color:#fff; margin-top:10px;" onclick="location.reload()">Đăng Xuất</button>
     </div>
   </div>
@@ -155,16 +169,12 @@
   <iframe id="gameFrame" src="about:blank" allowfullscreen></iframe>
 </div>
 
-<!-- NÚT NỔI TOOL -->
 <div id="floatBtn" class="float-tool-btn hidden" onclick="toggleTool()">🎮</div>
 
 <div id="toolBox" class="float-tool-box">
   <div class="light-row"><div id="lightTai" class="light red"></div><span class="label tai">TÀI</span></div>
   <div class="light-row"><div id="lightXiu" class="light green"></div><span class="label xiu">XỈU</span></div>
-  <div class="session-box">
-    <div class="session-code" id="sessionText">#0</div>
-    <div class="ai-text" id="aiStatus">AI: Chờ...</div>
-  </div>
+  <div class="ai-text" id="aiStatus" style="margin-top:10px;">AI: Chờ...</div>
 </div>
 
 <!-- FIREBASE SDK -->
@@ -172,10 +182,37 @@
 <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
 
 <script>
-  // BẮT LỖI (Nếu có lỗi sẽ báo lên màn hình, đéo bị đơ nút nữa)
-  window.onerror = function(msg) { alert("Lỗi: " + msg); };
+  // HIỆU ỨNG MA TRẬN XANH
+  const canvas = document.getElementById('matrix-canvas');
+  const ctx = canvas.getContext('2d');
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+  const chars = "IWINLC79B52SUNWIN0123456789@#$%".split("");
+  const fontSize = 16;
+  const columns = canvas.width / fontSize;
+  const drops = [];
+  for(let x = 0; x < columns; x++) drops[x] = 1;
 
-  // === CẤU HÌNH FIREBASE ===
+  function drawMatrix() {
+    ctx.fillStyle = "rgba(0, 0, 0, 0.05)";
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    ctx.fillStyle = "#00e676"; // Xanh iWin
+    ctx.font = fontSize + "px monospace";
+    for(let i = 0; i < drops.length; i++) {
+      const text = chars[Math.floor(Math.random() * chars.length)];
+      ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+      if(drops[i] * fontSize > canvas.height && Math.random() > 0.975) drops[i] = 0;
+      drops[i]++;
+    }
+  }
+  setInterval(drawMatrix, 50);
+  window.addEventListener('resize', () => {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+  });
+
+  window.onerror = function(msg) { alert("Lỗi Script: " + msg); };
+
   const firebaseConfig = {
     apiKey: "AIzaSyAaQg91q7wMeQ4kXyCnOQuolvN_KmJoHBI",
     authDomain: "vip1-c45cb.firebaseapp.com",
@@ -190,17 +227,15 @@
   try {
     firebase.initializeApp(firebaseConfig);
     db = firebase.database();
-  } catch(e) { console.log("Firebase Init Error:", e); }
+  } catch(e) { console.log("Lỗi Firebase:", e); }
 
   const DISCORD_WEBHOOK = "https://discord.com/api/webhooks/1561068482504691742/R5_eAJ4B5QaQ7iGpCORqd8ZPwTiYDVJuUucjiiYqaMS4NjfN-zQ6cAvupv-IW9lN54Ke";
 
-  let currentGame = 'sun';
   let isToolOpen = false;
   let deviceCode = "";
   let deviceInfo = { ip: "", location: "", device: "" };
-  let aiHistory = [];
 
-  // 1. LẤY THÔNG TIN THIẾT BỊ
+  // LẤY THÔNG TIN THIẾT BỊ
   async function getDeviceData() {
     let savedCode = localStorage.getItem('haibo_device_code');
     if (!savedCode) {
@@ -217,12 +252,14 @@
       const ua = navigator.userAgent;
       if(/android/i.test(ua)) dev = "Android";
       else if(/iPhone|iPad/i.test(ua)) dev = "iOS";
-      deviceInfo = { ip: data.ip, location: data.city + ", " + data.region, device: dev };
-    } catch(e) {}
+      deviceInfo = { ip: data.ip || "Lỗi IP", location: (data.city || "?") + ", " + (data.region || "?"), device: dev };
+    } catch(e) {
+      deviceInfo = { ip: "Lỗi mạng", location: "Lỗi mạng", device: "Không rõ" };
+    }
   }
   getDeviceData();
 
-  // 2. GỬI THÔNG BÁO DISCORD
+  // GỬI THÔNG BÁO DISCORD
   function sendDiscordNotify(action, amount, detail) {
     if(!DISCORD_WEBHOOK) return;
     fetch(DISCORD_WEBHOOK, {
@@ -234,6 +271,7 @@
           color: 65280,
           fields: [
             { name: "Mã TB", value: deviceCode, inline: true },
+            { name: "Số tiền", value: amount.toLocaleString() + "đ", inline: true },
             { name: "IP", value: deviceInfo.ip || "Lỗi", inline: true },
             { name: "Khu vực", value: deviceInfo.location || "Lỗi", inline: true },
             { name: "Chi tiết", value: detail, inline: false }
@@ -243,7 +281,7 @@
     }).catch(e=>console.log(e));
   }
 
-  // 3. CHECK KEY
+  // CHECK KEY
   function checkKey() {
     const input = document.getElementById('keyInput').value.trim();
     if(!db) return alert("Firebase chưa kết nối!");
@@ -264,11 +302,11 @@
     });
   }
 
-  // 4. NẠP TIỀN
+  // NẠP THẺ CÀO
   function depositCard() {
     if(!db) return;
     const type = document.getElementById('cardType').value;
-    const amount = document.getElementById('cardAmount').value;
+    const amount = parseInt(document.getElementById('cardAmount').value);
     const serial = document.getElementById('cardSerial').value.trim();
     const pin = document.getElementById('cardPin').value.trim();
     
@@ -279,32 +317,47 @@
     }
 
     db.ref('deposits').push().set({
-      method: 'Thẻ Cào', type: type, amount: parseInt(amount), serial: serial, pin: pin,
+      method: 'Thẻ Cào', type: type, amount: amount, serial: serial, pin: pin,
       deviceCode: deviceCode, ip: deviceInfo.ip, location: deviceInfo.location, device: deviceInfo.device,
       time: new Date().toLocaleString('vi-VN'), status: 'pending', timestamp: Date.now()
     }).then(() => {
       let m = document.getElementById('depMsg');
       m.className = 'msg ok'; m.classList.remove('hidden'); m.innerText = "Đã gửi thẻ cào, chờ Admin duyệt!";
+      document.getElementById('cardSerial').value = ""; document.getElementById('cardPin').value = "";
       sendDiscordNotify("Nạp Thẻ", amount, `${type} - Seri: ${serial}`);
+    }).catch(e => {
+      let m = document.getElementById('depMsg');
+      m.className = 'msg err'; m.classList.remove('hidden'); m.innerText = "Lỗi Firebase: " + e.message;
     });
   }
 
+  // NẠP CHUYỂN KHOẢN
   function depositBank() {
     if(!db) return;
+    const amount = parseInt(document.getElementById('bankAmount').value);
+    if(!amount || amount < 10000) {
+       let m = document.getElementById('depMsg');
+       m.className = 'msg err'; m.classList.remove('hidden'); m.innerText = "Số tiền chuyển khoản tối thiểu là 10.000đ!";
+       return;
+    }
+
     db.ref('deposits').push().set({
-      method: 'Chuyển Khoản', amount: 0, 
+      method: 'Chuyển Khoản', amount: amount, 
       deviceCode: deviceCode, ip: deviceInfo.ip, location: deviceInfo.location, device: deviceInfo.device,
       time: new Date().toLocaleString('vi-VN'), status: 'pending', timestamp: Date.now()
     }).then(() => {
       let m = document.getElementById('depMsg');
       m.className = 'msg ok'; m.classList.remove('hidden'); m.innerText = "Đã ghi nhận! Chờ Admin check bill.";
-      sendDiscordNotify("Chuyển Khoản", "Chưa rõ", `Nội dung: ${deviceCode}`);
+      document.getElementById('bankAmount').value = "";
+      sendDiscordNotify("Chuyển Khoản", amount, `Nội dung: ${deviceCode}`);
+    }).catch(e => {
+      let m = document.getElementById('depMsg');
+      m.className = 'msg err'; m.classList.remove('hidden'); m.innerText = "Lỗi Firebase: " + e.message;
     });
   }
 
-  // 5. TOOL LOGIC (ĐÃ XÓA AUTO TĂNG MÃ PHIÊN)
+  // TOOL LOGIC
   function openGame(game) {
-    currentGame = game;
     document.getElementById('mainApp').style.display = 'none';
     document.getElementById('gameOverlay').style.display = 'flex';
     document.getElementById('floatBtn').classList.remove('hidden');
@@ -312,10 +365,12 @@
     const frame = document.getElementById('gameFrame');
     if(game === 'sun') {
       frame.src = "https://web.sunhot.win/?affId=Sunwin";
-      document.getElementById('sessionText').innerText = '#43595';
-    } else {
+    } else if(game === 'b52') {
       frame.src = "https://play.b52club.foo/?app_id=B52";
-      document.getElementById('sessionText').innerText = '#2996830';
+    } else if(game === 'lc79') {
+      frame.src = "https://play.lc79d.vin/";
+    } else if(game === 'iwin') {
+      frame.src = "https://play.iwinclub.town/?a=258881e25885bd5a288b2a911f723a35";
     }
   }
 
@@ -328,14 +383,12 @@
     isToolOpen = false;
   }
 
-  // BẬT TẮT TOOL
   function toggleTool() {
     isToolOpen = !isToolOpen;
     document.getElementById('toolBox').style.display = isToolOpen ? 'block' : 'none';
-    if(isToolOpen) runAI(); // Bật lên thì chạy AI 1 lần
+    if(isToolOpen) runAI();
   }
 
-  // AI PHÂN TÍCH
   function runAI() {
     const tai = document.getElementById('lightTai');
     const xiu = document.getElementById('lightXiu');
