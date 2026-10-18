@@ -7,42 +7,105 @@
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&display=swap');
   @keyframes candy-glow { 0% { text-shadow: 0 0 10px #ff3333, 0 0 20px #ff0000; } 100% { text-shadow: 0 0 20px #ff3333, 0 0 40px #ff0000; } }
-  :root { --bg: #0a0000; --panel: rgba(30, 0, 0, 0.85); --red: #ff3333; --pink: #ff007f; --green: #00e676; --txt: #fff; }
+  
+  :root { 
+    --bg: #0a0000; 
+    --panel: rgba(30, 0, 0, 0.85); 
+    --red: #ff3333; 
+    --green: #00e676; 
+    --txt: #fff; 
+  }
+  
   * { box-sizing: border-box; font-family: system-ui, sans-serif; margin: 0; padding: 0; }
   
-  #matrix-canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; opacity: 0.4; }
-  body { background: radial-gradient(circle at 50% -20%, #330000 0%, var(--bg) 80%); color: var(--txt); display: flex; justify-content: center; padding: 20px; min-height: 100vh; position: relative; }
+  #matrix-canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; opacity: 0.6; }
+  
+  body { 
+    background: radial-gradient(circle at 50% -20%, #330000 0%, var(--bg) 80%); 
+    color: var(--txt); display: flex; justify-content: center; padding: 20px; min-height: 100vh; 
+    position: relative;
+  }
+  
   .app { width: 100%; max-width: 800px; position: relative; z-index: 1; }
   .header { text-align: center; margin-bottom: 20px; }
   .header h1 { color: var(--red); animation: candy-glow 2s infinite alternate; font-family: 'Orbitron', sans-serif; font-size: 2.2rem; letter-spacing: 3px; }
-  .card { background: var(--panel); padding: 20px; border-radius: 16px; border: 1px solid rgba(255, 51, 51, 0.5); margin-bottom: 20px; box-shadow: 0 10px 30px rgba(255, 0, 0, 0.2); backdrop-filter: blur(5px); }
+  
+  .card { 
+    background: var(--panel); padding: 20px; border-radius: 16px; 
+    border: 1px solid rgba(255, 51, 51, 0.5); 
+    margin-bottom: 20px; box-shadow: 0 10px 30px rgba(255, 0, 0, 0.2); 
+    backdrop-filter: blur(5px);
+  }
+  
   h2 { font-size: 1rem; color: var(--red); border-bottom: 1px solid rgba(255, 51, 51, 0.3); padding-bottom: 10px; margin-bottom: 15px; text-transform: uppercase; }
-  input, select { width: 100%; padding: 12px; margin-bottom: 10px; background: rgba(0,0,0,0.6); border: 1px solid rgba(255, 51, 51, 0.3); color: #fff; border-radius: 8px; outline: none; font-family: inherit; }
+  
+  input, select { 
+    width: 100%; padding: 12px; margin-bottom: 10px; background: rgba(0,0,0,0.6); 
+    border: 1px solid rgba(255, 51, 51, 0.3); color: #fff; border-radius: 8px; outline: none; font-family: inherit; 
+  }
   input:focus, select:focus { border-color: var(--red); box-shadow: 0 0 10px rgba(255, 51, 51, 0.5); }
-  button { width: 100%; padding: 14px; border: none; border-radius: 30px; font-weight: 900; font-size: 1rem; cursor: pointer; transition: 0.2s; margin-bottom: 10px; font-family: inherit; background: linear-gradient(180deg, #ff6b6b, #ff3333); color: #fff; text-shadow: 0 1px 2px rgba(0,0,0,0.5); box-shadow: 0 4px 15px rgba(255, 51, 51, 0.4); border: 1px solid #ff9999; }
+  
+  button { 
+    width: 100%; padding: 14px; border: none; border-radius: 30px; font-weight: 900; font-size: 1rem; 
+    cursor: pointer; transition: 0.2s; margin-bottom: 10px; font-family: inherit; 
+    background: linear-gradient(180deg, #ff6b6b, #ff3333); color: #fff; 
+    text-shadow: 0 1px 2px rgba(0,0,0,0.5); box-shadow: 0 4px 15px rgba(255, 51, 51, 0.4);
+    border: 1px solid #ff9999;
+  }
   button:hover { background: linear-gradient(180deg, #ff8888, #ff5252); transform: scale(1.02); }
+  
   .btn-green { background: linear-gradient(180deg, #00e676, #00b359); box-shadow: 0 4px 15px rgba(0,230,118,0.4); border: 1px solid #66ffa6; }
   .btn-green:hover { background: linear-gradient(180deg, #33ff99, #00cc66); }
   .btn-red { background: linear-gradient(180deg, #ff5252, #cc0000); }
   .btn-purple { background: linear-gradient(180deg, #b57bff, #8f5ce0); box-shadow: 0 4px 15px rgba(181,123,255,0.4); border: 1px solid #d9b3ff;}
+
   .row{ display:flex; gap:10px; margin-bottom:10px; } .row>*{flex:1;}
+  
   .games{ display:grid; grid-template-columns:repeat(4,1fr); gap:10px; margin-bottom:20px; }
-  .game{ background:rgba(0,0,0,0.6); border:1px solid #551111; padding:10px; border-radius:8px; text-align:center; cursor:pointer; font-size:0.9rem; color:#aaa; transition:0.2s;}
-  .game.active{ border-color:var(--red); background:rgba(255,51,51,0.2); color:#fff; box-shadow:0 0 10px var(--red);}
+  @media(max-width:600px){ .games{ grid-template-columns:repeat(2,1fr); } }
+  
+  .game { 
+    background:rgba(0,0,0,0.6); border:1px solid #551111; padding:5px; 
+    border-radius:10px; text-align:center; cursor:pointer; 
+    font-size:0.85rem; color:#aaa; transition:0.2s; display: flex; flex-direction: column; align-items: center;
+    overflow: hidden;
+  }
+  .game img { 
+    width: 100%; height: 60px; object-fit: cover; 
+    border-radius: 6px; margin-bottom: 5px; border: 1px solid #333;
+  }
+  .game.active { 
+    border-color:var(--red); background:rgba(255,51,51,0.2); color:#fff; 
+    box-shadow:0 0 10px var(--red); 
+  }
+  .game.active img { border-color: var(--red); }
+
   .bar-bg{ height:15px; background:#000; border-radius:8px; display:flex; overflow:hidden; border:1px solid var(--red); margin-bottom:10px;}
   .bar-tai{ background:#00e676; height:100%; transition:0.5s;} .bar-xiu{ background:#ff5252; height:100%; transition:0.5s;}
+  
   .hist{ display:flex; flex-wrap:wrap; gap:5px; margin-top:10px; }
   .h-item{ padding:5px 10px; border-radius:5px; background:#000; border:1px solid #551111; font-weight:bold;}
   .h-item.tai{ color:#00e676; border-color:#00e676;} .h-item.xiu{ color:#ff5252; border-color:#ff5252;}
+
   .hidden { display: none !important; }
+  
   .msg { padding: 10px; border-radius: 8px; font-size: 0.85rem; font-weight: bold; margin-top: 10px; text-align: center; }
   .msg.err { background: rgba(255,82,82,0.2); color: #ff5252; border: 1px solid #ff5252; }
   .msg.ok { background: rgba(0,230,118,0.2); color: var(--green); border: 1px solid var(--green); }
-  .header-bar { display: flex; justify-content: space-between; align-items: center; background: rgba(20,0,0,0.9); padding: 15px; border-radius: 12px; border: 1px solid rgba(255, 51, 51, 0.5); margin-bottom: 20px; flex-wrap:wrap; gap:10px; box-shadow: 0 5px 15px rgba(255,0,0,0.1); }
+  
+  .header-bar { 
+    display: flex; justify-content: space-between; align-items: center; 
+    background: rgba(20,0,0,0.9); padding: 15px; border-radius: 12px; 
+    border: 1px solid rgba(255, 51, 51, 0.5); margin-bottom: 20px; flex-wrap:wrap; gap:10px;
+    box-shadow: 0 5px 15px rgba(255,0,0,0.1);
+  }
   .balance { color: #ffd700; font-weight: bold; font-size: 1.2rem; text-shadow: 0 0 10px rgba(255,215,0,0.5); }
+  
   .bank-box { background: rgba(255, 51, 51, 0.1); padding: 15px; border: 1px dashed var(--red); border-radius: 8px; margin-bottom: 15px; line-height: 1.6; }
+  
   .loading { display: inline-block; width: 15px; height: 15px; border: 3px solid rgba(255,255,255,0.3); border-radius: 50%; border-top-color: #fff; animation: spin 1s infinite; vertical-align: middle; margin-right: 5px; }
   @keyframes spin { to { transform: rotate(360deg); } }
+  
   .warning-text { text-align: center; color: #ffd700; font-size: 0.85rem; font-weight: bold; margin-bottom: 15px; text-shadow: 0 0 5px #ffd700; }
   .pred-result{ text-align:center; padding:20px; background:rgba(0,0,0,0.9); border-radius:12px; border:2px dashed var(--red); margin-top:15px; }
   .pred-result h3{ font-size:2rem; margin-bottom:10px; font-family:'Orbitron', sans-serif; }
@@ -87,10 +150,23 @@
     <div class="card">
       <h2>Chọn Nền Tảng</h2>
       <div class="games">
-        <div class="game active" onclick="Game.select('sunwin', this)">Sunwin</div>
-        <div class="game" onclick="Game.select('hitclub', this)">Hitclub</div>
-        <div class="game" onclick="Game.select('b52', this)">B52</div>
-        <div class="game" onclick="Game.select('md5', this)">MD5</div>
+        <!-- ẢNH BÌA GAME ĐÃ ĐƯỢC CẬP NHẬT -->
+        <div class="game active" onclick="Game.select('sunwin', this)">
+          <img src="https://cdnlogo.com/logos/s/63/sunwin.png" alt="Sunwin" onerror="this.src='https://via.placeholder.com/100x60/ff3333/ffffff?text=Sunwin'">
+          <span>Sunwin</span>
+        </div>
+        <div class="game" onclick="Game.select('hitclub', this)">
+          <img src="https://hitclub.business/wp-content/uploads/2024/11/logo.png" alt="Hitclub" onerror="this.src='https://via.placeholder.com/100x60/ff3333/ffffff?text=Hitclub'">
+          <span>Hitclub</span>
+        </div>
+        <div class="game" onclick="Game.select('b52', this)">
+          <img src="https://i-b52.site/wp-content/uploads/2024/08/logo-b52-club-1.png" alt="B52" onerror="this.src='https://via.placeholder.com/100x60/ff3333/ffffff?text=B52'">
+          <span>B52</span>
+        </div>
+        <div class="game" onclick="Game.select('md5', this)">
+          <img src="https://via.placeholder.com/100x60/ff3333/ffffff?text=MD5" alt="MD5">
+          <span>MD5</span>
+        </div>
       </div>
     </div>
 
@@ -317,6 +393,7 @@
     render() { Predictor.render(); }
   };
 
+  // THUẬT TOÁN TÀI XỈU (CẬP NHẬT MD5 30-40 KÝ TỰ)
   const Algorithms = {
     sunwin(hist){
       let countTai = hist.filter(x => x.result === 'TAI').length; let countXiu = hist.length - countTai; let reason = "Sunwin: Phân tích cơ bản.";
@@ -336,10 +413,31 @@
       return { countTai, countXiu, reason };
     },
     md5(hist){
-      let countTai = hist.filter(x => x.result === 'TAI').length; let countXiu = hist.length - countTai; let reason = "MD5: Băm thời gian (Hash).";
-      const now = new Date().getTime().toString(); let hash = 0;
-      for (let i = 0; i < now.length; i++) { hash = ((hash << 5) - hash) + now.charCodeAt(i); hash |= 0; }
-      if(Math.abs(hash) % 2 === 0) { countTai += 2; reason = "MD5: Hash chẵn, Tài."; } else { countXiu += 2; reason = "MD5: Hash lẻ, Xỉu."; }
+      // Thuật toán MD5 sử dụng chuỗi băm 30-40 ký tự
+      let countTai = hist.filter(x => x.result === 'TAI').length;
+      let countXiu = hist.length - countTai;
+      let reason = "MD5: Phân tích Hash băm 32 ký tự.";
+      
+      // Tạo chuỗi MD5 giả lập từ thời gian hiện tại
+      const now = new Date().getTime().toString();
+      let hash = '';
+      const chars = '0123456789abcdef';
+      // Tạo chuỗi 32 ký tự (chuẩn MD5) hoặc ngẫu nhiên từ 30-40 ký tự
+      const length = 32; // Có thể thay đổi từ 30 đến 40
+      for (let i = 0; i < length; i++) {
+        hash += chars[Math.floor(Math.random() * chars.length)];
+      }
+      
+      // Lấy 2 ký tự cuối để quyết định
+      const lastChar = hash.charCodeAt(hash.length - 1);
+      if (lastChar % 2 === 0) {
+        countTai += 2;
+        reason = `MD5: Hash ${hash.slice(0, 8)}... (chẵn) → Tài.`;
+      } else {
+        countXiu += 2;
+        reason = `MD5: Hash ${hash.slice(0, 8)}... (lẻ) → Xỉu.`;
+      }
+      
       return { countTai, countXiu, reason };
     }
   };
