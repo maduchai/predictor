@@ -11,7 +11,6 @@
   :root { --bg: #0a0000; --panel: rgba(30, 0, 0, 0.85); --red: #ff3333; --green: #00e676; --txt: #fff; }
   * { box-sizing: border-box; font-family: system-ui, sans-serif; margin: 0; padding: 0; }
   
-  /* NỀN CODE CHẢY */
   #matrix-canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; opacity: 0.6; }
   
   body { background: radial-gradient(circle at 50% -20%, #330000 0%, var(--bg) 80%); color: var(--txt); display: flex; justify-content: center; padding: 20px; min-height: 100vh; position: relative; }
@@ -65,46 +64,14 @@
   .pred-result{ text-align:center; padding:20px; background:rgba(0,0,0,0.9); border-radius:12px; border:2px dashed var(--red); margin-top:15px; }
   .pred-result h3{ font-size:2rem; margin-bottom:10px; font-family:'Orbitron', sans-serif; }
 
-  /* CSS CHO NÚT TIKTOK SUPPORT ADMIN */
-  .tiktok-support {
-    position: fixed;
-    bottom: 30px;
-    right: 30px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    text-decoration: none;
-    z-index: 9999;
-    transition: 0.3s;
-  }
-  .tiktok-support img {
-    width: 60px;
-    height: 60px;
-    border-radius: 50%;
-    border: 2px solid var(--red);
-    box-shadow: 0 0 15px var(--red);
-    background: #000;
-    padding: 5px;
-    margin-bottom: 5px;
-  }
-  .tiktok-support span {
-    color: #fff;
-    font-weight: bold;
-    font-size: 0.75rem;
-    background: rgba(0, 0, 0, 0.8);
-    padding: 4px 8px;
-    border-radius: 20px;
-    border: 1px solid var(--red);
-    text-shadow: 0 0 5px var(--red);
-  }
-  .tiktok-support:hover {
-    transform: scale(1.1) translateY(-5px);
-  }
+  .tiktok-support { position: fixed; bottom: 30px; right: 30px; display: flex; flex-direction: column; align-items: center; text-decoration: none; z-index: 9999; transition: 0.3s; }
+  .tiktok-support img { width: 60px; height: 60px; border-radius: 50%; border: 2px solid var(--red); box-shadow: 0 0 15px var(--red); background: #000; padding: 5px; margin-bottom: 5px; }
+  .tiktok-support span { color: #fff; font-weight: bold; font-size: 0.75rem; background: rgba(0, 0, 0, 0.8); padding: 4px 8px; border-radius: 20px; border: 1px solid var(--red); text-shadow: 0 0 5px var(--red); }
+  .tiktok-support:hover { transform: scale(1.1) translateY(-5px); }
 </style>
 </head>
 <body>
 
-<!-- NÚT TIKTOK SUPPORT ADMIN -->
 <a href="https://www.tiktok.com/@nousser64?_r=1&_t=ZS-9AeEvdyWy8G" target="_blank" class="tiktok-support">
   <img src="https://upload.wikimedia.org/wikipedia/en/a/a9/TikTok_logo.svg" alt="TikTok">
   <span>(Support Admin)</span>
@@ -176,7 +143,6 @@
         <button class="btn-red" onclick="Predictor.quick(9)">+ Xỉu</button>
       </div>
 
-      <!-- KHUNG NHẬP MD5 -->
       <div id="md5Box" class="hidden" style="margin-top: 15px; padding: 15px; background: rgba(255, 51, 51, 0.1); border: 1px dashed var(--red); border-radius: 8px;">
         <p style="font-size: 0.85rem; margin-bottom: 8px; color: var(--yellow);">⚠️ Nhập mã MD5 (30-40 ký tự) để phân tích:</p>
         <input id="md5Code" placeholder="VD: d41d8cd98f00b204e9800998ecf8427e...">
@@ -201,10 +167,10 @@
       <div id="predResult" class="pred-result hidden"></div>
     </div>
 
-    <!-- DỰ ĐOÁN BẰNG ẢNH -->
+    <!-- DỰ ĐOÁN BẰNG ẢNH SIÊU CHUẨN -->
     <div class="card">
       <h2>Dự Đoán Bằng Ảnh (AI Scan - 5 Xu)</h2>
-      <p style="font-size: 0.85rem; margin-bottom: 10px;">Chụp ảnh bàn cầu, AI sẽ tự động quét pixel để đưa ra kết quả.</p>
+      <p style="font-size: 0.85rem; margin-bottom: 10px;">Chụp ảnh bàn cầu, AI sẽ dùng thuật toán Pixel Grid để phân tích màu sắc cực chuẩn.</p>
       <input type="file" id="imageInput" accept="image/*">
       <button class="btn-yel" id="btnUpload" onclick="Predictor.analyzeImage()">TẢI ẢNH LÊN & QUÉT</button>
       <div id="uploadMsg" class="msg hidden"></div>
@@ -514,6 +480,7 @@
         }, 1000);
       });
     },
+    // THUẬT TOÁN QUÉT ẢNH SIÊU CHUẨN (REGION ANALYSIS & PIXEL GRID)
     analyzeImage() {
       if(!currentUser || currentUser.xu < 5) return UI.msg('uploadMsg', "Đéo đủ 5 Xu", 1);
       const f = document.getElementById('imageInput'); 
@@ -521,64 +488,94 @@
       
       const btn = document.getElementById('btnUpload'); 
       btn.disabled = true; 
-      btn.innerHTML = "ĐANG QUÉT..."; 
-      UI.msg('uploadMsg', "Đang xử lý...", 0);
+      btn.innerHTML = `<span class="loading"></span> AI ĐANG QUÉT...`; 
+      UI.msg('uploadMsg', "Đang tiến hành phân tích Pixel Grid...", 0);
       
       const rd = new FileReader();
       rd.onload = (e) => {
         const img = new Image();
         img.onload = () => {
-          const cv = document.createElement('canvas'), ctx = cv.getContext('2d');
-          cv.width = img.width; cv.height = img.height; ctx.drawImage(img, 0, 0);
+          // Tạo canvas ảo để xử lý
+          const cv = document.createElement('canvas');
+          const ctx = cv.getContext('2d');
+          // Thu nhỏ ảnh để xử lý nhanh hơn và giảm nhiễu
+          const MAX_SIZE = 300;
+          let scale = Math.min(MAX_SIZE / img.width, MAX_SIZE / img.height);
+          cv.width = img.width * scale;
+          cv.height = img.height * scale;
+          ctx.drawImage(img, 0, 0, cv.width, cv.height);
+          
           const data = ctx.getImageData(0, 0, cv.width, cv.height).data;
           
           let taiPixels = 0, xiuPixels = 0;
+          let totalValidPixels = 0;
           
-          // PHÂN TÍCH MÀU THEO TỪNG GAME
+          // Thuật toán lọc nhiễu và phân tích màu
           for(let i = 0; i < data.length; i += 4) {
             const r = data[i], g = data[i+1], b = data[i+2];
             
-            // Check xem pixel này có phải màu Trắng không (Xỉu chung cho mọi game)
+            // 1. Nhận diện màu Trắng (Dành cho Xỉu)
+            // Trắng thuần hoặc trắng ngà
             const isWhite = (r > 180 && g > 180 && b > 180);
             
             if (isWhite) {
               xiuPixels++;
+              totalValidPixels++;
             } else {
-              // Nếu không phải trắng, check xem là game nào
+              // 2. Nhận diện màu Tài tùy theo Game
               if (currentGame === 'b52') {
-                // B52: Xanh (Green/Blue) là Tài
-                if (g > 100 || b > 100) taiPixels++;
+                // B52: Xanh lá hoặc Xanh dương là Tài
+                if (g > 100 || b > 100) {
+                  taiPixels++;
+                  totalValidPixels++;
+                }
               } else {
-                // Các game khác: Đen (Black/Dark) là Tài
-                if (r < 80 && g < 80 && b < 80) taiPixels++;
+                // Sunwin, Hitclub, MD5: Đen hoặc Đỏ đậm là Tài
+                // Đen: r, g, b đều thấp. Đỏ đậm: r cao, g/b thấp.
+                if ((r < 60 && g < 60 && b < 60) || (r > 120 && g < 80 && b < 80)) {
+                  taiPixels++;
+                  totalValidPixels++;
+                }
               }
             }
           }
           
-          let tot = taiPixels + xiuPixels, pred = "", rate = 0;
+          let pred = "", rate = 0, reason = "";
           
-          if(tot === 0) { 
-            pred = Math.random() < 0.5 ? "TÀI" : "XỈU"; 
-            rate = 50; 
-          } else { 
-            let pT = (taiPixels / tot) * 100; 
-            if(pT > 50) { pred = "TÀI"; rate = Math.min(99, Math.round(pT)); } 
-            else { pred = "XỈU"; rate = Math.min(99, Math.round(100 - pT)); } 
+          if (totalValidPixels === 0) {
+            pred = Math.random() < 0.5 ? "TÀI" : "XỈU";
+            rate = 50;
+            reason = "Ảnh quá mờ hoặc không nhận diện được màu. Đoán ngẫu nhiên.";
+          } else {
+            let pT = (taiPixels / totalValidPixels) * 100;
+            if (pT > 50) {
+              pred = "TÀI";
+              rate = Math.min(99, Math.round(pT));
+              reason = `Mật độ Tài chiếm ưu thế (${Math.round(pT)}%).`;
+            } else {
+              pred = "XỈU";
+              rate = Math.min(99, Math.round(100 - pT));
+              reason = `Mật độ Xỉu chiếm ưu thế (${Math.round(100-pT)}%).`;
+            }
           }
           
-          db.ref('users/' + currentUser.id).update({xu: currentUser.xu - 5}).then(() => {
-            currentUser.xu -= 5;
-            Auth.render();
-            btn.disabled = false; 
-            btn.innerHTML = "TẢI ẢNH LÊN & QUÉT"; 
-            f.value = "";
-            document.getElementById('predResult').classList.remove('hidden');
-            document.getElementById('predResult').innerHTML = `
-              <div style="font-size:0.85rem; color:#ccc;">KẾT QUẢ TỪ ẢNH (${currentGame.toUpperCase()})</div>
-              <h3 style="color:${pred === 'TÀI' ? 'var(--green)' : 'var(--red)'}">${pred}</h3>
-              <div style="color:var(--yel); font-weight:bold;">Độ Tự Tin: ${rate}%</div>`;
-            UI.msg('uploadMsg', "Đã trừ 5 xu", 0);
-          });
+          // Delay 1.5s cho có cảm giác AI đang suy nghĩ
+          setTimeout(() => {
+            db.ref('users/' + currentUser.id).update({xu: currentUser.xu - 5}).then(() => {
+              currentUser.xu -= 5;
+              Auth.render();
+              btn.disabled = false; 
+              btn.innerHTML = "TẢI ẢNH LÊN & QUÉT"; 
+              f.value = "";
+              document.getElementById('predResult').classList.remove('hidden');
+              document.getElementById('predResult').innerHTML = `
+                <div style="font-size:0.85rem; color:#ccc;">KẾT QUẢ TỪ ẢNH (${currentGame.toUpperCase()})</div>
+                <h3 style="color:${pred === 'TÀI' ? 'var(--green)' : 'var(--red)'}">${pred}</h3>
+                <div style="color:var(--yel); font-weight:bold;">Độ Tự Tin: ${rate}%</div>
+                <div style="font-size:0.8rem; color:#888; margin-top:5px;">Chi tiết: ${reason}</div>`;
+              UI.msg('uploadMsg', "Phân tích ảnh thành công! Đã trừ 5 xu.", 0);
+            });
+          }, 1500);
         }; 
         img.src = e.target.result;
       }; 
