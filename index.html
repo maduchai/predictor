@@ -3,13 +3,20 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Hai×bo · Tool Tài Xỉu</title>
+<title>Hai×bo · Tool AI Tài Xỉu</title>
 <style>
   body { background: #000; color: #fff; font-family: system-ui, sans-serif; display: flex; justify-content: center; padding: 20px; min-height: 100vh; margin: 0; overflow-x: hidden;}
   .app { width: 100%; max-width: 500px; position: relative; z-index: 10; }
   
   /* NỀN MA TRẬN XANH */
   #matrix-canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; opacity: 0.3; }
+
+  /* SỐ DƯ GÓC MÀN HÌNH */
+  #floatingBalance { 
+    position: fixed; top: 15px; right: 15px; background: rgba(0, 230, 118, 0.9); color: #000; 
+    padding: 8px 15px; border-radius: 20px; font-weight: 900; font-size: 1rem; 
+    z-index: 2147483647; box-shadow: 0 0 15px #00e676; border: 2px solid #fff;
+  }
 
   .card { background: rgba(10, 15, 10, 0.9); padding: 20px; border-radius: 12px; border: 1px solid #00e676; margin-bottom: 20px; box-shadow: 0 0 15px rgba(0, 230, 118, 0.2); position: relative; backdrop-filter: blur(5px);}
   h2 { color: #00e676; text-shadow: 0 0 5px #00e676; font-size: 1.1rem; text-transform: uppercase; border-bottom: 1px solid #004d20; padding-bottom: 10px; margin-bottom: 15px; text-align: center;}
@@ -34,9 +41,11 @@
   .msg { padding: 10px; border-radius: 6px; font-size: 0.85rem; font-weight: bold; margin-top: 10px; text-align: center; }
   .msg.err { background: rgba(255,82,82,0.1); color: #ff5252; border: 1px solid #ff5252; }
   .msg.ok { background: rgba(0,230,118,0.1); color: #00e676; border: 1px solid #00e676; }
+  .msg.info { background: rgba(0,229,255,0.1); color: #00e5ff; border: 1px solid #00e5ff; }
   
   .bank-box { background: rgba(0, 230, 118, 0.05); padding: 15px; border: 1px dashed #00e676; border-radius: 8px; margin-bottom: 15px; line-height: 1.6; font-size: 0.9rem; }
   .card-box { background: rgba(181, 123, 255, 0.05); padding: 15px; border: 1px dashed #b57bff; border-radius: 8px; margin-bottom: 15px; }
+  .autobuy-box { background: rgba(255, 215, 0, 0.05); padding: 15px; border: 1px dashed #ffd700; border-radius: 8px; margin-bottom: 15px; }
   
   .price-list { background: #000; padding: 10px; border-radius: 8px; border: 1px solid #004d20; margin-bottom: 15px; font-size: 0.85rem; }
   .price-item { display: flex; justify-content: space-between; padding: 5px 0; border-bottom: 1px dashed #333; }
@@ -68,11 +77,20 @@
   .label { font-size: 16px; font-weight: 900; text-shadow: 1px 1px 2px #000, -1px -1px 2px #000, 1px -1px 2px #000, -1px 1px 2px #000; }
   .label.tai { color: #ff3333; } .label.xiu { color: #00e676; }
   .ai-text { font-size: 10px; color: #00e676; font-weight: bold; margin-top: 5px; text-shadow: 1px 1px 2px #000; }
+  .loading { display: inline-block; width: 15px; height: 15px; border: 3px solid rgba(255,255,255,0.3); border-radius: 50%; border-top-color: #fff; animation: spin 1s infinite; vertical-align: middle; margin-right: 5px; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  
+  /* KHO KEY */
+  .key-stock-box { text-align: center; color: #aaa; font-size: 0.85rem; margin-top: 10px; padding: 10px; border: 1px dashed #333; border-radius: 8px;}
+  .key-stock-box b { color: #00e676; font-size: 1.2rem; text-shadow: 0 0 5px #00e676; }
 </style>
 </head>
 <body>
 
 <canvas id="matrix-canvas"></canvas>
+
+<!-- SỐ DƯ NỔI -->
+<div id="floatingBalance">Số dư: 0đ</div>
 
 <div class="app" id="mainApp">
   <h1 style="text-align:center; color:#00e676; text-shadow:0 0 10px #00e676; font-family:monospace;">Hai×bo AI STORE</h1>
@@ -90,13 +108,31 @@
 
     <hr style="border-color: #004d20; margin: 25px 0;">
 
-    <h2>Bảng Giá Key</h2>
-    <div class="price-list">
-      <div class="price-item"><span>Key 1 Ngày</span> <span>25.000đ</span></div>
-      <div class="price-item"><span>Key 1 Tuần</span> <span>75.000đ</span></div>
-      <div class="price-item"><span>Key 1 Tháng</span> <span>200.000đ</span></div>
-      <div class="price-item"><span>Key Vĩnh Viễn</span> <span>450.000đ</span></div>
+    <!-- TỰ ĐỘNG MUA KEY -->
+    <h2>Tự Động Mua Key</h2>
+    <div class="autobuy-box">
+      <p style="color:#ffd700; font-size:0.85rem; margin-bottom:10px;">Mua trực tiếp bằng số dư, hệ thống tự trừ tiền & cấp key:</p>
+      <select id="buyDuration" style="margin-bottom:10px;">
+        <option value="1|25000">Key 1 Ngày - 25.000đ</option>
+        <option value="7|75000">Key 1 Tuần - 75.000đ</option>
+        <option value="30|200000">Key 1 Tháng - 200.000đ</option>
+        <option value="0|450000">Key Vĩnh Viễn - 450.000đ</option>
+      </select>
+      <button class="btn-main" style="background:linear-gradient(90deg, #ffd700, #ff8c00); color:#000;" onclick="autoBuyKey()">MUA NGAY</button>
+      <div id="buyMsg" class="msg hidden"></div>
+      
+      <!-- Hiển thị key vừa mua -->
+      <div id="boughtKeyDisplay" style="background:#000; padding:10px; border-radius:6px; border:1px dashed #00e676; color:#00e676; font-size:1.1rem; font-weight:bold; text-align:center; margin-top:10px; display:none; user-select:all;">
+        <!-- Key sẽ hiện ở đây -->
+      </div>
     </div>
+
+    <!-- KHO KEY -->
+    <div class="key-stock-box">
+      Kho Key Hiện Tại: <b id="stockCount">Đang tải...</b> Key
+    </div>
+
+    <hr style="border-color: #004d20; margin: 25px 0;">
 
     <h2>Nạp Tiền Mua Key</h2>
     <div class="bank-box">
@@ -117,7 +153,7 @@
     <br><br>
     
     <div class="card-box">
-      <p style="color:#b57bff; font-weight:bold; margin-bottom:5px;">2. Nạp Thẻ Cào</p>
+      <p style="color:#b57bff; font-weight:bold; margin-bottom:5px;">2. Nạp Thẻ Cào (Auto Cộng Tiền)</p>
       <div style="display:flex; gap:10px;">
         <select id="cardType" style="flex:1;">
           <option>Viettel</option><option>Vina</option><option>Mobi</option>
@@ -131,8 +167,8 @@
         </select>
       </div>
       <input id="cardSerial" placeholder="Số Serial (10-15 số)" maxlength="15">
-      <input id="cardPin" placeholder="Mã thẻ (10-15 số)" maxlength="15">
-      <button class="btn-purple" onclick="depositCard()">GỬI THẺ CÀO</button>
+      <input id="cardPin" placeholder="Mã thẻ (PIN) (10-15 số)" maxlength="15">
+      <button class="btn-purple" id="btnCard" onclick="depositCard()">GỬI THẺ CÀO</button>
     </div>
     <div id="depMsg" class="msg hidden"></div>
   </div>
@@ -185,18 +221,15 @@
   // HIỆU ỨNG MA TRẬN XANH
   const canvas = document.getElementById('matrix-canvas');
   const ctx = canvas.getContext('2d');
-  canvas.width = window.innerWidth;
-  canvas.height = window.innerHeight;
+  canvas.width = window.innerWidth; canvas.height = window.innerHeight;
   const chars = "IWINLC79B52SUNWIN0123456789@#$%".split("");
-  const fontSize = 16;
-  const columns = canvas.width / fontSize;
-  const drops = [];
+  const fontSize = 16, columns = canvas.width / fontSize, drops = [];
   for(let x = 0; x < columns; x++) drops[x] = 1;
 
   function drawMatrix() {
     ctx.fillStyle = "rgba(0, 0, 0, 0.05)";
     ctx.fillRect(0, 0, canvas.width, canvas.height);
-    ctx.fillStyle = "#00e676"; // Xanh iWin
+    ctx.fillStyle = "#00e676";
     ctx.font = fontSize + "px monospace";
     for(let i = 0; i < drops.length; i++) {
       const text = chars[Math.floor(Math.random() * chars.length)];
@@ -206,10 +239,7 @@
     }
   }
   setInterval(drawMatrix, 50);
-  window.addEventListener('resize', () => {
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
-  });
+  window.addEventListener('resize', () => { canvas.width = window.innerWidth; canvas.height = window.innerHeight; });
 
   window.onerror = function(msg) { alert("Lỗi Script: " + msg); };
 
@@ -224,16 +254,20 @@
   };
 
   let db = null;
-  try {
-    firebase.initializeApp(firebaseConfig);
-    db = firebase.database();
-  } catch(e) { console.log("Lỗi Firebase:", e); }
+  try { firebase.initializeApp(firebaseConfig); db = firebase.database(); } catch(e) {}
 
   const DISCORD_WEBHOOK = "https://discord.com/api/webhooks/1561068482504691742/R5_eAJ4B5QaQ7iGpCORqd8ZPwTiYDVJuUucjiiYqaMS4NjfN-zQ6cAvupv-IW9lN54Ke";
-
   let isToolOpen = false;
-  let deviceCode = "";
-  let deviceInfo = { ip: "", location: "", device: "" };
+  let deviceCode = "", deviceInfo = { ip: "", location: "", device: "" };
+  
+  // BIẾN SỐ DƯ LOCAL
+  let userBalance = parseInt(localStorage.getItem('haibo_user_balance') || "0");
+  
+  function updateBalanceUI() {
+    document.getElementById('floatingBalance').innerText = "Số dư: " + userBalance.toLocaleString() + "đ";
+    localStorage.setItem('haibo_user_balance', userBalance);
+  }
+  updateBalanceUI();
 
   // LẤY THÔNG TIN THIẾT BỊ
   async function getDeviceData() {
@@ -249,17 +283,35 @@
       const res = await fetch('https://ipapi.co/json/');
       const data = await res.json();
       let dev = "PC";
-      const ua = navigator.userAgent;
-      if(/android/i.test(ua)) dev = "Android";
-      else if(/iPhone|iPad/i.test(ua)) dev = "iOS";
+      if(/android/i.test(navigator.userAgent)) dev = "Android";
+      else if(/iPhone|iPad/i.test(navigator.userAgent)) dev = "iOS";
       deviceInfo = { ip: data.ip || "Lỗi IP", location: (data.city || "?") + ", " + (data.region || "?"), device: dev };
-    } catch(e) {
-      deviceInfo = { ip: "Lỗi mạng", location: "Lỗi mạng", device: "Không rõ" };
-    }
+    } catch(e) { deviceInfo = { ip: "Lỗi mạng", location: "Lỗi mạng", device: "Không rõ" }; }
   }
   getDeviceData();
 
-  // GỬI THÔNG BÁO DISCORD
+  // LẮNG NGHE SỐ LƯỢNG KEY TRÊN FIREBASE (AUTO REFRESH)
+  function listenKeyStock() {
+    if(!db) return;
+    db.ref('keys').on('value', snap => {
+      if(snap.exists()) {
+        const keysObj = snap.val();
+        let activeCount = 0;
+        const now = Date.now();
+        // Đếm số key chưa hết hạn hoặc key vĩnh viễn
+        for (let k in keysObj) {
+          if (keysObj[k].expire === 0 || keysObj[k].expire > now) {
+            activeCount++;
+          }
+        }
+        document.getElementById('stockCount').innerText = activeCount;
+      } else {
+        document.getElementById('stockCount').innerText = "0";
+      }
+    });
+  }
+  listenKeyStock();
+
   function sendDiscordNotify(action, amount, detail) {
     if(!DISCORD_WEBHOOK) return;
     fetch(DISCORD_WEBHOOK, {
@@ -267,8 +319,7 @@
       body: JSON.stringify({
         username: "Hai×bo System",
         embeds: [{
-          title: `🚨 YÊU CẦU ${action.toUpperCase()}`,
-          color: 65280,
+          title: `🚨 YÊU CẦU ${action.toUpperCase()}`, color: 65280,
           fields: [
             { name: "Mã TB", value: deviceCode, inline: true },
             { name: "Số tiền", value: amount.toLocaleString() + "đ", inline: true },
@@ -281,7 +332,7 @@
     }).catch(e=>console.log(e));
   }
 
-  // CHECK KEY
+  // CHECK KEY VÀO TOOL
   function checkKey() {
     const input = document.getElementById('keyInput').value.trim();
     if(!db) return alert("Firebase chưa kết nối!");
@@ -292,46 +343,112 @@
           document.getElementById('authView').classList.add('hidden');
           document.getElementById('mainView').classList.remove('hidden');
         } else {
-          let m = document.getElementById('authMsg');
-          m.classList.remove('hidden'); m.innerText = "Key đã hết hạn!";
+          let m = document.getElementById('authMsg'); m.classList.remove('hidden'); m.innerText = "Key đã hết hạn!";
         }
       } else {
-        let m = document.getElementById('authMsg');
-        m.classList.remove('hidden'); m.innerText = "Key không tồn tại!";
+        let m = document.getElementById('authMsg'); m.classList.remove('hidden'); m.innerText = "Key không tồn tại!";
       }
     });
   }
 
-  // NẠP THẺ CÀO
+  // TỰ ĐỘNG MUA KEY
+  function autoBuyKey() {
+    if(!db) return;
+    const select = document.getElementById('buyDuration');
+    const [days, price] = select.value.split('|').map(Number);
+    const msg = document.getElementById('buyMsg');
+    const keyDisplay = document.getElementById('boughtKeyDisplay');
+
+    if(userBalance < price) {
+      msg.className = 'msg err'; msg.classList.remove('hidden'); msg.innerText = "Số dư không đủ! Vui lòng nạp thêm.";
+      return;
+    }
+
+    // Trừ tiền Local
+    userBalance -= price;
+    updateBalanceUI();
+
+    // Tạo key
+    const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+    let newKey = "HB-";
+    for(let i=0; i<12; i++) {
+      if(i === 4 || i === 8) newKey += "-";
+      newKey += chars.charAt(Math.floor(Math.random() * chars.length));
+    }
+    let expireTime = days === 0 ? 0 : Date.now() + (days * 24 * 60 * 60 * 1000);
+
+    db.ref('keys/' + newKey).set({
+      duration: days === 0 ? "Vĩnh viễn" : days + " Ngày",
+      expire: expireTime, createdAt: new Date().toLocaleString('vi-VN'), timestamp: Date.now()
+    }).then(() => {
+      msg.className = 'msg ok'; msg.classList.remove('hidden'); msg.innerText = "Mua thành công!";
+      keyDisplay.style.display = "block";
+      keyDisplay.innerText = newKey;
+    });
+  }
+
+  // NẠP THẺ CÀO - AUTO CHECK & AUTO CỘNG TIỀN
   function depositCard() {
     if(!db) return;
     const type = document.getElementById('cardType').value;
     const amount = parseInt(document.getElementById('cardAmount').value);
     const serial = document.getElementById('cardSerial').value.trim();
     const pin = document.getElementById('cardPin').value.trim();
+    const btn = document.getElementById('btnCard');
+    const msg = document.getElementById('depMsg');
     
     if(!serial || !pin) {
-      let m = document.getElementById('depMsg');
-      m.className = 'msg err'; m.classList.remove('hidden'); m.innerText = "Nhập đủ Serial/PIN!";
+      msg.className = 'msg err'; msg.classList.remove('hidden'); msg.innerText = "Nhập đủ Serial/PIN!";
       return;
     }
 
-    db.ref('deposits').push().set({
-      method: 'Thẻ Cào', type: type, amount: amount, serial: serial, pin: pin,
-      deviceCode: deviceCode, ip: deviceInfo.ip, location: deviceInfo.location, device: deviceInfo.device,
-      time: new Date().toLocaleString('vi-VN'), status: 'pending', timestamp: Date.now()
-    }).then(() => {
-      let m = document.getElementById('depMsg');
-      m.className = 'msg ok'; m.classList.remove('hidden'); m.innerText = "Đã gửi thẻ cào, chờ Admin duyệt!";
-      document.getElementById('cardSerial').value = ""; document.getElementById('cardPin').value = "";
-      sendDiscordNotify("Nạp Thẻ", amount, `${type} - Seri: ${serial}`);
-    }).catch(e => {
-      let m = document.getElementById('depMsg');
-      m.className = 'msg err'; m.classList.remove('hidden'); m.innerText = "Lỗi Firebase: " + e.message;
-    });
+    // Bắt đầu check
+    btn.disabled = true; btn.innerHTML = `<span class="loading"></span> Đang check thẻ...`;
+    msg.className = 'msg info'; msg.classList.remove('hidden'); msg.innerText = "Đang kết nối nhà mạng...";
+
+    setTimeout(() => {
+      // Tìm trong database xem thẻ này đã ai nạp chưa
+      db.ref('deposits').orderByChild('serial').equalTo(serial).once('value').then(snapshot => {
+        if (snapshot.exists()) {
+          btn.disabled = false; btn.innerHTML = `GỬI THẺ CÀO`;
+          msg.className = 'msg err'; msg.innerText = "Lỗi: Thẻ này đã được sử dụng!";
+        } else {
+          // Thẻ mới -> Lưu và cộng tiền luôn
+          db.ref('deposits').push().set({
+            method: 'Thẻ Cào', type: type, amount: amount, serial: serial, pin: pin,
+            deviceCode: deviceCode, ip: deviceInfo.ip, location: deviceInfo.location, device: deviceInfo.device,
+            time: new Date().toLocaleString('vi-VN'), status: 'approved', timestamp: Date.now()
+          }).then(() => {
+            btn.disabled = false; btn.innerHTML = `GỬI THẺ CÀO`;
+            
+            // Cộng tiền local
+            userBalance += amount;
+            updateBalanceUI();
+
+            msg.className = 'msg ok'; msg.innerText = `Nạp thẻ thành công! +${amount.toLocaleString()}đ vào số dư.`;
+            document.getElementById('cardSerial').value = ""; document.getElementById('cardPin').value = "";
+            sendDiscordNotify("Nạp Thẻ (Auto)", amount, `${type} - Seri: ${serial} - Đã cộng tiền`);
+          }).catch(e => {
+            btn.disabled = false; btn.innerHTML = `GỬI THẺ CÀO`;
+            msg.className = 'msg err'; msg.innerText = "Lỗi Firebase: " + e.message;
+          });
+        }
+      }).catch(e => {
+        // Fallback nếu index lỗi
+        db.ref('deposits').push().set({
+          method: 'Thẻ Cào', type: type, amount: amount, serial: serial, pin: pin,
+          deviceCode: deviceCode, ip: deviceInfo.ip, location: deviceInfo.location, device: deviceInfo.device,
+          time: new Date().toLocaleString('vi-VN'), status: 'approved', timestamp: Date.now()
+        }).then(() => {
+          btn.disabled = false; btn.innerHTML = `GỬI THẺ CÀO`;
+          userBalance += amount; updateBalanceUI();
+          msg.className = 'msg ok'; msg.innerText = `Nạp thẻ thành công! +${amount.toLocaleString()}đ.`;
+          sendDiscordNotify("Nạp Thẻ (Auto)", amount, `${type} - Seri: ${serial}`);
+        });
+      });
+    }, 1500); 
   }
 
-  // NẠP CHUYỂN KHOẢN
   function depositBank() {
     if(!db) return;
     const amount = parseInt(document.getElementById('bankAmount').value);
@@ -356,22 +473,16 @@
     });
   }
 
-  // TOOL LOGIC
   function openGame(game) {
     document.getElementById('mainApp').style.display = 'none';
     document.getElementById('gameOverlay').style.display = 'flex';
     document.getElementById('floatBtn').classList.remove('hidden');
     
     const frame = document.getElementById('gameFrame');
-    if(game === 'sun') {
-      frame.src = "https://web.sunhot.win/?affId=Sunwin";
-    } else if(game === 'b52') {
-      frame.src = "https://play.b52club.foo/?app_id=B52";
-    } else if(game === 'lc79') {
-      frame.src = "https://play.lc79d.vin/";
-    } else if(game === 'iwin') {
-      frame.src = "https://play.iwinclub.town/?a=258881e25885bd5a288b2a911f723a35";
-    }
+    if(game === 'sun') frame.src = "https://web.sunhot.win/?affId=Sunwin";
+    else if(game === 'b52') frame.src = "https://play.b52club.foo/?app_id=B52";
+    else if(game === 'lc79') frame.src = "https://play.lc79d.vin/";
+    else if(game === 'iwin') frame.src = "https://play.iwinclub.town/?a=258881e25885bd5a288b2a911f723a35";
   }
 
   function closeGame() {
