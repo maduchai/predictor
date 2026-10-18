@@ -24,6 +24,26 @@
   /* NỀN MA TRẬN XANH */
   #matrix-canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; opacity: 0.4; }
 
+  /* DÒNG CẢNH BÁO */
+  .warning-banner {
+    background: rgba(255, 215, 0, 0.2);
+    border: 1px solid #ffd700;
+    color: #ffd700;
+    text-align: center;
+    padding: 12px;
+    border-radius: 10px;
+    font-weight: 900;
+    font-size: 0.85rem;
+    margin-bottom: 20px;
+    box-shadow: 0 0 15px rgba(255, 215, 0, 0.3);
+    text-transform: uppercase;
+    animation: pulseWarning 2s infinite alternate;
+  }
+  @keyframes pulseWarning {
+    0% { opacity: 0.7; }
+    100% { opacity: 1; text-shadow: 0 0 10px #ffd700; }
+  }
+
   /* SỐ DƯ GÓC MÀN HÌNH */
   #floatingBalance { 
     position: fixed; top: 15px; right: 15px; 
@@ -93,13 +113,7 @@
   }
   button:active { transform: scale(0.97); }
   
-  .btn-main { 
-    background: linear-gradient(135deg, #00e676, #008f4c); 
-    color: #000; 
-    box-shadow: 0 5px 15px rgba(0, 230, 118, 0.3);
-  }
-  .btn-main:hover { box-shadow: 0 8px 25px rgba(0, 230, 118, 0.5); transform: translateY(-2px); }
-  
+  .btn-main { background: linear-gradient(135deg, #00e676, #008f4c); color: #000; box-shadow: 0 5px 15px rgba(0, 230, 118, 0.3); }
   .btn-green { background: linear-gradient(135deg, #00b359, #008f4c); color: #fff; box-shadow: 0 5px 15px rgba(0, 179, 89, 0.3); }
   .btn-purple { background: linear-gradient(135deg, #b57bff, #8f5ce0); color: #fff; box-shadow: 0 5px 15px rgba(181, 123, 255, 0.3); }
   
@@ -129,12 +143,10 @@
   .msg { padding: 12px; border-radius: 8px; font-size: 0.9rem; font-weight: bold; margin-top: 15px; text-align: center; }
   .msg.err { background: rgba(255, 82, 82, 0.15); color: #ff5252; border: 1px solid #ff5252; }
   .msg.ok { background: rgba(0, 230, 118, 0.15); color: #00e676; border: 1px solid #00e676; }
-  .msg.info { background: rgba(0, 229, 255, 0.15); color: #00e5ff; border: 1px solid #00e5ff; }
   
   .bank-box { background: rgba(0, 230, 118, 0.05); padding: 15px; border: 1px dashed rgba(0, 230, 118, 0.4); border-radius: 10px; margin-bottom: 15px; line-height: 1.8; font-size: 0.95rem; }
   .card-box { background: rgba(181, 123, 255, 0.05); padding: 15px; border: 1px dashed rgba(181, 123, 255, 0.4); border-radius: 10px; margin-bottom: 15px; }
   .autobuy-box { background: rgba(255, 215, 0, 0.05); padding: 15px; border: 1px dashed rgba(255, 215, 0, 0.4); border-radius: 10px; margin-bottom: 15px; }
-  
   .bank-code-box { background: rgba(0, 230, 118, 0.1); border: 1px solid #00e676; padding: 15px; border-radius: 10px; margin-bottom: 15px; text-align: center; }
   .bank-code-box b { font-size: 1.4rem; color: #00e676; letter-spacing: 2px; text-shadow: 0 0 10px rgba(0, 230, 118, 0.5); }
 
@@ -159,6 +171,7 @@
     font-size: 12px; width: auto; margin: 0; backdrop-filter: blur(5px);
   }
   
+  /* NÚT NỔI 🎮 */
   .float-tool-btn { 
     position: fixed; top: 100px; right: 20px; width: 50px; height: 50px; 
     background: rgba(0, 230, 118, 0.7); border-radius: 50%; border: 2px solid #00e676; 
@@ -168,15 +181,21 @@
   }
   .float-tool-btn:hover { transform: scale(1.1); }
   
+  /* TOOL DỰ ĐOÁN (CHỈ CÓ 1 KIỂU DỌC) */
   .float-tool-box { 
-    position: fixed; top: 160px; right: 20px; width: 130px; 
-    background: rgba(5, 10, 5, 0.9); border: 1px solid #00e676; 
+    position: fixed; top: 160px; right: 20px; 
+    background: rgba(5, 10, 5, 0.85); 
+    border: 1px solid #00e676; 
     border-radius: 12px; padding: 15px; z-index: 2147483647; 
-    display: none; text-align: center; backdrop-filter: blur(5px); 
+    display: none; text-align: center; backdrop-filter: blur(8px); 
     box-shadow: 0 10px 30px rgba(0,0,0,0.8);
+    flex-direction: column; 
+    align-items: center; 
+    justify-content: center; 
+    width: 120px; 
   }
-  
-  .light-row { display: flex; align-items: center; justify-content: center; gap: 10px; margin-bottom: 15px; }
+
+  .light-row { display: flex; align-items: center; justify-content: center; gap: 8px; margin-bottom: 10px; flex-direction: column; }
   .light { width: 22px; height: 22px; border-radius: 50%; border: 1px solid rgba(255,255,255,0.3); }
   .light.red { background: #300; } .light.green { background: #030; }
   .light.active-red { animation: flashRed 0.4s 4 alternate; }
@@ -184,9 +203,10 @@
   .light.active-green { animation: flashGreen 0.4s 4 alternate; }
   @keyframes flashGreen { 0% { background: #00ff00; box-shadow: 0 0 25px #00ff00; } 100% { background: #050; box-shadow: none; } }
   
-  .label { font-size: 18px; font-weight: 900; text-shadow: 1px 1px 2px #000, -1px -1px 2px #000, 1px -1px 2px #000, -1px 1px 2px #000; }
+  .label { font-size: 16px; font-weight: 900; text-shadow: 1px 1px 2px #000; }
   .label.tai { color: #ff3333; } .label.xiu { color: #00e676; }
-  .ai-text { font-size: 11px; color: #00e676; font-weight: bold; margin-top: 10px; text-shadow: 1px 1px 2px #000; }
+  .ai-text { font-size: 12px; color: #00e5ff; font-weight: 900; margin-top: 8px; text-shadow: 1px 1px 2px #000; }
+  
   .key-stock-box { text-align: center; color: #aaa; font-size: 0.9rem; margin-top: 15px; padding: 12px; border: 1px dashed rgba(255,255,255,0.2); border-radius: 10px; background: rgba(0,0,0,0.4);}
   .key-stock-box b { color: #00e676; font-size: 1.3rem; text-shadow: 0 0 10px rgba(0,230,118,0.5); }
 </style>
@@ -197,6 +217,10 @@
 
 <div class="app" id="mainApp">
   <h1 style="text-align:center; color:#00e676; text-shadow:0 0 20px #00e676; font-family:'Orbitron', sans-serif; font-size: 2rem; margin-bottom: 20px;">Hai×bo AI STORE</h1>
+
+  <div class="warning-banner">
+    ⚠️ TOOL CHỈ HỖ TRỢ 80% VÀ BẬT TỪ GIÂY 02 LÚC SẮP MỞ BÁT ⚠️
+  </div>
 
   <div id="authView" class="card">
     <a href="https://www.tiktok.com/@nousser64?_r=1&_t=ZS-9AeEvdyWy8G" target="_blank" class="tiktok-icon">
@@ -291,10 +315,12 @@
 </div>
 
 <div id="floatBtn" class="float-tool-btn hidden" onclick="toggleTool()">🎮</div>
+
 <div id="toolBox" class="float-tool-box">
   <div class="light-row"><div id="lightTai" class="light red"></div><span class="label tai">TÀI</span></div>
   <div class="light-row"><div id="lightXiu" class="light green"></div><span class="label xiu">XỈU</span></div>
-  <div class="ai-text" id="aiStatus" style="margin-top:10px;">AI: Chờ...</div>
+  
+  <div class="ai-text" id="aiStatus" style="width:100%; text-align:center;">AI: Chờ...</div>
 </div>
 
 <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
@@ -336,8 +362,10 @@
   const DISCORD_WEBHOOK = "https://discord.com/api/webhooks/1561068482504691742/R5_eAJ4B5QaQ7iGpCORqd8ZPwTiYDVJuUucjiiYqaMS4NjfN-zQ6cAvupv-IW9lN54Ke";
   let isToolOpen = false, deviceCode = "", deviceInfo = { ip: "", location: "", device: "" };
   let userBalance = 0, userRef = null;
-  let gameInterval = null; // Biến quản lý bộ đếm thời gian 65s
+  let gameInterval = null;
   
+  let historyResults = []; 
+
   function updateBalanceUI() { document.getElementById('floatingBalance').innerText = "Số dư: " + userBalance.toLocaleString() + "đ"; }
 
   async function getDeviceData() {
@@ -465,51 +493,90 @@
 
     document.getElementById('mainApp').style.display = 'none'; 
     document.getElementById('gameOverlay').style.display = 'flex'; 
-    document.getElementById('floatBtn').classList.remove('hidden');
+    document.getElementById('floatBtn').classList.remove('hidden'); 
     
     const frame = document.getElementById('gameFrame');
     if(game === 'sun') frame.src = "https://web.sunhot.win/?affId=Sunwin";
     else if(game === 'lc79') frame.src = "https://play.lc79d.vin/";
 
-    // Reset và chạy bộ đếm 65s
+    historyResults = [];
     if(gameInterval) clearInterval(gameInterval);
-    runAI(); // Chạy ngay lần đầu
-    gameInterval = setInterval(() => {
-      runAI(); // Cứ 65s nháy kết quả 1 lần
-    }, 65000);
+    runAI(); 
+    gameInterval = setInterval(() => { runAI(); }, 65000);
   }
 
   function closeGame() {
     document.getElementById('mainApp').style.display = 'block'; 
     document.getElementById('gameOverlay').style.display = 'none';
     document.getElementById('floatBtn').classList.add('hidden'); 
-    document.getElementById('toolBox').style.display = 'none';
+    document.getElementById('toolBox').style.display = 'none'; 
     document.getElementById('gameFrame').src = "about:blank"; 
     isToolOpen = false;
-    if(gameInterval) clearInterval(gameInterval); // Dừng đếm khi thoát game
+    if(gameInterval) clearInterval(gameInterval); 
   }
 
   function toggleTool() {
     isToolOpen = !isToolOpen; 
-    document.getElementById('toolBox').style.display = isToolOpen ? 'block' : 'none';
+    document.getElementById('toolBox').style.display = isToolOpen ? 'flex' : 'none';
   }
 
+  // THUẬT TOÁN DỰ ĐOÁN (50 - 85%)
   function runAI() {
-    if(!isToolOpen) return; // Đóng tool thì không nháy
+    if(!isToolOpen) return; 
 
     const tai = document.getElementById('lightTai'), xiu = document.getElementById('lightXiu'), aiStatus = document.getElementById('aiStatus');
-    tai.className = 'light red'; xiu.className = 'light green'; aiStatus.innerText = "AI: Đang quét..."; aiStatus.style.color = "#ffd700";
+    tai.className = 'light red'; xiu.className = 'light green'; aiStatus.innerText = "AI: Đang phân tích..."; aiStatus.style.color = "#ffd700";
 
     setTimeout(() => {
-      let predict = Math.random() < 0.5 ? "TAI" : "XIU", confidence = Math.floor(Math.random() * 20) + 75;
+      let predict = "TAI";
+      let confidence = 50;
+
+      if (historyResults.length < 3) {
+         predict = (Date.now() % 2 === 0) ? "TAI" : "XIU";
+         confidence = Math.floor(Math.random() * 10) + 50; // 50 - 59%
+      } 
+      else {
+        let last = historyResults[historyResults.length - 1];
+        let last2 = historyResults[historyResults.length - 2];
+        let last3 = historyResults[historyResults.length - 3];
+
+        if (last === "TAI" && last2 === "TAI" && last3 === "TAI") {
+           predict = "XIU"; 
+           confidence = Math.floor(Math.random() * 16) + 70; // 70 - 85%
+        }
+        else if (last === "XIU" && last2 === "XIU" && last3 === "XIU") {
+           predict = "TAI"; 
+           confidence = Math.floor(Math.random() * 16) + 70; // 70 - 85%
+        }
+        else if (last !== last2 && last2 !== last3 && last !== last3) {
+           predict = (last === "TAI") ? "XIU" : "TAI";
+           confidence = Math.floor(Math.random() * 11) + 65; // 65 - 75%
+        }
+        else {
+           predict = last;
+           confidence = Math.floor(Math.random() * 11) + 60; // 60 - 70%
+        }
+      }
+
+      historyResults.push(predict);
+      if(historyResults.length > 10) historyResults.shift();
+
+      // Kẹp tỉ lệ % trong khoảng 50% - 85%
+      if(confidence < 50) confidence = 50;
+      if(confidence > 85) confidence = 85;
+
       if(predict === "TAI") {
-        tai.classList.add('active-red'); aiStatus.innerText = `AI: TÀI (${confidence}%)`; aiStatus.style.color = "#ff3333";
+        tai.classList.add('active-red'); 
+        aiStatus.innerText = `AI: TÀI (${confidence}%)`; 
+        aiStatus.style.color = "#ff3333";
         setTimeout(() => { tai.classList.remove('active-red'); }, 1600);
       } else {
-        xiu.classList.add('active-green'); aiStatus.innerText = `AI: XỈU (${confidence}%)`; aiStatus.style.color = "#00e676";
+        xiu.classList.add('active-green'); 
+        aiStatus.innerText = `AI: XỈU (${confidence}%)`; 
+        aiStatus.style.color = "#00e676";
         setTimeout(() => { xiu.classList.remove('active-green'); }, 1600);
       }
-    }, 1000); 
+    }, 1500); 
   }
 </script>
 </body>
