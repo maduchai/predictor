@@ -78,6 +78,7 @@
           <option value="30">1 Tháng (200k)</option>
           <option value="0">Vĩnh Viễn (450k)</option>
         </select>
+        <input type="number" id="keyDeviceLimit" value="1" min="1" style="flex:1;" title="Số thiết bị được dùng">
         <button class="btn-c" onclick="createKey()" style="flex:1;">Tạo Key</button>
       </div>
       <div id="keyResult" style="background:#000; padding:15px; border:1px dashed var(--gold); color:var(--gold); text-align:center; font-size:1.2rem; font-weight:bold; display:none; letter-spacing:1px;"></div>
@@ -89,7 +90,7 @@
       <table>
         <thead>
           <tr>
-            <th>Mã Key</th><th>Hạn Sử Dụng</th><th>Ngày Tạo</th><th>Trạng Thái</th><th>Hành động</th>
+            <th>Mã Key</th><th>Hạn Sử Dụng</th><th>Thiết bị (Đã dùng / Tối đa)</th><th>Trạng Thái</th><th>Hành động</th>
           </tr>
         </thead>
         <tbody id="keyList">
@@ -108,7 +109,6 @@
 <script>
   window.onerror = function(msg) { alert("Lỗi: " + msg); };
 
-  // === CẤU HÌNH FIREBASE VÀ DISCORD ===
   const firebaseConfig = {
     apiKey: "AIzaSyAaQg91q7wMeQ4kXyCnOQuolvN_KmJoHBI",
     authDomain: "vip1-c45cb.firebaseapp.com",
@@ -123,17 +123,13 @@
 
   const DISCORD_WEBHOOK = "https://discord.com/api/webhooks/1561068482504691742/R5_eAJ4B5QaQ7iGpCORqd8ZPwTiYDVJuUucjiiYqaMS4NjfN-zQ6cAvupv-IW9lN54Ke";
 
-  // LẤY PASS TỪ MÁY (Mặc định là admin123)
   const getPass = () => localStorage.getItem('admin_password') || "admin123";
 
-  // 1. ĐĂNG NHẬP
   function login() {
     const pass = document.getElementById('adminPass').value;
     if(pass === getPass()) {
       document.getElementById('authView').classList.add('hidden');
       document.getElementById('adminPanel').classList.remove('hidden');
-      
-      // Khởi chạy Auto Refresh (Lắng nghe thay đổi từ Firebase)
       loadDeposits();
       loadKeys();
     } else {
@@ -141,7 +137,6 @@
     }
   }
 
-  // 2. ĐỔI MẬT KHẨU
   function changePassword() {
     const oldPass = prompt("Nhập mật khẩu hiện tại:");
     if(oldPass !== getPass()) return alert("Mật khẩu cũ sai!");
@@ -153,9 +148,10 @@
     }
   }
 
-  // 3. TẠO KEY
   function createKey() {
     const days = parseInt(document.getElementById('keyDuration').value);
+    const maxDevices = parseInt(document.getElementById('keyDeviceLimit').value) || 1;
+    
     const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
     let key = "HB-";
     for(let i=0; i<12; i++) {
@@ -164,13 +160,13 @@
     }
     
     let expireTime = 0;
-    if(days > 0) {
-      expireTime = Date.now() + (days * 24 * 60 * 60 * 1000);
-    }
+    if(days > 0) expireTime = Date.now() + (days * 24 * 60 * 60 * 1000);
 
     const keyData = {
       duration: days === 0 ? "Vĩnh viễn" : days + " Ngày",
       expire: expireTime,
+      maxDevices: maxDevices,
+      usedDevices: {}, // Mảng lưu các thiết bị đã dùng key này
       createdAt: new Date().toLocaleString('vi-VN'),
       timestamp: Date.now()
     };
@@ -180,7 +176,6 @@
       el.style.display = "block";
       el.innerText = key;
       
-      // Báo Discord
       fetch(DISCORD_WEBHOOK, {
         method: "POST", headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -188,7 +183,7 @@
           embeds: [{
             title: "🔑 ĐÃ TẠO KEY MỚI!",
             color: 16776960,
-            description: `**Key:** \`${key}\`\n**Hạn:** ${keyData.duration}`,
+            description: `**Key:** \`${key}\`\n**Hạn:** ${keyData.duration}\n**Giới hạn:** ${maxDevices} thiết bị`,
             timestamp: new Date().toISOString()
           }]
         })
@@ -196,7 +191,6 @@
     });
   }
 
-  // 4. QUẢN LÝ KEY (AUTO REFRESH)
   function loadKeys() {
     const keyList = document.getElementById('keyList');
     db.ref('keys').on('value', snap => {
@@ -206,7 +200,6 @@
         return;
       }
 
-      // Sắp xếp key mới nhất lên đầu
       const data = snap.val();
       const arr = Object.keys(data).map(k => ({ key: k, ...data[k] })).sort((a,b)=>b.timestamp - a.timestamp);
 
@@ -215,12 +208,16 @@
         const statusHtml = isExpired 
           ? `<span style="color:#ff5252">Hết hạn</span>` 
           : `<span style="color:#00e676">Hoạt động</span>`;
+        
+        const usedCount = item.usedDevices ? Object.keys(item.usedDevices).length : 0;
+        const maxDev = item.maxDevices || 1;
+        const deviceStatus = usedCount >= maxDev ? `<span style="color:#ff5252">${usedCount}/${maxDev} (Đầy)</span>` : `<span style="color:#00e5ff">${usedCount}/${maxDev}</span>`;
           
         keyList.innerHTML += `
           <tr>
             <td style="color:var(--gold); font-weight:bold; user-select:all">${item.key}</td>
             <td>${item.duration}</td>
-            <td>${item.createdAt}</td>
+            <td>${deviceStatus}</td>
             <td>${statusHtml}</td>
             <td><button class="btn-sm" style="background:#551111;" onclick="deleteKey('${item.key}')">Xóa</button></td>
           </tr>
@@ -229,7 +226,6 @@
     });
   }
 
-  // 5. XÓA KEY (THU HỒI)
   function deleteKey(key) {
     if(confirm("Mày có chắc muốn xóa vĩnh viễn key: " + key + " ?")) {
       db.ref('keys/' + key).remove().then(() => {
@@ -238,7 +234,6 @@
     }
   }
 
-  // 6. DUYỆT NẠP (AUTO REFRESH)
   function loadDeposits() {
     const depList = document.getElementById('depList');
     db.ref('deposits').on('value', snap => {
@@ -269,12 +264,10 @@
     });
   }
 
-  // 7. BẤM NÚT DUYỆT
   function approveDeposit(id) {
     if(!confirm("Xác nhận đã nhận được tiền và duyệt đơn này?")) return;
     
     db.ref('deposits/' + id).update({ status: 'approved' }).then(() => {
-      // Báo Discord
       fetch(DISCORD_WEBHOOK, {
         method: "POST", headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
