@@ -29,7 +29,7 @@
     background: linear-gradient(45deg, #ff0000, #ff7f00, #ffff00, #00ff00, #0000ff, #4b0082, #8b00ff, #ff0000);
     background-size: 400% 400%;
     animation: rainbowFlow 15s ease infinite;
-    opacity: 0.3; /* Làm mờ để không chói mắt */
+    opacity: 0.3;
   }
   @keyframes rainbowFlow {
     0% { background-position: 0% 50%; }
@@ -37,7 +37,7 @@
     100% { background-position: 0% 50%; }
   }
 
-  /* NỀN MA TRẬN XANH (Nằm trên nền 7 màu) */
+  /* NỀN MA TRẬN XANH */
   #matrix-canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; opacity: 0.5; }
 
   /* ================= CHỮ / SỐ 7 MÀU ================= */
@@ -119,6 +119,8 @@
     transition: all 0.3s ease; text-transform: uppercase; letter-spacing: 1px;
   }
   button:active { transform: scale(0.97); }
+  button:disabled { opacity: 0.6; cursor: not-allowed; transform: none !important; }
+  
   .btn-main { background: linear-gradient(135deg, #00e676, #008f4c); color: #000; box-shadow: 0 5px 15px rgba(0, 230, 118, 0.3); }
   .btn-green { background: linear-gradient(135deg, #00b359, #008f4c); color: #fff; box-shadow: 0 5px 15px rgba(0, 179, 89, 0.3); }
   .btn-purple { background: linear-gradient(135deg, #b57bff, #8f5ce0); color: #fff; box-shadow: 0 5px 15px rgba(181, 123, 255, 0.3); }
@@ -187,7 +189,7 @@
   /* ================= TOOL DỰ ĐOÁN OVERLAY (TRONG SUỐT) ================= */
   .float-tool-box { 
     position: fixed; top: 160px; right: 20px; 
-    background: rgba(0, 0, 0, 0.3); /* Trong suốt */
+    background: rgba(0, 0, 0, 0.3);
     border: 1px solid rgba(255, 255, 255, 0.3); 
     border-radius: 16px; padding: 15px; z-index: 2147483647; 
     display: none; text-align: center; backdrop-filter: blur(15px); 
@@ -378,7 +380,7 @@
 
         <div id="md5ResultBox" class="md5-result">
           <div class="rainbow-text" style="font-weight:bold; font-size:0.9rem; margin-bottom:10px;">KẾT QUẢ GIẢI MÃ</div>
-          <div id="md5ResultText" style="font-size:1.2rem; font-weight:bold; color:#fff; word-break:break-all;"></div>
+          <div id="md5ResultText" style="font-size:1.2rem; font-weight:bold; word-break:break-all;"></div>
           <div id="md5Reason" style="font-size:0.8rem; color:#aaa; margin-top:10px;"></div>
         </div>
       </div>
@@ -417,8 +419,12 @@
 <div id="toolBox" class="float-tool-box">
   <div class="light-row"><div id="lightTai" class="light red"></div><span class="label tai">TÀI</span></div>
   <div class="light-row"><div id="lightXiu" class="light green"></div><span class="label xiu">XỈU</span></div>
-  <div class="ai-text" id="aiStatus" style="width:100%; text-align:center; font-size:11px;">AI: Chờ lệnh...</div>
-  <button style="padding:8px; font-size:12px; margin-top:10px; border-radius:6px; background: #00e676; color: black; border: none; font-weight: bold; width: 100%; cursor: pointer; text-transform: uppercase; box-shadow: 0 0 10px rgba(0,230,118,0.5);" onclick="runAI()">🚀 PHÂN TÍCH</button>
+  
+  <!-- Vùng chứa kết quả và trạng thái -->
+  <div class="ai-text" id="aiStatus" style="width:100%; text-align:center; font-size:11px; line-height: 1.4;">AI: Chờ lệnh...</div>
+  
+  <!-- Nút Phân Tích -->
+  <button id="btnRunAI" style="padding:8px; font-size:12px; margin-top:10px; border-radius:6px; background: #00e676; color: black; border: none; font-weight: bold; width: 100%; cursor: pointer; text-transform: uppercase; box-shadow: 0 0 10px rgba(0,230,118,0.5);" onclick="runAI()">🚀 PHÂN TÍCH</button>
 </div>
 
 <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
@@ -461,8 +467,12 @@
   let isToolOpen = false, deviceCode = "", deviceInfo = { ip: "", location: "", device: "" };
   let userBalance = 0, userRef = null;
   
+  // Biến quản lý trạng thái Tool
   let aiTimeout = null;
-  
+  let cooldownTimer = null;
+  let cooldownRemaining = 40;
+  let isCoolingDown = false;
+
   let historyResults = []; 
   let f168History = JSON.parse(localStorage.getItem('f168_history') || "[]");
 
@@ -729,7 +739,7 @@
       }
 
       resText.innerText = result;
-      resText.className = "rainbow-text"; // Áp dụng chữ 7 màu cho kết quả
+      resText.className = "rainbow-text"; 
       reasonText.innerText = reason;
       
       resBox.style.display = "block";
@@ -756,8 +766,15 @@
     
     isToolOpen = true; 
     document.getElementById('toolBox').style.display = 'flex';
-    document.getElementById('aiStatus').innerText = "AI: Chờ lệnh...";
+    document.getElementById('aiStatus').innerText = "AI: Sẵn sàng...";
     document.getElementById('aiStatus').style.color = "#ffd700";
+    document.getElementById('btnRunAI').disabled = false;
+    document.getElementById('btnRunAI').innerText = "🚀 PHÂN TÍCH";
+    document.getElementById('btnRunAI').style.background = "#00e676";
+    
+    // Reset đèn
+    document.getElementById('lightTai').className = 'light red';
+    document.getElementById('lightXiu').className = 'light green';
   }
 
   function closeGame() {
@@ -767,7 +784,11 @@
     document.getElementById('toolBox').style.display = 'none'; 
     document.getElementById('gameFrame').src = "about:blank"; 
     isToolOpen = false;
+    
+    // Dọn dẹp các timer
     if(aiTimeout) clearTimeout(aiTimeout);
+    if(cooldownTimer) clearInterval(cooldownTimer);
+    isCoolingDown = false;
   }
 
   function toggleTool() {
@@ -775,27 +796,38 @@
     document.getElementById('toolBox').style.display = isToolOpen ? 'flex' : 'none';
   }
 
+  // ================= THUẬT TOÁN AI & ĐẾM NGƯỢC 40s =================
   function runAI() {
-    if(!isToolOpen) return; 
+    if(!isToolOpen || isCoolingDown) return; 
 
     const tai = document.getElementById('lightTai'), xiu = document.getElementById('lightXiu'), aiStatus = document.getElementById('aiStatus');
+    const btn = document.getElementById('btnRunAI');
     
+    // Khóa trạng thái
+    isCoolingDown = true;
+    btn.disabled = true;
+    btn.style.background = "#555";
+    btn.innerText = "ĐANG GỌI API...";
+    
+    // Reset đèn tạm thời
     tai.className = 'light red'; 
     xiu.className = 'light green'; 
-    aiStatus.innerHTML = "AI: Đang phân tích..."; 
-    aiStatus.style.color = "#ffd700";
+    aiStatus.innerHTML = `<span style="color:#ffd700">Kết nối AI Server...</span>`; 
 
     if(aiTimeout) clearTimeout(aiTimeout);
 
+    // Giả lập thời gian phản hồi API (1.5s)
     aiTimeout = setTimeout(() => {
       let predict = "TAI";
       let confidence = 50;
       let algoNote = "";
+      let apiVersion = "Sunwin-AI-v3.2";
 
+      // Thuật toán Phân Tích Cầu
       if (historyResults.length < 3) {
          predict = (new Date().getSeconds() % 2 === 0) ? "TAI" : "XIU";
-         confidence = Math.floor(Math.random() * 15) + 55;
-         algoNote = "Cầu khởi điểm";
+         confidence = Math.floor(Math.random() * 10) + 65; // Từ 65-75%
+         algoNote = "Khởi tạo cầu mới";
       } 
       else {
         let last = historyResults[historyResults.length - 1];
@@ -803,42 +835,68 @@
         let last3 = historyResults[historyResults.length - 3];
 
         if (last === "TAI" && last2 === "TAI" && last3 === "TAI") {
-           predict = "XIU"; confidence = Math.floor(Math.random() * 16) + 75;
-           algoNote = "Bẻ cầu bệt Tài";
+           predict = "XIU"; confidence = Math.floor(Math.random() * 10) + 80; // 80-90%
+           algoNote = "Thuật toán bẻ cầu bệt Tài";
         }
         else if (last === "XIU" && last2 === "XIU" && last3 === "XIU") {
-           predict = "TAI"; confidence = Math.floor(Math.random() * 16) + 75;
-           algoNote = "Bẻ cầu bệt Xỉu";
+           predict = "TAI"; confidence = Math.floor(Math.random() * 10) + 80;
+           algoNote = "Thuật toán bẻ cầu bệt Xỉu";
         }
         else if (last !== last2 && last2 !== last3 && last !== last3) {
            predict = (last === "TAI") ? "XIU" : "TAI";
-           confidence = Math.floor(Math.random() * 11) + 65;
-           algoNote = "Bắt cầu 1-1";
+           confidence = Math.floor(Math.random() * 10) + 70;
+           algoNote = "Bắt cầu 1-1 (Markov Chain)";
         }
         else {
-           predict = last; confidence = Math.floor(Math.random() * 11) + 60;
+           predict = last; confidence = Math.floor(Math.random() * 10) + 60;
            algoNote = "Cầu đang có lợi thế";
         }
       }
 
+      // Đảm bảo % không vượt quá 95%
+      if(confidence < 50) confidence = 50;
+      if(confidence > 95) confidence = 95;
+
+      // Lưu lịch sử
       historyResults.push(predict);
       if(historyResults.length > 10) historyResults.shift();
 
-      if(confidence < 50) confidence = 50;
-      if(confidence > 85) confidence = 85;
-
+      // Hiển thị kết quả (CỐ ĐỊNH KHÔNG ĐỔI)
       if(predict === "TAI") {
         tai.classList.add('active-red'); 
-        aiStatus.innerHTML = `AI: TÀI (${confidence}%)<br><span style="font-size:10px;color:#aaa">${algoNote}</span>`; 
-        aiStatus.style.color = "#ff3333";
+        aiStatus.innerHTML = `<span style="color:#ff3333; font-size:13px; font-weight:bold;">TÀI (${confidence}%)</span><br><span style="font-size:10px;color:#ccc">${algoNote}</span><br><span style="font-size:9px;color:#00e5ff">${apiVersion}</span>`; 
         setTimeout(() => { tai.classList.remove('active-red'); }, 1600);
       } else {
         xiu.classList.add('active-green'); 
-        aiStatus.innerHTML = `AI: XỈU (${confidence}%)<br><span style="font-size:10px;color:#aaa">${algoNote}</span>`; 
-        aiStatus.style.color = "#00e676";
+        aiStatus.innerHTML = `<span style="color:#00e676; font-size:13px; font-weight:bold;">XỈU (${confidence}%)</span><br><span style="font-size:10px;color:#ccc">${algoNote}</span><br><span style="font-size:9px;color:#00e5ff">${apiVersion}</span>`; 
         setTimeout(() => { xiu.classList.remove('active-green'); }, 1600);
       }
+
+      // Bắt đầu đếm ngược 40s
+      startCooldown();
+
     }, 1500); 
+  }
+
+  function startCooldown() {
+    cooldownRemaining = 40;
+    const btn = document.getElementById('btnRunAI');
+    btn.innerText = `ĐỢI ${cooldownRemaining}s...`;
+    
+    if(cooldownTimer) clearInterval(cooldownTimer);
+    
+    cooldownTimer = setInterval(() => {
+      cooldownRemaining--;
+      if(cooldownRemaining <= 0) {
+        clearInterval(cooldownTimer);
+        isCoolingDown = false;
+        btn.disabled = false;
+        btn.innerText = "🚀 PHÂN TÍCH";
+        btn.style.background = "#00e676";
+      } else {
+        btn.innerText = `ĐỢI ${cooldownRemaining}s...`;
+      }
+    }, 1000);
   }
 </script>
 </body>
