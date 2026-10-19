@@ -702,7 +702,7 @@
     }, 2000);
   }
 
-  // XỬ LÝ MỞ GAME VÀ THỜI GIAN 65s (TÀI XỈU)
+  // XỬ LÝ MỞ GAME VÀ THỜI GIAN 30s (TÀI XỈU)
   function openGame(game) {
     if(game === 'b52' || game === 'iwin') {
       alert("Hệ thống B52 và iWin đang bảo trì, vui lòng quay lại sau!");
@@ -738,7 +738,7 @@
     document.getElementById('toolBox').style.display = isToolOpen ? 'flex' : 'none';
   }
 
-  // THUẬT TOÁN TÀI XỈU (50 - 85%)
+  // THUẬT TOÁN TÀI XỈU (60 - 100%)
   function runAI() {
     if(!isToolOpen) return; 
 
