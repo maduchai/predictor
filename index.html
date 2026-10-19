@@ -196,7 +196,7 @@
   .aviator-result { background: #000; border: 1px solid #ff4d4d; padding: 15px; border-radius: 10px; margin-top: 15px; text-align: center; display: none; }
   .aviator-value { font-size: 3rem; font-weight: 900; font-family: 'Orbitron', sans-serif; margin: 15px 0; text-shadow: 0 0 20px currentColor; }
 
-  /* Nút phụ (Auto/Làm mới) */
+  /* Nút phụ (Làm mới) */
   .btn-sub-row { display: flex; gap: 10px; margin-bottom: 12px; }
   .btn-sub-row button { flex: 1; padding: 10px; font-size: 0.85rem; margin-bottom: 0; }
 </style>
@@ -314,9 +314,9 @@
         <h2>AI Dự Đoán Bóng Đá F168</h2>
         <p style="font-size:0.85rem; color:#aaa; margin-bottom:15px; text-align:center;">Trái - Phải - Giữa</p>
         
+        <!-- Đã xóa nút AUTO, chỉ còn Phân Tích và Làm Mới -->
         <div class="btn-sub-row">
             <button class="btn-blue" id="btnF168" onclick="predictF168()" style="flex: 2;">PHÂN TÍCH</button>
-            <button class="btn-main" id="btnAutoF168" onclick="toggleAutoF168()" style="background:#555; color:#fff; flex: 1;">AUTO</button>
             <button style="background:#ff3333; color:#fff; flex: 1;" onclick="document.getElementById('f168ResultBox').style.display='none'">LÀM MỚI</button>
         </div>
         
@@ -357,9 +357,9 @@
         <h2>Dự Đoán Aviator B52</h2>
         <p style="font-size:0.85rem; color:#aaa; margin-bottom:15px; text-align:center;">Thuật toán phân tích hệ số bay (X)</p>
         
+        <!-- Đã xóa nút AUTO, chỉ còn Phân Tích và Làm Mới -->
         <div class="btn-sub-row">
             <button class="btn-red" id="btnAviator" onclick="predictAviator()" style="flex: 2;">PHÂN TÍCH</button>
-            <button class="btn-main" id="btnAutoAviator" onclick="toggleAutoAviator()" style="background:#555; color:#fff; flex: 1;">AUTO</button>
             <button style="background:#ff3333; color:#fff; flex: 1;" onclick="document.getElementById('aviatorResultBox').style.display='none'">LÀM MỚI</button>
         </div>
 
@@ -433,10 +433,6 @@
   
   let historyResults = []; 
   let f168History = JSON.parse(localStorage.getItem('f168_history') || "[]");
-
-  // Biến Auto cho F168 và Aviator
-  let autoF168Interval = null;
-  let autoAviatorInterval = null;
 
   function updateBalanceUI() { document.getElementById('floatingBalance').innerText = "Số dư: " + userBalance.toLocaleString() + "đ"; }
 
@@ -560,9 +556,6 @@
 
   // CHUYỂN ĐỔI TOOL (TAB)
   function switchTool(tool) {
-    if(tool !== 'f168' && autoF168Interval) toggleAutoF168(); 
-    if(tool !== 'aviator' && autoAviatorInterval) toggleAutoAviator();
-
     document.getElementById('tabTx').classList.toggle('active', tool === 'tx');
     document.getElementById('tabF168').classList.toggle('active', tool === 'f168');
     document.getElementById('tabMd5').classList.toggle('active', tool === 'md5');
@@ -574,50 +567,16 @@
     document.getElementById('sectionAviator').classList.toggle('hidden', tool !== 'aviator');
   }
 
-  // ================= AUTO CHO F168 (Đã đổi thành 40s) =================
-  function toggleAutoF168() {
-    const btn = document.getElementById('btnAutoF168');
-    if (autoF168Interval) {
-        clearInterval(autoF168Interval);
-        autoF168Interval = null;
-        btn.innerText = "AUTO";
-        btn.style.background = "#555";
-    } else {
-        predictF168(); 
-        autoF168Interval = setInterval(predictF168, 40000); // 40 Giây
-        btn.innerText = "TẮT AUTO";
-        btn.style.background = "linear-gradient(135deg, #00e676, #008f4c)";
-    }
-  }
-
-  // ================= AUTO CHO AVIATOR (Đã đổi thành 40s) =================
-  function toggleAutoAviator() {
-    const btn = document.getElementById('btnAutoAviator');
-    if (autoAviatorInterval) {
-        clearInterval(autoAviatorInterval);
-        autoAviatorInterval = null;
-        btn.innerText = "AUTO";
-        btn.style.background = "#555";
-    } else {
-        predictAviator(); 
-        autoAviatorInterval = setInterval(predictAviator, 40000); // 40 Giây
-        btn.innerText = "TẮT AUTO";
-        btn.style.background = "linear-gradient(135deg, #00e676, #008f4c)";
-    }
-  }
-
-  // TOOL DỰ ĐOÁN AVIATOR B52
+  // TOOL DỰ ĐOÁN AVIATOR B52 (CHỈ CHẠY KHI BẤM)
   function predictAviator() {
     const btn = document.getElementById('btnAviator');
     const resBox = document.getElementById('aviatorResultBox');
     const valEl = document.getElementById('aviatorValue');
     const reasonEl = document.getElementById('aviatorReason');
 
-    if(!autoAviatorInterval) {
-        btn.disabled = true;
-        btn.innerHTML = `<span class="loading"></span> ĐANG PHÂN TÍCH...`;
-        resBox.style.display = "none";
-    }
+    btn.disabled = true;
+    btn.innerHTML = `<span class="loading"></span> ĐANG PHÂN TÍCH...`;
+    resBox.style.display = "none";
 
     setTimeout(() => {
       let multiplier = 1.00;
@@ -643,23 +602,19 @@
       valEl.style.animation = "pulseWarning 0.5s 2 alternate";
 
       resBox.style.display = "block";
-      if(!autoAviatorInterval) {
-          btn.disabled = false;
-          btn.innerHTML = `PHÂN TÍCH`;
-      }
+      btn.disabled = false;
+      btn.innerHTML = `PHÂN TÍCH`;
     }, 1500);
   }
 
-  // AI DỰ ĐOÁN BÓNG ĐÁ F168
+  // AI DỰ ĐOÁN BÓNG ĐÁ F168 (CHỈ CHẠY KHI BẤM)
   function predictF168() {
     const btn = document.getElementById('btnF168');
     const resBox = document.getElementById('f168ResultBox');
 
-    if(!autoF168Interval) {
-        btn.disabled = true;
-        btn.innerHTML = `<span class="loading"></span> ĐANG PHÂN TÍCH...`;
-        resBox.style.display = "none";
-    }
+    btn.disabled = true;
+    btn.innerHTML = `<span class="loading"></span> ĐANG PHÂN TÍCH...`;
+    resBox.style.display = "none";
 
     setTimeout(() => {
       const options = ["TRÁI", "PHẢI", "GIỮA"];
@@ -686,10 +641,8 @@
       localStorage.setItem('f168_history', JSON.stringify(f168History));
       renderF168History();
 
-      if(!autoF168Interval) {
-          btn.disabled = false;
-          btn.innerHTML = `PHÂN TÍCH`;
-      }
+      btn.disabled = false;
+      btn.innerHTML = `PHÂN TÍCH`;
     }, 1500);
   }
 
@@ -760,7 +713,7 @@
     }, 2000);
   }
 
-  // XỬ LÝ MỞ GAME VÀ THỜI GIAN 40s (TÀI XỈU)
+  // XỬ LÝ MỞ GAME VÀ THỜI GIAN 35s (TÀI XỈU) - GIỮ NGUYÊN AUTO NHƯ BẠN MUỐN
   function openGame(game) {
     if(game === 'b52' || game === 'iwin') {
       alert("Hệ thống B52 và iWin đang bảo trì, vui lòng quay lại sau!");
@@ -782,8 +735,8 @@
     document.getElementById('toolBox').style.display = 'flex';
     runAI(); 
     
-    // Đã đổi thành 40 giây (40000 ms)
-    gameInterval = setInterval(() => { runAI(); }, 40000);
+    // Đã đổi thành 35 giây (35000 ms) cho Tool Tài Xỉu
+    gameInterval = setInterval(() => { runAI(); }, 35000);
   }
 
   function closeGame() {
@@ -809,8 +762,8 @@
     if (aiTimeout) clearTimeout(aiTimeout);
     
     runAI(); 
-    // Đã đổi thành 40 giây (40000 ms)
-    gameInterval = setInterval(() => { runAI(); }, 40000); 
+    // Đã đổi thành 35 giây (35000 ms) cho Tool Tài Xỉu
+    gameInterval = setInterval(() => { runAI(); }, 35000); 
   }
 
   // THUẬT TOÁN TÀI XỈU (50 - 85%)
