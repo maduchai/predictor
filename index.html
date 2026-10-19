@@ -23,7 +23,9 @@
   
   /* ================= BACKGROUND 7 MÀU CHẢY ================= */
   .bg-rainbow {
-    position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: -2;
+    position: fixed;
+    top: 0; left: 0; width: 100vw; height: 100vh;
+    z-index: -2;
     background: linear-gradient(45deg, #ff0000, #ff7f00, #ffff00, #00ff00, #0000ff, #4b0082, #8b00ff, #ff0000);
     background-size: 400% 400%;
     animation: rainbowFlow 15s ease infinite;
@@ -82,10 +84,14 @@
 
   .card { 
     background: rgba(15, 20, 15, 0.75); 
-    padding: 25px; border-radius: 16px; border: 1px solid rgba(255, 255, 255, 0.2); 
+    padding: 25px; 
+    border-radius: 16px; 
+    border: 1px solid rgba(255, 255, 255, 0.2); 
     margin-bottom: 20px; 
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8), inset 0 0 20px rgba(255, 255, 255, 0.05); 
-    position: relative; backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+    position: relative; 
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
   }
   
   h2 { 
@@ -172,49 +178,45 @@
   
   /* NÚT NỔI 🎮 */
   .float-tool-btn { 
-    position: fixed; top: 100px; right: 20px; width: 50px; height: 50px; 
+    position: fixed; top: 80px; right: 15px; width: 45px; height: 45px; 
     background: rgba(0, 230, 118, 0.7); border-radius: 50%; border: 2px solid #00e676; 
     box-shadow: 0 0 20px #00e676; z-index: 2147483647; display: flex; align-items: center; 
-    justify-content: center; font-size: 24px; cursor: pointer; backdrop-filter: blur(5px);
+    justify-content: center; font-size: 20px; cursor: pointer; backdrop-filter: blur(5px);
     transition: 0.3s;
   }
   .float-tool-btn:hover { transform: scale(1.1); }
   
-  /* ================= TOOL DỰ ĐOÁN OVERLAY (THU NHỎ) ================= */
+  /* ================= TOOL DỰ ĐOÁN OVERLAY (THU NHỎ & TRONG SUỐT) ================= */
   .float-tool-box { 
-    position: fixed; top: 160px; right: 20px; 
+    position: fixed; top: 130px; right: 15px; 
     background: rgba(0, 0, 0, 0.3);
     border: 1px solid rgba(255, 255, 255, 0.3); 
-    border-radius: 12px; padding: 8px; z-index: 2147483647; 
+    border-radius: 12px; padding: 10px 8px; z-index: 2147483647; 
     display: none; text-align: center; backdrop-filter: blur(15px); 
     box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
-    flex-direction: column; align-items: center; justify-content: center; 
-    width: 110px; /* Đã thu nhỏ chiều rộng */
+    flex-direction: column; align-items: center; justify-content: center; width: 110px; /* Thu nhỏ chiều rộng */
   }
 
-  .light-row { display: flex; align-items: center; justify-content: center; gap: 5px; margin-bottom: 3px; flex-direction: row; }
-  .light { width: 14px; height: 14px; border-radius: 50%; border: 1px solid rgba(255,255,255,0.3); } /* Thu nhỏ đèn */
+  .light-row { display: flex; align-items: center; justify-content: space-around; width: 100%; margin-bottom: 5px; }
+  .light-col { display: flex; flex-direction: column; align-items: center; }
+  .light { width: 16px; height: 16px; border-radius: 50%; border: 1px solid rgba(255,255,255,0.3); margin-bottom: 2px; }
   .light.red { background: #300; } .light.green { background: #030; }
   .light.active-red { animation: flashRed 0.4s 4 alternate; }
-  @keyframes flashRed { 0% { background: #ff0000; box-shadow: 0 0 15px #ff0000; } 100% { background: #500; box-shadow: none; } }
+  @keyframes flashRed { 0% { background: #ff0000; box-shadow: 0 0 20px #ff0000; } 100% { background: #500; box-shadow: none; } }
   .light.active-green { animation: flashGreen 0.4s 4 alternate; }
-  @keyframes flashGreen { 0% { background: #00ff00; box-shadow: 0 0 15px #00ff00; } 100% { background: #050; box-shadow: none; } }
+  @keyframes flashGreen { 0% { background: #00ff00; box-shadow: 0 0 20px #00ff00; } 100% { background: #050; box-shadow: none; } }
   
-  .label { font-size: 13px; font-weight: 900; text-shadow: 1px 1px 2px #000; }
+  .label { font-size: 12px; font-weight: 900; text-shadow: 1px 1px 2px #000; }
   .label.tai { color: #ff3333; } .label.xiu { color: #00e676; }
-  .ai-text { font-size: 10px; color: #00e5ff; font-weight: 900; margin-top: 5px; text-shadow: 1px 1px 2px #000; line-height: 1.3; }
   
-  /* HIỂN THỊ XÚC XẮC */
+  /* KHU VỰC XÚC XẮC */
   .dice-container {
-    display: flex;
-    justify-content: center;
-    gap: 3px;
-    margin: 4px 0;
-    font-size: 22px; /* Kích thước xúc xắc */
-    color: #fff;
-    text-shadow: 0 0 8px #00e676;
+    display: flex; justify-content: center; gap: 4px; margin: 4px 0;
+    font-size: 22px; line-height: 1; text-shadow: 0 0 5px rgba(255,255,255,0.5);
   }
-
+  
+  .ai-text { font-size: 10px; color: #00e5ff; font-weight: 900; margin-top: 4px; text-shadow: 1px 1px 2px #000; line-height: 1.2; }
+  
   .key-stock-box { text-align: center; color: #aaa; font-size: 0.9rem; margin-top: 15px; padding: 12px; border: 1px dashed rgba(255,255,255,0.2); border-radius: 10px; background: rgba(0,0,0,0.4);}
   .key-stock-box b { color: #00e676; font-size: 1.3rem; text-shadow: 0 0 10px rgba(0,230,118,0.5); }
 
@@ -316,6 +318,11 @@
   </div>
 
   <div id="mainView" class="hidden">
+    <!-- Hiển thị hạn Key sau khi vào -->
+    <div style="text-align:center; margin-bottom: 15px; font-weight: bold; color: #00e676;">
+        Hạn sử dụng Key: <span id="displayKeyTime" class="rainbow-text">Đang kiểm tra...</span>
+    </div>
+
     <!-- TABS CHỌN TOOL -->
     <div class="tool-tabs">
       <button id="tabTx" class="active" onclick="switchTool('tx')">TÀI XỈU</button>
@@ -421,16 +428,28 @@
 
 <div id="floatBtn" class="float-tool-btn hidden" onclick="toggleTool()">🎮</div>
 
-<!-- TOOL DỰ ĐOÁN TRONG SUỐT (ĐÃ THU NHỎ VÀ THÊM XÚC XẮC) -->
+<!-- TOOL DỰ ĐOÁN TRONG SUỐT (THU NHỎ) -->
 <div id="toolBox" class="float-tool-box">
-  <div class="light-row"><div id="lightTai" class="light red"></div><span class="label tai">TÀI</span></div>
-  <div class="light-row"><div id="lightXiu" class="light green"></div><span class="label xiu">XỈU</span></div>
   
-  <!-- Vùng chứa hình xúc xắc -->
-  <div id="diceResult" class="dice-container"></div>
+  <!-- Đèn Tài Xỉu xếp ngang -->
+  <div class="light-row">
+    <div class="light-col">
+      <div id="lightTai" class="light red"></div>
+      <span class="label tai">TÀI</span>
+    </div>
+    <div class="light-col">
+      <div id="lightXiu" class="light green"></div>
+      <span class="label xiu">XỈU</span>
+    </div>
+  </div>
+
+  <!-- Khu vực hiển thị xúc xắc -->
+  <div class="dice-container" id="diceResult">
+      <!-- Sẽ chứa icon xúc xắc ở đây -->
+  </div>
 
   <!-- Vùng chứa kết quả và trạng thái -->
-  <div class="ai-text" id="aiStatus" style="width:100%; text-align:center;">AI: Chờ lệnh...</div>
+  <div class="ai-text" id="aiStatus">AI: Chờ...</div>
   
   <!-- Nút Phân Tích -->
   <button id="btnRunAI" style="padding:6px; font-size:10px; margin-top:8px; border-radius:6px; background: #00e676; color: black; border: none; font-weight: bold; width: 100%; cursor: pointer; text-transform: uppercase; box-shadow: 0 0 10px rgba(0,230,118,0.5);" onclick="runAI()">🚀 PHÂN TÍCH</button>
@@ -476,6 +495,7 @@
   let isToolOpen = false, deviceCode = "", deviceInfo = { ip: "", location: "", device: "" };
   let userBalance = 0, userRef = null;
   
+  // Biến quản lý trạng thái Tool
   let aiTimeout = null;
   let cooldownTimer = null;
   let cooldownRemaining = 40;
@@ -483,6 +503,16 @@
 
   let historyResults = []; 
   let f168History = JSON.parse(localStorage.getItem('f168_history') || "[]");
+
+  // Hàm tính toán thời gian còn lại
+  function formatTimeRemaining(ms) {
+    if (ms <= 0) return "Đã hết hạn";
+    if (ms > 9999999 * 60000) return "Vĩnh viễn";
+    let d = Math.floor(ms / (1000 * 60 * 60 * 24));
+    let h = Math.floor((ms % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+    let m = Math.floor((ms % (1000 * 60 * 60)) / (1000 * 60));
+    return `${d > 0 ? d + ' ngày ' : ''}${h > 0 ? h + ' giờ ' : ''}${m} phút`;
+  }
 
   function updateBalanceUI() { document.getElementById('floatingBalance').innerText = "Số dư: " + userBalance.toLocaleString() + "đ"; }
 
@@ -541,18 +571,32 @@
         const data = snap.val();
         if(data.expire > Date.now() || data.expire === 0) {
           const maxDev = data.maxDevices || 1; const usedDevs = data.usedDevices || {};
-          if (usedDevs[deviceCode]) { grantAccess(); } 
+          if (usedDevs[deviceCode]) { 
+              // Key đã kích hoạt trên máy này
+              let timeLeft = data.expire === 0 ? "Vĩnh viễn" : formatTimeRemaining(data.expire - Date.now());
+              alert(`Key đã kích hoạt trên thiết bị này!\nHạn sử dụng: ${timeLeft}`);
+              grantAccess(data.expire); 
+          } 
           else if (Object.keys(usedDevs).length < maxDev) {
-            db.ref('keys/' + input + '/usedDevices/' + deviceCode).set(true).then(() => grantAccess());
+            db.ref('keys/' + input + '/usedDevices/' + deviceCode).set(true).then(() => {
+                let timeLeft = data.expire === 0 ? "Vĩnh viễn" : formatTimeRemaining(data.expire - Date.now());
+                alert(`Kích hoạt thành công!\nHạn sử dụng: ${timeLeft}`);
+                grantAccess(data.expire);
+            });
           } else { let m = document.getElementById('authMsg'); m.classList.remove('hidden'); m.innerText = "Key này đã đạt giới hạn thiết bị!"; }
         } else { let m = document.getElementById('authMsg'); m.classList.remove('hidden'); m.innerText = "Key đã hết hạn!"; }
       } else { let m = document.getElementById('authMsg'); m.classList.remove('hidden'); m.innerText = "Key không tồn tại!"; }
     });
   }
 
-  function grantAccess() {
+  function grantAccess(expireTime) {
     document.getElementById('authView').classList.add('hidden');
     document.getElementById('mainView').classList.remove('hidden');
+    
+    // Hiển thị thời gian còn lại lên UI
+    let timeStr = expireTime === 0 ? "Vĩnh viễn" : formatTimeRemaining(expireTime - Date.now());
+    document.getElementById('displayKeyTime').innerText = timeStr;
+
     renderF168History(); 
   }
 
@@ -779,11 +823,11 @@
     document.getElementById('btnRunAI').disabled = false;
     document.getElementById('btnRunAI').innerText = "🚀 PHÂN TÍCH";
     document.getElementById('btnRunAI').style.background = "#00e676";
-    document.getElementById('diceResult').innerHTML = ""; // Xóa xúc xắc cũ
     
-    // Reset đèn
+    // Reset đèn và xúc xắc
     document.getElementById('lightTai').className = 'light red';
     document.getElementById('lightXiu').className = 'light green';
+    document.getElementById('diceResult').innerHTML = '';
   }
 
   function closeGame() {
@@ -794,6 +838,7 @@
     document.getElementById('gameFrame').src = "about:blank"; 
     isToolOpen = false;
     
+    // Dọn dẹp các timer
     if(aiTimeout) clearTimeout(aiTimeout);
     if(cooldownTimer) clearInterval(cooldownTimer);
     isCoolingDown = false;
@@ -810,31 +855,34 @@
 
     const tai = document.getElementById('lightTai'), xiu = document.getElementById('lightXiu'), aiStatus = document.getElementById('aiStatus');
     const btn = document.getElementById('btnRunAI');
-    const diceContainer = document.getElementById('diceResult');
+    const diceBox = document.getElementById('diceResult');
     
+    // Khóa trạng thái
     isCoolingDown = true;
     btn.disabled = true;
     btn.style.background = "#555";
     btn.innerText = "ĐANG GỌI API...";
     
+    // Reset đèn và xúc xắc tạm thời
     tai.className = 'light red'; 
     xiu.className = 'light green'; 
+    diceBox.innerHTML = ''; // Xóa xúc xắc cũ
     aiStatus.innerHTML = `<span style="color:#ffd700">Kết nối AI Server...</span>`; 
-    diceContainer.innerHTML = ""; // Xóa xúc xắc cũ
 
     if(aiTimeout) clearTimeout(aiTimeout);
 
+    // Giả lập thời gian phản hồi API (1.5s)
     aiTimeout = setTimeout(() => {
       let predict = "TAI";
       let confidence = 50;
       let algoNote = "";
-      let apiVersion = "Sunwin-AI-v3.2";
+      let apiVersion = "Sunwin-AI-v4.1"; // Cập nhật version mới
 
-      // Phân tích cầu
+      // Thuật toán Phân Tích Cầu
       if (historyResults.length < 3) {
          predict = (new Date().getSeconds() % 2 === 0) ? "TAI" : "XIU";
-         confidence = Math.floor(Math.random() * 10) + 65; 
-         algoNote = "Khởi tạo cầu mới";
+         confidence = Math.floor(Math.random() * 10) + 65;
+         algoNote = "Khởi tạo cầu";
       } 
       else {
         let last = historyResults[historyResults.length - 1];
@@ -842,7 +890,7 @@
         let last3 = historyResults[historyResults.length - 3];
 
         if (last === "TAI" && last2 === "TAI" && last3 === "TAI") {
-           predict = "XIU"; confidence = Math.floor(Math.random() * 10) + 80;
+           predict = "XIU"; confidence = Math.floor(Math.random() * 10) + 80; 
            algoNote = "Bẻ cầu bệt Tài";
         }
         else if (last === "XIU" && last2 === "XIU" && last3 === "XIU") {
@@ -856,42 +904,46 @@
         }
         else {
            predict = last; confidence = Math.floor(Math.random() * 10) + 60;
-           algoNote = "Cầu có lợi thế";
+           algoNote = "Cầu đang có lợi thế";
         }
       }
 
       if(confidence < 50) confidence = 50;
       if(confidence > 95) confidence = 95;
 
-      // Lưu lịch sử
       historyResults.push(predict);
       if(historyResults.length > 10) historyResults.shift();
 
-      // --- TẠO XÚC XẮC PHÙ HỢP ---
+      // Tạo 3 viên xúc xắc phù hợp với kết quả
       let d1, d2, d3, sum;
-      do {
-          d1 = Math.floor(Math.random() * 6) + 1;
-          d2 = Math.floor(Math.random() * 6) + 1;
-          d3 = Math.floor(Math.random() * 6) + 1;
-          sum = d1 + d2 + d3;
-      } while ((predict === "TAI" && sum < 11) || (predict === "XIU" && sum >= 11));
+      if(predict === "TAI") {
+          do {
+              d1 = Math.floor(Math.random() * 6) + 1;
+              d2 = Math.floor(Math.random() * 6) + 1;
+              d3 = Math.floor(Math.random() * 6) + 1;
+              sum = d1 + d2 + d3;
+          } while (sum < 11 || sum > 18);
+      } else {
+          do {
+              d1 = Math.floor(Math.random() * 6) + 1;
+              d2 = Math.floor(Math.random() * 6) + 1;
+              d3 = Math.floor(Math.random() * 6) + 1;
+              sum = d1 + d2 + d3;
+          } while (sum < 3 || sum > 10);
+      }
 
-      // Hiển thị xúc xắc (Dùng icon Unicode)
-      const diceIcons = ['⚀','⚁','⚂','⚃','⚄','⚅'];
-      diceContainer.innerHTML = `
-        <span style="color:#fff; font-size:20px;">${diceIcons[d1-1]}</span>
-        <span style="color:#fff; font-size:20px;">${diceIcons[d2-1]}</span>
-        <span style="color:#fff; font-size:20px;">${diceIcons[d3-1]}</span>
-      `;
+      // Ký tự xúc xắc (Unicode)
+      const diceIcons = {1:'⚀', 2:'⚁', 3:'⚂', 4:'⚃', 5:'⚄', 6:'⚅'};
+      diceBox.innerHTML = `<span style="color:#fff">${diceIcons[d1]}</span><span style="color:#fff">${diceIcons[d2]}</span><span style="color:#fff">${diceIcons[d3]}</span>`;
 
       // Hiển thị kết quả
       if(predict === "TAI") {
         tai.classList.add('active-red'); 
-        aiStatus.innerHTML = `<span style="color:#ff3333; font-size:12px; font-weight:bold;">TÀI (${sum}đ - ${confidence}%)</span><br><span style="font-size:9px;color:#ccc">${algoNote}</span>`; 
+        aiStatus.innerHTML = `<span style="color:#ff3333; font-size:12px; font-weight:bold;">TÀI (${confidence}%)</span><br><span style="font-size:9px;color:#ccc">${algoNote}</span>`; 
         setTimeout(() => { tai.classList.remove('active-red'); }, 1600);
       } else {
         xiu.classList.add('active-green'); 
-        aiStatus.innerHTML = `<span style="color:#00e676; font-size:12px; font-weight:bold;">XỈU (${sum}đ - ${confidence}%)</span><br><span style="font-size:9px;color:#ccc">${algoNote}</span>`; 
+        aiStatus.innerHTML = `<span style="color:#00e676; font-size:12px; font-weight:bold;">XỈU (${confidence}%)</span><br><span style="font-size:9px;color:#ccc">${algoNote}</span>`; 
         setTimeout(() => { xiu.classList.remove('active-green'); }, 1600);
       }
 
