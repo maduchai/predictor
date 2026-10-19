@@ -186,7 +186,7 @@
   }
   .float-tool-btn:hover { transform: scale(1.1); }
   
-  /* ================= TOOL DỰ ĐOÁN OVERLAY (THU NHỎ & TRONG SUỐT) ================= */
+  /* ================= TOOL DỰ ĐOÁN OVERLAY ================= */
   .float-tool-box { 
     position: fixed; top: 130px; right: 15px; 
     background: rgba(0, 0, 0, 0.3);
@@ -194,7 +194,7 @@
     border-radius: 12px; padding: 10px 8px; z-index: 2147483647; 
     display: none; text-align: center; backdrop-filter: blur(15px); 
     box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
-    flex-direction: column; align-items: center; justify-content: center; width: 110px; /* Thu nhỏ chiều rộng */
+    flex-direction: column; align-items: center; justify-content: center; width: 110px;
   }
 
   .light-row { display: flex; align-items: center; justify-content: space-around; width: 100%; margin-bottom: 5px; }
@@ -209,12 +209,7 @@
   .label { font-size: 12px; font-weight: 900; text-shadow: 1px 1px 2px #000; }
   .label.tai { color: #ff3333; } .label.xiu { color: #00e676; }
   
-  /* KHU VỰC XÚC XẮC */
-  .dice-container {
-    display: flex; justify-content: center; gap: 4px; margin: 4px 0;
-    font-size: 22px; line-height: 1; text-shadow: 0 0 5px rgba(255,255,255,0.5);
-  }
-  
+  .dice-container { display: flex; justify-content: center; gap: 4px; margin: 4px 0; font-size: 22px; line-height: 1; text-shadow: 0 0 5px rgba(255,255,255,0.5); }
   .ai-text { font-size: 10px; color: #00e5ff; font-weight: 900; margin-top: 4px; text-shadow: 1px 1px 2px #000; line-height: 1.2; }
   
   .key-stock-box { text-align: center; color: #aaa; font-size: 0.9rem; margin-top: 15px; padding: 12px; border: 1px dashed rgba(255,255,255,0.2); border-radius: 10px; background: rgba(0,0,0,0.4);}
@@ -238,9 +233,62 @@
   .aviator-result { background: #000; border: 1px solid #ff4d4d; padding: 15px; border-radius: 10px; margin-top: 15px; text-align: center; display: none; }
   .aviator-value { font-size: 3rem; font-weight: 900; font-family: 'Orbitron', sans-serif; margin: 15px 0; text-shadow: 0 0 20px currentColor; }
 
-  /* Nút phụ (Làm mới) */
   .btn-sub-row { display: flex; gap: 10px; margin-bottom: 12px; }
   .btn-sub-row button { flex: 1; padding: 10px; font-size: 0.85rem; margin-bottom: 0; }
+
+  /* ================= GIAO DIỆN THẢO LUẬN ================= */
+  #btnOpenChat {
+    position: fixed; bottom: 20px; left: 20px;
+    background: linear-gradient(135deg, #00b0ff, #0077ff);
+    color: #fff; padding: 12px 20px; border-radius: 30px;
+    font-weight: bold; cursor: pointer; z-index: 99999;
+    box-shadow: 0 5px 15px rgba(0, 176, 255, 0.4);
+    border: 2px solid #fff; display: flex; align-items: center; gap: 8px;
+    font-size: 14px; transition: 0.3s;
+  }
+  #btnOpenChat:hover { transform: scale(1.05); }
+
+  #chatModal {
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0,0,0,0.8); backdrop-filter: blur(5px);
+    z-index: 2147483647; display: none; justify-content: center; align-items: center;
+    padding: 15px;
+  }
+  .chat-container {
+    background: #121212; width: 100%; max-width: 500px; height: 80vh;
+    border-radius: 15px; border: 1px solid #00b0ff;
+    display: flex; flex-direction: column; overflow: hidden;
+    box-shadow: 0 10px 40px rgba(0, 176, 255, 0.3);
+  }
+  .chat-header {
+    background: #1a1a1a; padding: 15px; display: flex; justify-content: space-between;
+    align-items: center; border-bottom: 1px solid #333;
+  }
+  .chat-header h3 { margin: 0; color: #00b0ff; font-size: 16px; }
+  .chat-header button { width: auto; margin: 0; padding: 5px 10px; background: #ff4d4d; font-size: 12px; border-radius: 5px; }
+  
+  .chat-messages {
+    flex: 1; padding: 15px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px;
+    background: #0a0a0a;
+  }
+  .chat-msg {
+    background: #1e1e1e; padding: 10px; border-radius: 8px; font-size: 14px;
+    border-left: 3px solid #00b0ff; word-wrap: break-word;
+  }
+  .chat-msg .name { color: #00e676; font-weight: bold; font-size: 12px; margin-bottom: 3px; display: flex; justify-content: space-between; }
+  .chat-msg .name span { color: #888; font-weight: normal; font-size: 11px; }
+  .chat-msg .text { color: #ddd; margin-bottom: 5px; }
+  .chat-msg img { max-width: 100%; border-radius: 5px; margin-top: 5px; border: 1px solid #444; cursor: pointer; }
+
+  .chat-input-area {
+    padding: 10px; background: #1a1a1a; border-top: 1px solid #333;
+    display: flex; flex-direction: column; gap: 8px;
+  }
+  .chat-input-area input[type="text"] { margin: 0; padding: 10px; font-size: 13px; }
+  .chat-input-area .file-row { display: flex; gap: 10px; align-items: center; }
+  .chat-input-area input[type="file"] { flex: 1; font-size: 12px; color: #aaa; margin: 0; padding: 5px; background: transparent; border: 1px dashed #555; }
+  .chat-input-area button { margin: 0; padding: 10px; font-size: 14px; }
+  .preview-img { max-height: 50px; border-radius: 5px; display: none; }
 </style>
 </head>
 <body>
@@ -248,6 +296,9 @@
 <div class="bg-rainbow"></div>
 <canvas id="matrix-canvas"></canvas>
 <div id="floatingBalance">Số dư: 0đ</div>
+
+<!-- NÚT MỞ THẢO LUẬN -->
+<div id="btnOpenChat" onclick="openChat()">💬 Thảo Luận</div>
 
 <div class="app" id="mainApp">
   <h1 class="rainbow-text" style="text-align:center; font-family:'Orbitron', sans-serif; font-size: 2.2rem; margin-bottom: 20px;">Hai×bo AI STORE</h1>
@@ -430,8 +481,6 @@
 
 <!-- TOOL DỰ ĐOÁN TRONG SUỐT (THU NHỎ) -->
 <div id="toolBox" class="float-tool-box">
-  
-  <!-- Đèn Tài Xỉu xếp ngang -->
   <div class="light-row">
     <div class="light-col">
       <div id="lightTai" class="light red"></div>
@@ -442,17 +491,31 @@
       <span class="label xiu">XỈU</span>
     </div>
   </div>
-
-  <!-- Khu vực hiển thị xúc xắc -->
-  <div class="dice-container" id="diceResult">
-      <!-- Sẽ chứa icon xúc xắc ở đây -->
-  </div>
-
-  <!-- Vùng chứa kết quả và trạng thái -->
+  <div class="dice-container" id="diceResult"></div>
   <div class="ai-text" id="aiStatus">AI: Chờ...</div>
-  
-  <!-- Nút Phân Tích -->
   <button id="btnRunAI" style="padding:6px; font-size:10px; margin-top:8px; border-radius:6px; background: #00e676; color: black; border: none; font-weight: bold; width: 100%; cursor: pointer; text-transform: uppercase; box-shadow: 0 0 10px rgba(0,230,118,0.5);" onclick="runAI()">🚀 PHÂN TÍCH</button>
+</div>
+
+<!-- MODAL THẢO LUẬN -->
+<div id="chatModal">
+  <div class="chat-container">
+    <div class="chat-header">
+      <h3>💬 THẢO LUẬN & CHỨNG MINH</h3>
+      <button onclick="closeChat()">✕ Đóng</button>
+    </div>
+    <div class="chat-messages" id="chatMessages">
+      <!-- Tin nhắn sẽ được load ở đây -->
+    </div>
+    <div class="chat-input-area">
+      <input type="text" id="chatName" placeholder="Tên của bạn (Tùy chọn)..." maxlength="20">
+      <input type="text" id="chatText" placeholder="Nhập nội dung thảo luận..." maxlength="200">
+      <div class="file-row">
+        <input type="file" id="chatImage" accept="image/*" onchange="previewChatImage(this)">
+        <img id="chatImagePreview" class="preview-img" src="" alt="Preview">
+        <button class="btn-main" id="btnSendChat" onclick="sendChat()" style="flex: 1;">GỬI</button>
+      </div>
+    </div>
+  </div>
 </div>
 
 <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
@@ -503,6 +566,99 @@
 
   let historyResults = []; 
   let f168History = JSON.parse(localStorage.getItem('f168_history') || "[]");
+
+  // ================= CHỨC NĂNG THẢO LUẬN =================
+  let chatBase64Image = "";
+
+  function openChat() {
+    document.getElementById('chatModal').style.display = 'flex';
+    document.getElementById('chatMessages').scrollTop = document.getElementById('chatMessages').scrollHeight;
+  }
+
+  function closeChat() {
+    document.getElementById('chatModal').style.display = 'none';
+  }
+
+  function previewChatImage(input) {
+    const file = input.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        chatBase64Image = e.target.result;
+        const preview = document.getElementById('chatImagePreview');
+        preview.src = chatBase64Image;
+        preview.style.display = 'block';
+      };
+      reader.readAsDataURL(file);
+    } else {
+      chatBase64Image = "";
+      document.getElementById('chatImagePreview').style.display = 'none';
+    }
+  }
+
+  function sendChat() {
+    const name = document.getElementById('chatName').value.trim() || "Ẩn Danh";
+    const text = document.getElementById('chatText').value.trim();
+    
+    if (!text && !chatBase64Image) return alert("Vui lòng nhập nội dung hoặc chọn ảnh!");
+
+    const btn = document.getElementById('btnSendChat');
+    btn.innerText = "ĐANG GỬI...";
+    btn.disabled = true;
+
+    db.ref('discussions').push({
+      name: name,
+      text: text,
+      image: chatBase64Image, // Lưu Base64
+      deviceCode: deviceCode,
+      time: Date.now()
+    }).then(() => {
+      // Xóa form
+      document.getElementById('chatText').value = "";
+      document.getElementById('chatImage').value = "";
+      document.getElementById('chatImagePreview').style.display = 'none';
+      chatBase64Image = "";
+      
+      btn.innerText = "GỬI";
+      btn.disabled = false;
+    }).catch(e => {
+      alert("Lỗi gửi tin nhắn: " + e.message);
+      btn.innerText = "GỬI";
+      btn.disabled = false;
+    });
+  }
+
+  // Lắng nghe tin nhắn mới
+  function listenChat() {
+    if (!db) return;
+    db.ref('discussions').limitToLast(50).on('value', snap => {
+      const box = document.getElementById('chatMessages');
+      box.innerHTML = "";
+      if (snap.exists()) {
+        const msgs = snap.val();
+        Object.keys(msgs).forEach(key => {
+          const m = msgs[key];
+          const timeStr = new Date(m.time).toLocaleTimeString('vi-VN');
+          
+          let imgHtml = m.image ? `<img src="${m.image}" onclick="window.open(this.src)" alt="Minh chứng">` : "";
+          
+          box.innerHTML += `
+            <div class="chat-msg">
+              <div class="name">${m.name} <span>${timeStr}</span></div>
+              <div class="text">${m.text}</div>
+              ${imgHtml}
+            </div>
+          `;
+        });
+        // Tự động cuộn xuống dưới
+        box.scrollTop = box.scrollHeight;
+      } else {
+        box.innerHTML = "<div style='text-align:center;color:#666;font-size:12px;'>Chưa có thảo luận nào.</div>";
+      }
+    });
+  }
+  listenChat();
+  // ========================================================
 
   // Hàm tính toán thời gian còn lại
   function formatTimeRemaining(ms) {
@@ -572,7 +728,6 @@
         if(data.expire > Date.now() || data.expire === 0) {
           const maxDev = data.maxDevices || 1; const usedDevs = data.usedDevices || {};
           if (usedDevs[deviceCode]) { 
-              // Key đã kích hoạt trên máy này
               let timeLeft = data.expire === 0 ? "Vĩnh viễn" : formatTimeRemaining(data.expire - Date.now());
               alert(`Key đã kích hoạt trên thiết bị này!\nHạn sử dụng: ${timeLeft}`);
               grantAccess(data.expire); 
@@ -593,7 +748,6 @@
     document.getElementById('authView').classList.add('hidden');
     document.getElementById('mainView').classList.remove('hidden');
     
-    // Hiển thị thời gian còn lại lên UI
     let timeStr = expireTime === 0 ? "Vĩnh viễn" : formatTimeRemaining(expireTime - Date.now());
     document.getElementById('displayKeyTime').innerText = timeStr;
 
@@ -824,7 +978,6 @@
     document.getElementById('btnRunAI').innerText = "🚀 PHÂN TÍCH";
     document.getElementById('btnRunAI').style.background = "#00e676";
     
-    // Reset đèn và xúc xắc
     document.getElementById('lightTai').className = 'light red';
     document.getElementById('lightXiu').className = 'light green';
     document.getElementById('diceResult').innerHTML = '';
@@ -838,7 +991,6 @@
     document.getElementById('gameFrame').src = "about:blank"; 
     isToolOpen = false;
     
-    // Dọn dẹp các timer
     if(aiTimeout) clearTimeout(aiTimeout);
     if(cooldownTimer) clearInterval(cooldownTimer);
     isCoolingDown = false;
@@ -849,7 +1001,6 @@
     document.getElementById('toolBox').style.display = isToolOpen ? 'flex' : 'none';
   }
 
-  // ================= THUẬT TOÁN AI & ĐẾM NGƯỢC 40s =================
   function runAI() {
     if(!isToolOpen || isCoolingDown) return; 
 
@@ -857,28 +1008,24 @@
     const btn = document.getElementById('btnRunAI');
     const diceBox = document.getElementById('diceResult');
     
-    // Khóa trạng thái
     isCoolingDown = true;
     btn.disabled = true;
     btn.style.background = "#555";
     btn.innerText = "ĐANG GỌI API...";
     
-    // Reset đèn và xúc xắc tạm thời
     tai.className = 'light red'; 
     xiu.className = 'light green'; 
-    diceBox.innerHTML = ''; // Xóa xúc xắc cũ
+    diceBox.innerHTML = ''; 
     aiStatus.innerHTML = `<span style="color:#ffd700">Kết nối AI Server...</span>`; 
 
     if(aiTimeout) clearTimeout(aiTimeout);
 
-    // Giả lập thời gian phản hồi API (1.5s)
     aiTimeout = setTimeout(() => {
       let predict = "TAI";
       let confidence = 50;
       let algoNote = "";
-      let apiVersion = "Sunwin-AI-v4.1"; // Cập nhật version mới
+      let apiVersion = "Sunwin-AI-v4.1"; 
 
-      // Thuật toán Phân Tích Cầu
       if (historyResults.length < 3) {
          predict = (new Date().getSeconds() % 2 === 0) ? "TAI" : "XIU";
          confidence = Math.floor(Math.random() * 10) + 65;
@@ -914,7 +1061,6 @@
       historyResults.push(predict);
       if(historyResults.length > 10) historyResults.shift();
 
-      // Tạo 3 viên xúc xắc phù hợp với kết quả
       let d1, d2, d3, sum;
       if(predict === "TAI") {
           do {
@@ -932,11 +1078,9 @@
           } while (sum < 3 || sum > 10);
       }
 
-      // Ký tự xúc xắc (Unicode)
       const diceIcons = {1:'⚀', 2:'⚁', 3:'⚂', 4:'⚃', 5:'⚄', 6:'⚅'};
       diceBox.innerHTML = `<span style="color:#fff">${diceIcons[d1]}</span><span style="color:#fff">${diceIcons[d2]}</span><span style="color:#fff">${diceIcons[d3]}</span>`;
 
-      // Hiển thị kết quả
       if(predict === "TAI") {
         tai.classList.add('active-red'); 
         aiStatus.innerHTML = `<span style="color:#ff3333; font-size:12px; font-weight:bold;">TÀI (${confidence}%)</span><br><span style="font-size:9px;color:#ccc">${algoNote}</span>`; 
@@ -947,7 +1091,6 @@
         setTimeout(() => { xiu.classList.remove('active-green'); }, 1600);
       }
 
-      // Bắt đầu đếm ngược 40s
       startCooldown();
 
     }, 1500); 
