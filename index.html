@@ -23,9 +23,7 @@
   
   /* ================= BACKGROUND 7 MÀU CHẢY ================= */
   .bg-rainbow {
-    position: fixed;
-    top: 0; left: 0; width: 100vw; height: 100vh;
-    z-index: -2;
+    position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: -2;
     background: linear-gradient(45deg, #ff0000, #ff7f00, #ffff00, #00ff00, #0000ff, #4b0082, #8b00ff, #ff0000);
     background-size: 400% 400%;
     animation: rainbowFlow 15s ease infinite;
@@ -84,14 +82,10 @@
 
   .card { 
     background: rgba(15, 20, 15, 0.75); 
-    padding: 25px; 
-    border-radius: 16px; 
-    border: 1px solid rgba(255, 255, 255, 0.2); 
+    padding: 25px; border-radius: 16px; border: 1px solid rgba(255, 255, 255, 0.2); 
     margin-bottom: 20px; 
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8), inset 0 0 20px rgba(255, 255, 255, 0.05); 
-    position: relative; 
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
+    position: relative; backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
   }
   
   h2 { 
@@ -186,29 +180,41 @@
   }
   .float-tool-btn:hover { transform: scale(1.1); }
   
-  /* ================= TOOL DỰ ĐOÁN OVERLAY (TRONG SUỐT) ================= */
+  /* ================= TOOL DỰ ĐOÁN OVERLAY (THU NHỎ) ================= */
   .float-tool-box { 
     position: fixed; top: 160px; right: 20px; 
     background: rgba(0, 0, 0, 0.3);
     border: 1px solid rgba(255, 255, 255, 0.3); 
-    border-radius: 16px; padding: 15px; z-index: 2147483647; 
+    border-radius: 12px; padding: 8px; z-index: 2147483647; 
     display: none; text-align: center; backdrop-filter: blur(15px); 
     box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
-    flex-direction: column; align-items: center; justify-content: center; width: 150px; 
+    flex-direction: column; align-items: center; justify-content: center; 
+    width: 110px; /* Đã thu nhỏ chiều rộng */
   }
 
-  .light-row { display: flex; align-items: center; justify-content: center; gap: 8px; margin-bottom: 10px; flex-direction: column; }
-  .light { width: 22px; height: 22px; border-radius: 50%; border: 1px solid rgba(255,255,255,0.3); }
+  .light-row { display: flex; align-items: center; justify-content: center; gap: 5px; margin-bottom: 3px; flex-direction: row; }
+  .light { width: 14px; height: 14px; border-radius: 50%; border: 1px solid rgba(255,255,255,0.3); } /* Thu nhỏ đèn */
   .light.red { background: #300; } .light.green { background: #030; }
   .light.active-red { animation: flashRed 0.4s 4 alternate; }
-  @keyframes flashRed { 0% { background: #ff0000; box-shadow: 0 0 25px #ff0000; } 100% { background: #500; box-shadow: none; } }
+  @keyframes flashRed { 0% { background: #ff0000; box-shadow: 0 0 15px #ff0000; } 100% { background: #500; box-shadow: none; } }
   .light.active-green { animation: flashGreen 0.4s 4 alternate; }
-  @keyframes flashGreen { 0% { background: #00ff00; box-shadow: 0 0 25px #00ff00; } 100% { background: #050; box-shadow: none; } }
+  @keyframes flashGreen { 0% { background: #00ff00; box-shadow: 0 0 15px #00ff00; } 100% { background: #050; box-shadow: none; } }
   
-  .label { font-size: 16px; font-weight: 900; text-shadow: 1px 1px 2px #000; }
+  .label { font-size: 13px; font-weight: 900; text-shadow: 1px 1px 2px #000; }
   .label.tai { color: #ff3333; } .label.xiu { color: #00e676; }
-  .ai-text { font-size: 12px; color: #00e5ff; font-weight: 900; margin-top: 8px; text-shadow: 1px 1px 2px #000; }
+  .ai-text { font-size: 10px; color: #00e5ff; font-weight: 900; margin-top: 5px; text-shadow: 1px 1px 2px #000; line-height: 1.3; }
   
+  /* HIỂN THỊ XÚC XẮC */
+  .dice-container {
+    display: flex;
+    justify-content: center;
+    gap: 3px;
+    margin: 4px 0;
+    font-size: 22px; /* Kích thước xúc xắc */
+    color: #fff;
+    text-shadow: 0 0 8px #00e676;
+  }
+
   .key-stock-box { text-align: center; color: #aaa; font-size: 0.9rem; margin-top: 15px; padding: 12px; border: 1px dashed rgba(255,255,255,0.2); border-radius: 10px; background: rgba(0,0,0,0.4);}
   .key-stock-box b { color: #00e676; font-size: 1.3rem; text-shadow: 0 0 10px rgba(0,230,118,0.5); }
 
@@ -415,16 +421,19 @@
 
 <div id="floatBtn" class="float-tool-btn hidden" onclick="toggleTool()">🎮</div>
 
-<!-- TOOL DỰ ĐOÁN TRONG SUỐT -->
+<!-- TOOL DỰ ĐOÁN TRONG SUỐT (ĐÃ THU NHỎ VÀ THÊM XÚC XẮC) -->
 <div id="toolBox" class="float-tool-box">
   <div class="light-row"><div id="lightTai" class="light red"></div><span class="label tai">TÀI</span></div>
   <div class="light-row"><div id="lightXiu" class="light green"></div><span class="label xiu">XỈU</span></div>
   
+  <!-- Vùng chứa hình xúc xắc -->
+  <div id="diceResult" class="dice-container"></div>
+
   <!-- Vùng chứa kết quả và trạng thái -->
-  <div class="ai-text" id="aiStatus" style="width:100%; text-align:center; font-size:11px; line-height: 1.4;">AI: Chờ lệnh...</div>
+  <div class="ai-text" id="aiStatus" style="width:100%; text-align:center;">AI: Chờ lệnh...</div>
   
   <!-- Nút Phân Tích -->
-  <button id="btnRunAI" style="padding:8px; font-size:12px; margin-top:10px; border-radius:6px; background: #00e676; color: black; border: none; font-weight: bold; width: 100%; cursor: pointer; text-transform: uppercase; box-shadow: 0 0 10px rgba(0,230,118,0.5);" onclick="runAI()">🚀 PHÂN TÍCH</button>
+  <button id="btnRunAI" style="padding:6px; font-size:10px; margin-top:8px; border-radius:6px; background: #00e676; color: black; border: none; font-weight: bold; width: 100%; cursor: pointer; text-transform: uppercase; box-shadow: 0 0 10px rgba(0,230,118,0.5);" onclick="runAI()">🚀 PHÂN TÍCH</button>
 </div>
 
 <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
@@ -467,7 +476,6 @@
   let isToolOpen = false, deviceCode = "", deviceInfo = { ip: "", location: "", device: "" };
   let userBalance = 0, userRef = null;
   
-  // Biến quản lý trạng thái Tool
   let aiTimeout = null;
   let cooldownTimer = null;
   let cooldownRemaining = 40;
@@ -771,6 +779,7 @@
     document.getElementById('btnRunAI').disabled = false;
     document.getElementById('btnRunAI').innerText = "🚀 PHÂN TÍCH";
     document.getElementById('btnRunAI').style.background = "#00e676";
+    document.getElementById('diceResult').innerHTML = ""; // Xóa xúc xắc cũ
     
     // Reset đèn
     document.getElementById('lightTai').className = 'light red';
@@ -785,7 +794,6 @@
     document.getElementById('gameFrame').src = "about:blank"; 
     isToolOpen = false;
     
-    // Dọn dẹp các timer
     if(aiTimeout) clearTimeout(aiTimeout);
     if(cooldownTimer) clearInterval(cooldownTimer);
     isCoolingDown = false;
@@ -802,31 +810,30 @@
 
     const tai = document.getElementById('lightTai'), xiu = document.getElementById('lightXiu'), aiStatus = document.getElementById('aiStatus');
     const btn = document.getElementById('btnRunAI');
+    const diceContainer = document.getElementById('diceResult');
     
-    // Khóa trạng thái
     isCoolingDown = true;
     btn.disabled = true;
     btn.style.background = "#555";
     btn.innerText = "ĐANG GỌI API...";
     
-    // Reset đèn tạm thời
     tai.className = 'light red'; 
     xiu.className = 'light green'; 
     aiStatus.innerHTML = `<span style="color:#ffd700">Kết nối AI Server...</span>`; 
+    diceContainer.innerHTML = ""; // Xóa xúc xắc cũ
 
     if(aiTimeout) clearTimeout(aiTimeout);
 
-    // Giả lập thời gian phản hồi API (1.5s)
     aiTimeout = setTimeout(() => {
       let predict = "TAI";
       let confidence = 50;
       let algoNote = "";
       let apiVersion = "Sunwin-AI-v3.2";
 
-      // Thuật toán Phân Tích Cầu
+      // Phân tích cầu
       if (historyResults.length < 3) {
          predict = (new Date().getSeconds() % 2 === 0) ? "TAI" : "XIU";
-         confidence = Math.floor(Math.random() * 10) + 65; // Từ 65-75%
+         confidence = Math.floor(Math.random() * 10) + 65; 
          algoNote = "Khởi tạo cầu mới";
       } 
       else {
@@ -835,25 +842,24 @@
         let last3 = historyResults[historyResults.length - 3];
 
         if (last === "TAI" && last2 === "TAI" && last3 === "TAI") {
-           predict = "XIU"; confidence = Math.floor(Math.random() * 10) + 80; // 80-90%
-           algoNote = "Thuật toán bẻ cầu bệt Tài";
+           predict = "XIU"; confidence = Math.floor(Math.random() * 10) + 80;
+           algoNote = "Bẻ cầu bệt Tài";
         }
         else if (last === "XIU" && last2 === "XIU" && last3 === "XIU") {
            predict = "TAI"; confidence = Math.floor(Math.random() * 10) + 80;
-           algoNote = "Thuật toán bẻ cầu bệt Xỉu";
+           algoNote = "Bẻ cầu bệt Xỉu";
         }
         else if (last !== last2 && last2 !== last3 && last !== last3) {
            predict = (last === "TAI") ? "XIU" : "TAI";
            confidence = Math.floor(Math.random() * 10) + 70;
-           algoNote = "Bắt cầu 1-1 (Markov Chain)";
+           algoNote = "Bắt cầu 1-1";
         }
         else {
            predict = last; confidence = Math.floor(Math.random() * 10) + 60;
-           algoNote = "Cầu đang có lợi thế";
+           algoNote = "Cầu có lợi thế";
         }
       }
 
-      // Đảm bảo % không vượt quá 95%
       if(confidence < 50) confidence = 50;
       if(confidence > 95) confidence = 95;
 
@@ -861,14 +867,31 @@
       historyResults.push(predict);
       if(historyResults.length > 10) historyResults.shift();
 
-      // Hiển thị kết quả (CỐ ĐỊNH KHÔNG ĐỔI)
+      // --- TẠO XÚC XẮC PHÙ HỢP ---
+      let d1, d2, d3, sum;
+      do {
+          d1 = Math.floor(Math.random() * 6) + 1;
+          d2 = Math.floor(Math.random() * 6) + 1;
+          d3 = Math.floor(Math.random() * 6) + 1;
+          sum = d1 + d2 + d3;
+      } while ((predict === "TAI" && sum < 11) || (predict === "XIU" && sum >= 11));
+
+      // Hiển thị xúc xắc (Dùng icon Unicode)
+      const diceIcons = ['⚀','⚁','⚂','⚃','⚄','⚅'];
+      diceContainer.innerHTML = `
+        <span style="color:#fff; font-size:20px;">${diceIcons[d1-1]}</span>
+        <span style="color:#fff; font-size:20px;">${diceIcons[d2-1]}</span>
+        <span style="color:#fff; font-size:20px;">${diceIcons[d3-1]}</span>
+      `;
+
+      // Hiển thị kết quả
       if(predict === "TAI") {
         tai.classList.add('active-red'); 
-        aiStatus.innerHTML = `<span style="color:#ff3333; font-size:13px; font-weight:bold;">TÀI (${confidence}%)</span><br><span style="font-size:10px;color:#ccc">${algoNote}</span><br><span style="font-size:9px;color:#00e5ff">${apiVersion}</span>`; 
+        aiStatus.innerHTML = `<span style="color:#ff3333; font-size:12px; font-weight:bold;">TÀI (${sum}đ - ${confidence}%)</span><br><span style="font-size:9px;color:#ccc">${algoNote}</span>`; 
         setTimeout(() => { tai.classList.remove('active-red'); }, 1600);
       } else {
         xiu.classList.add('active-green'); 
-        aiStatus.innerHTML = `<span style="color:#00e676; font-size:13px; font-weight:bold;">XỈU (${confidence}%)</span><br><span style="font-size:10px;color:#ccc">${algoNote}</span><br><span style="font-size:9px;color:#00e5ff">${apiVersion}</span>`; 
+        aiStatus.innerHTML = `<span style="color:#00e676; font-size:12px; font-weight:bold;">XỈU (${sum}đ - ${confidence}%)</span><br><span style="font-size:9px;color:#ccc">${algoNote}</span>`; 
         setTimeout(() => { xiu.classList.remove('active-green'); }, 1600);
       }
 
