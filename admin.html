@@ -5,17 +5,52 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>ADMIN · Hai×bo</title>
 <style>
-  :root{ --bg:#0a0000; --panel:#1a0000; --red:#ff3333; --gold:#ffd700; --green:#00e676; --cyan:#00e5ff; }
+  :root{ 
+    --panel: rgba(15, 0, 0, 0.85); /* Nền đen trong suốt */
+    --red:#ff3333; 
+    --gold:#ffd700; 
+    --green:#00e676; 
+    --cyan:#00e5ff; 
+  }
   *{box-sizing:border-box;font-family:system-ui,sans-serif;margin:0;padding:0}
-  body{ background:radial-gradient(circle at 50% -20%, #330000 0%, var(--bg) 70%); color:#ffe6e6; padding:20px; display:flex; justify-content:center; min-height:100vh; }
+  
+  /* 1. HIỆU ỨNG NỀN 7 MÀU NHẠT CHUYỂN ĐỘNG */
+  body { 
+    background: linear-gradient(-45deg, #ff9a9e, #fecfef, #f6d365, #fda085, #84fab0, #8fd3f4, #a6c1ee);
+    background-size: 400% 400%;
+    animation: gradientBG 15s ease infinite;
+    color:#ffe6e6; 
+    padding:20px; 
+    display:flex; 
+    justify-content:center; 
+    min-height:100vh; 
+  }
+  @keyframes gradientBG {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+  }
+
   .app{ width:100%; max-width:1000px; }
   .header{ text-align:center; margin-bottom:20px; }
-  .header h1{ color:var(--red); text-shadow:0 0 15px var(--red); font-size:2rem; }
-  .card{ background:linear-gradient(180deg,rgba(30,0,0,0.9) 0%, #0a0000 100%); padding:20px; border-radius:12px; border:1px solid #551111; margin-bottom:20px; }
+  .header h1{ color:var(--red); text-shadow:0 0 15px var(--red), 0 0 5px #fff; font-size:2rem; }
+  
+  /* KHUNG TRONG SUỐT */
+  .card{ 
+    background: var(--panel); 
+    backdrop-filter: blur(8px); 
+    -webkit-backdrop-filter: blur(8px);
+    padding:20px; 
+    border-radius:12px; 
+    border:1px solid #551111; 
+    margin-bottom:20px; 
+    box-shadow: 0 8px 32px 0 rgba(0,0,0,0.5);
+  }
+  
   h2{ color:var(--red); margin-bottom:15px; font-size:1.1rem; border-bottom:1px solid #551111; padding-bottom:5px; text-transform:uppercase; }
   input, select{ width:100%; padding:10px; margin-bottom:10px; background:#000; border:1px solid #551111; color:#fff; border-radius:6px; outline:none; }
   button{ background:var(--red); color:#fff; border:none; padding:10px 15px; border-radius:6px; cursor:pointer; font-weight:bold; transition:0.2s;}
-  button:hover { filter: brightness(1.2); }
+  button:hover { filter: brightness(1.2); transform: scale(1.02); }
   .btn-g{ background:var(--green); color:#000; } 
   .btn-c{ background:var(--cyan); color:#000;}
   .btn-sm { padding: 5px 10px; font-size: 0.8rem; }
@@ -25,9 +60,12 @@
   .hidden{ display:none!important; }
   .status-pending { color: #ffd700; font-weight: bold; }
   .status-done { color: #00e676; font-weight: bold; }
-  .header-bar { display:flex; justify-content:space-between; align-items:center; background:#0a0000; padding:10px 20px; border-radius:8px; margin-bottom:20px; border:1px solid var(--red); flex-wrap:wrap; gap:10px;}
-  .manual-add-box { background: rgba(0, 230, 118, 0.05); border: 1px dashed var(--green); padding: 15px; border-radius: 8px; margin-bottom: 20px;}
+  .header-bar { display:flex; justify-content:space-between; align-items:center; background:var(--panel); backdrop-filter: blur(8px); padding:10px 20px; border-radius:8px; margin-bottom:20px; border:1px solid var(--red); flex-wrap:wrap; gap:10px;}
+  .manual-add-box { background: rgba(0, 230, 118, 0.1); border: 1px dashed var(--green); padding: 15px; border-radius: 8px; margin-bottom: 20px;}
   .manual-add-box h3 { color: var(--green); margin-bottom: 10px; font-size: 1rem; }
+  
+  /* CSS cho đồng hồ đếm ngược */
+  .countdown-timer { font-family: monospace; font-size: 0.9rem; color: #ffeb3b; display: block; margin-top: 3px; }
 </style>
 </head>
 <body>
@@ -81,7 +119,13 @@
     <div class="card">
       <h2>Tạo Key Kích Hoạt</h2>
       <div style="display:flex; gap:10px; margin-bottom:10px;">
-        <select id="keyDuration" style="flex:1;"><option value="1">1 Ngày</option><option value="7">1 Tuần</option><option value="30">1 Tháng</option><option value="0">Vĩnh Viễn</option></select>
+        <select id="keyDuration" style="flex:1;">
+            <option value="0.01">Test (1 Phút)</option>
+            <option value="1">1 Ngày</option>
+            <option value="7">1 Tuần</option>
+            <option value="30">1 Tháng</option>
+            <option value="0">Vĩnh Viễn</option>
+        </select>
         <input type="number" id="keyDeviceLimit" value="1" min="1" style="flex:1;" title="Số thiết bị">
         <button class="btn-c" onclick="createKey()" style="flex:1;">Tạo Key</button>
       </div>
@@ -91,7 +135,7 @@
     <div class="card">
       <h2>Danh Sách Key Đã Tạo</h2>
       <table>
-        <thead><tr><th>Mã Key</th><th>Hạn</th><th>Thiết bị (Dùng / Tối đa)</th><th>Trạng Thái</th><th>Hành động</th></tr></thead>
+        <thead><tr><th>Mã Key</th><th>Hạn</th><th>Thiết bị (Dùng / Tối đa)</th><th>Trạng Thái (Đếm ngược)</th><th>Hành động</th></tr></thead>
         <tbody id="keyList"><tr><td colspan="5" style="text-align:center; color:#888;">Đang tải dữ liệu...</td></tr></tbody>
       </table>
     </div>
@@ -119,13 +163,16 @@
   const DISCORD_WEBHOOK = "https://discord.com/api/webhooks/1561068482504691742/R5_eAJ4B5QaQ7iGpCORqd8ZPwTiYDVJuUucjiiYqaMS4NjfN-zQ6cAvupv-IW9lN54Ke";
   const getPass = () => localStorage.getItem('admin_password') || "admin123";
 
+  // Biến lưu trữ toàn bộ key để phục vụ việc đếm ngược
+  let globalKeysData = {};
+
   function login() {
     if(document.getElementById('adminPass').value === getPass()) {
       document.getElementById('authView').classList.add('hidden');
       document.getElementById('adminPanel').classList.remove('hidden');
-      loadDevices(); // Gọi hàm load thiết bị
+      loadDevices(); 
       loadDeposits();
-      loadKeys();
+      loadKeys(); // Bắt đầu tải key và chạy đếm ngược
     } else { document.getElementById('loginMsg').innerText = "Sai mật khẩu!"; }
   }
 
@@ -136,7 +183,6 @@
     if(newPass && newPass.trim() !== "") { localStorage.setItem('admin_password', newPass.trim()); alert("Đổi mật khẩu thành công!"); }
   }
 
-  // HÀM LOAD DANH SÁCH THIẾT BỊ TRUY CẬP
   function loadDevices() {
     const deviceList = document.getElementById('deviceList');
     db.ref('users').on('value', snap => {
@@ -195,33 +241,105 @@
   }
 
   function createKey() {
-    const days = parseInt(document.getElementById('keyDuration').value);
+    const days = parseFloat(document.getElementById('keyDuration').value);
     const maxDevices = parseInt(document.getElementById('keyDeviceLimit').value) || 1;
     const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"; let key = "HB-";
     for(let i=0; i<12; i++) { if(i === 4 || i === 8) key += "-"; key += chars.charAt(Math.floor(Math.random() * chars.length)); }
+    
+    // Tính thời gian hết hạn (days = 0 là vĩnh viễn)
     let expireTime = days === 0 ? 0 : Date.now() + (days * 24 * 60 * 60 * 1000);
-    db.ref('keys/' + key).set({ duration: days === 0 ? "Vĩnh viễn" : days + " Ngày", expire: expireTime, maxDevices: maxDevices, usedDevices: {}, createdAt: new Date().toLocaleString('vi-VN'), timestamp: Date.now() })
+    let durationText = days === 0 ? "Vĩnh viễn" : (days < 1 ? (days * 24 * 60) + " Phút" : days + " Ngày");
+
+    db.ref('keys/' + key).set({ duration: durationText, expire: expireTime, maxDevices: maxDevices, usedDevices: {}, createdAt: new Date().toLocaleString('vi-VN'), timestamp: Date.now() })
     .then(() => { let el = document.getElementById('keyResult'); el.style.display = "block"; el.innerText = key; });
   }
 
+  // HÀM LOAD KEY VÀ CHUẨN BỊ ĐẾM NGƯỢC
   function loadKeys() {
     const keyList = document.getElementById('keyList');
     db.ref('keys').on('value', snap => {
       keyList.innerHTML = "";
+      globalKeysData = snap.val() || {};
+      
       if(!snap.exists()) { keyList.innerHTML = "<tr><td colspan='5' style='text-align:center;'>Chưa có key nào</td></tr>"; return; }
-      const arr = Object.keys(snap.val()).map(k => ({ key: k, ...snap.val()[k] })).sort((a,b)=>b.timestamp - a.timestamp);
+      
+      const arr = Object.keys(globalKeysData).map(k => ({ key: k, ...globalKeysData[k] })).sort((a,b)=>b.timestamp - a.timestamp);
+      
       arr.forEach(item => {
-        const isExpired = item.expire !== 0 && item.expire < Date.now();
-        const statusHtml = isExpired ? `<span style="color:#ff5252">Hết hạn</span>` : `<span style="color:#00e676">Hoạt động</span>`;
         const usedCount = item.usedDevices ? Object.keys(item.usedDevices).length : 0;
         const maxDev = item.maxDevices || 1;
         const deviceStatus = usedCount >= maxDev ? `<span style="color:#ff5252">${usedCount}/${maxDev} (Đầy)</span>` : `<span style="color:#00e5ff">${usedCount}/${maxDev}</span>`;
-        keyList.innerHTML += `<tr><td style="color:var(--gold); font-weight:bold; user-select:all">${item.key}</td><td>${item.duration}</td><td>${deviceStatus}</td><td>${statusHtml}</td><td><button class="btn-sm" style="background:#551111;" onclick="deleteKey('${item.key}')">Xóa</button></td></tr>`;
+        
+        // Gắn data-expire để hàm setInterval có thể đọc và đếm ngược
+        let statusCell = `<td id="status-${item.key}" data-expire="${item.expire}" data-key="${item.key}">Đang tính...</td>`;
+
+        keyList.innerHTML += `
+          <tr>
+            <td style="color:var(--gold); font-weight:bold; user-select:all">${item.key}</td>
+            <td>${item.duration}</td>
+            <td>${deviceStatus}</td>
+            ${statusCell}
+            <td><button class="btn-sm" style="background:#551111;" onclick="deleteKey('${item.key}')">Xóa</button></td>
+          </tr>
+        `;
       });
+      updateAllTimers(); // Chạy cập nhật ngay lập tức
     });
   }
 
-  function deleteKey(key) { if(confirm("Xóa key: " + key + " ?")) db.ref('keys/' + key).remove(); }
+  function deleteKey(key) { 
+      if(confirm("Xóa key: " + key + " ?")) db.ref('keys/' + key).remove(); 
+  }
+
+  // HÀM ĐỊNH DẠNG THỜI GIAN (Ngày, Giờ, Phút, Giây)
+  function formatTime(ms) {
+      if (ms <= 0) return "Hết hạn";
+      let s = Math.floor(ms / 1000);
+      let d = Math.floor(s / 86400); s -= d * 86400;
+      let h = Math.floor(s / 3600); s -= h * 3600;
+      let m = Math.floor(s / 60); s -= m * 60;
+      
+      let res = "";
+      if (d > 0) res += d + "n ";
+      if (h > 0) res += h + "h ";
+      if (m > 0) res += m + "m ";
+      res += s + "s";
+      return res;
+  }
+
+  // 2 & 3. HÀM TỰ ĐỘNG CHECK VÀ TỰ ĐỘNG XÓA KEY HẾT HẠN (Chạy mỗi giây)
+  function updateAllTimers() {
+      const statusCells = document.querySelectorAll('td[data-expire]');
+      
+      statusCells.forEach(td => {
+          let expire = parseInt(td.getAttribute('data-expire'));
+          let key = td.getAttribute('data-key');
+          
+          if (expire === 0) {
+              td.innerHTML = `<span style="color:#00e676">Hoạt động</span><br><small style="color:#aaa">Vĩnh viễn</small>`;
+              return;
+          }
+
+          let diff = expire - Date.now();
+          
+          if (diff <= 0) {
+              // Hết hạn -> Hiển thị đỏ và gọi lệnh xóa khỏi Firebase
+              td.innerHTML = `<span style="color:#ff5252">Hết hạn (Đang xóa...)</span>`;
+              db.ref('keys/' + key).remove(); // Tự động xóa
+              // Không cần xóa DOM thủ công vì Firebase sẽ kích hoạt sự kiện load lại bảng
+          } else {
+              // Còn hạn -> Cập nhật đếm ngược
+              td.innerHTML = `<span style="color:#00e676">Hoạt động</span><br><small class="countdown-timer">${formatTime(diff)}</small>`;
+          }
+      });
+  }
+
+  // Kích hoạt bộ đếm thời gian mỗi 1 giây
+  setInterval(() => {
+      if (!document.getElementById('adminPanel').classList.contains('hidden')) {
+          updateAllTimers();
+      }
+  }, 1000);
 
   function loadDeposits() {
     const depList = document.getElementById('depList');
