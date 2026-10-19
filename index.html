@@ -21,8 +21,39 @@
   
   .app { width: 100%; max-width: 520px; position: relative; z-index: 10; }
   
-  /* NỀN MA TRẬN XANH */
-  #matrix-canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; opacity: 0.4; }
+  /* ================= BACKGROUND 7 MÀU CHẢY ================= */
+  .bg-rainbow {
+    position: fixed;
+    top: 0; left: 0; width: 100vw; height: 100vh;
+    z-index: -2;
+    background: linear-gradient(45deg, #ff0000, #ff7f00, #ffff00, #00ff00, #0000ff, #4b0082, #8b00ff, #ff0000);
+    background-size: 400% 400%;
+    animation: rainbowFlow 15s ease infinite;
+    opacity: 0.3; /* Làm mờ để không chói mắt */
+  }
+  @keyframes rainbowFlow {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+  }
+
+  /* NỀN MA TRẬN XANH (Nằm trên nền 7 màu) */
+  #matrix-canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; opacity: 0.5; }
+
+  /* ================= CHỮ / SỐ 7 MÀU ================= */
+  .rainbow-text {
+    background-image: linear-gradient(to right, #ff0000, #ff7f00, #ffff00, #00ff00, #0000ff, #4b0082, #8b00ff, #ff0000);
+    background-size: 200% auto;
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    animation: rainbowText 3s linear infinite;
+    font-weight: 900;
+    text-shadow: 0 0 10px rgba(255,255,255,0.2);
+  }
+  @keyframes rainbowText {
+    to { background-position: 200% center; }
+  }
 
   .warning-banner {
     background: rgba(255, 215, 0, 0.2);
@@ -55,9 +86,9 @@
     background: rgba(15, 20, 15, 0.75); 
     padding: 25px; 
     border-radius: 16px; 
-    border: 1px solid rgba(0, 230, 118, 0.3); 
+    border: 1px solid rgba(255, 255, 255, 0.2); 
     margin-bottom: 20px; 
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8), inset 0 0 20px rgba(0, 230, 118, 0.05); 
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8), inset 0 0 20px rgba(255, 255, 255, 0.05); 
     position: relative; 
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
@@ -66,14 +97,14 @@
   h2 { 
     color: #00e676; text-shadow: 0 0 10px rgba(0, 230, 118, 0.5); 
     font-size: 1.2rem; text-transform: uppercase; 
-    border-bottom: 1px solid rgba(0, 230, 118, 0.2); 
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2); 
     padding-bottom: 12px; margin-bottom: 20px; text-align: center;
     font-family: 'Orbitron', sans-serif; letter-spacing: 1px;
   }
   
   input, select { 
     width: 100%; padding: 14px; margin-bottom: 15px; 
-    background: rgba(0, 0, 0, 0.6); border: 1px solid rgba(0, 230, 118, 0.3); 
+    background: rgba(0, 0, 0, 0.6); border: 1px solid rgba(255, 255, 255, 0.3); 
     color: #fff; border-radius: 10px; box-sizing: border-box; outline: none;
     font-size: 0.95rem; transition: all 0.3s ease;
   }
@@ -96,7 +127,7 @@
   
   .game-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px; }
   .game-btn { 
-    background: rgba(0, 0, 0, 0.5); border: 1px solid rgba(255, 255, 255, 0.1); 
+    background: rgba(0, 0, 0, 0.5); border: 1px solid rgba(255, 255, 255, 0.2); 
     padding: 15px; border-radius: 12px; display: flex; flex-direction: column; 
     align-items: center; cursor: pointer; transition: all 0.3s ease; 
   }
@@ -105,7 +136,7 @@
     box-shadow: 0 0 20px rgba(0, 230, 118, 0.2); transform: translateY(-3px);
   }
   .game-btn img { width: 70px; height: 70px; object-fit: contain; margin-bottom: 10px; border-radius: 12px; }
-  .game-btn span { font-weight: bold; color: #fff; font-size: 1rem; }
+  .game-btn span { font-weight: bold; font-size: 1rem; }
   
   .hidden { display: none !important; }
   
@@ -113,9 +144,9 @@
   .msg.err { background: rgba(255, 82, 82, 0.15); color: #ff5252; border: 1px solid #ff5252; }
   .msg.ok { background: rgba(0, 230, 118, 0.15); color: #00e676; border: 1px solid #00e676; }
   
-  .bank-box { background: rgba(0, 230, 118, 0.05); padding: 15px; border: 1px dashed rgba(0, 230, 118, 0.4); border-radius: 10px; margin-bottom: 15px; line-height: 1.8; font-size: 0.95rem; }
-  .card-box { background: rgba(181, 123, 255, 0.05); padding: 15px; border: 1px dashed rgba(181, 123, 255, 0.4); border-radius: 10px; margin-bottom: 15px; }
-  .autobuy-box { background: rgba(255, 215, 0, 0.05); padding: 15px; border: 1px dashed rgba(255, 215, 0, 0.4); border-radius: 10px; margin-bottom: 15px; }
+  .bank-box { background: rgba(0, 0, 0, 0.4); padding: 15px; border: 1px dashed rgba(255, 255, 255, 0.3); border-radius: 10px; margin-bottom: 15px; line-height: 1.8; font-size: 0.95rem; }
+  .card-box { background: rgba(0, 0, 0, 0.4); padding: 15px; border: 1px dashed rgba(255, 255, 255, 0.3); border-radius: 10px; margin-bottom: 15px; }
+  .autobuy-box { background: rgba(0, 0, 0, 0.4); padding: 15px; border: 1px dashed rgba(255, 255, 255, 0.3); border-radius: 10px; margin-bottom: 15px; }
   .bank-code-box { background: rgba(0, 230, 118, 0.1); border: 1px solid #00e676; padding: 15px; border-radius: 10px; margin-bottom: 15px; text-align: center; }
   .bank-code-box b { font-size: 1.4rem; color: #00e676; letter-spacing: 2px; text-shadow: 0 0 10px rgba(0, 230, 118, 0.5); }
 
@@ -153,14 +184,15 @@
   }
   .float-tool-btn:hover { transform: scale(1.1); }
   
-  /* TOOL DỰ ĐOÁN OVERLAY */
+  /* ================= TOOL DỰ ĐOÁN OVERLAY (TRONG SUỐT) ================= */
   .float-tool-box { 
     position: fixed; top: 160px; right: 20px; 
-    background: rgba(5, 10, 5, 0.85); border: 1px solid #00e676; 
-    border-radius: 12px; padding: 15px; z-index: 2147483647; 
-    display: none; text-align: center; backdrop-filter: blur(8px); 
-    box-shadow: 0 10px 30px rgba(0,0,0,0.8);
-    flex-direction: column; align-items: center; justify-content: center; width: 130px; 
+    background: rgba(0, 0, 0, 0.3); /* Trong suốt */
+    border: 1px solid rgba(255, 255, 255, 0.3); 
+    border-radius: 16px; padding: 15px; z-index: 2147483647; 
+    display: none; text-align: center; backdrop-filter: blur(15px); 
+    box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+    flex-direction: column; align-items: center; justify-content: center; width: 150px; 
   }
 
   .light-row { display: flex; align-items: center; justify-content: center; gap: 8px; margin-bottom: 10px; flex-direction: column; }
@@ -202,11 +234,13 @@
 </style>
 </head>
 <body>
+<!-- LỚP NỀN 7 MÀU CHẢY -->
+<div class="bg-rainbow"></div>
 <canvas id="matrix-canvas"></canvas>
 <div id="floatingBalance">Số dư: 0đ</div>
 
 <div class="app" id="mainApp">
-  <h1 style="text-align:center; color:#00e676; text-shadow:0 0 20px #00e676; font-family:'Orbitron', sans-serif; font-size: 2rem; margin-bottom: 20px;">Hai×bo AI STORE</h1>
+  <h1 class="rainbow-text" style="text-align:center; font-family:'Orbitron', sans-serif; font-size: 2.2rem; margin-bottom: 20px;">Hai×bo AI STORE</h1>
 
   <div class="warning-banner">
     ⚠️ TOOL CHỈ HỖ TRỢ 80% VÀ BẬT TỪ GIÂY 02 LÚC SẮP MỞ BÁT ⚠️
@@ -218,14 +252,14 @@
       (Bấm vào icon mua IB Admin)
     </a>
 
-    <h2>Nhập Key Để Vào Tool</h2>
+    <h2 class="rainbow-text">Nhập Key Để Vào Tool</h2>
     <input id="keyInput" type="password" placeholder="Nhập Key Đã Mua...">
     <button class="btn-main" onclick="checkKey()">XÁC NHẬN KEY</button>
     <div id="authMsg" class="msg err hidden"></div>
 
-    <hr style="border-color: rgba(0, 230, 118, 0.2); margin: 25px 0;">
+    <hr style="border-color: rgba(255, 255, 255, 0.2); margin: 25px 0;">
 
-    <h2>Tự Động Mua Key</h2>
+    <h2 class="rainbow-text">Tự Động Mua Key</h2>
     <div class="autobuy-box">
       <select id="buyDuration" style="margin-bottom:10px;">
         <option value="1|25000">Key 1 Ngày - 25.000đ</option>
@@ -240,11 +274,11 @@
 
     <div class="key-stock-box">Kho Key Hiện Tại: <b id="stockCount">Đang tải...</b> Key</div>
 
-    <hr style="border-color: rgba(0, 230, 118, 0.2); margin: 25px 0;">
+    <hr style="border-color: rgba(255, 255, 255, 0.2); margin: 25px 0;">
 
-    <h2>Nạp Tiền Mua Key</h2>
+    <h2 class="rainbow-text">Nạp Tiền Mua Key</h2>
     <div class="bank-box">
-      <p style="color:#00e676; font-weight:bold; margin-bottom:8px;">1. Chuyển Khoản Ngân Hàng</p>
+      <p class="rainbow-text" style="font-weight:bold; margin-bottom:8px;">1. Chuyển Khoản Ngân Hàng</p>
       <p>Ngân hàng: <b>LPBank</b></p>
       <p>Số TK: <b>0868866580</b></p>
       <p>Chủ TK: <b>MA VAN HUNG</b></p>
@@ -261,7 +295,7 @@
     <br><br>
     
     <div class="card-box">
-      <p style="color:#b57bff; font-weight:bold; margin-bottom:8px;">2. Nạp Thẻ Cào</p>
+      <p class="rainbow-text" style="font-weight:bold; margin-bottom:8px;">2. Nạp Thẻ Cào</p>
       <div style="display:flex; gap:10px;">
         <select id="cardType" style="flex:1;"><option>Viettel</option><option>Vina</option><option>Mobi</option></select>
         <select id="cardAmount" style="flex:1;"><option value="20000">20.000đ</option><option value="50000">50.000đ</option><option value="100000">100.000đ</option><option value="200000">200.000đ</option><option value="500000">500.000đ</option></select>
@@ -285,23 +319,23 @@
     <!-- TOOL TÀI XỈU (MẶC ĐỊNH) -->
     <div id="sectionTx">
       <div class="card">
-        <h2>Chọn Game Để Vào</h2>
+        <h2 class="rainbow-text">Chọn Game Để Vào</h2>
         <div class="game-grid">
           <div class="game-btn" onclick="openGame('sun')">
             <img src="https://cdnlogo.com/logos/s/63/sunwin.png" onerror="this.src='https://via.placeholder.com/70x70/000/00e676?text=Sunwin'">
-            <span>Sunwin</span>
+            <span class="rainbow-text">Sunwin</span>
           </div>
           <div class="game-btn" onclick="openGame('lc79')">
             <img src="https://via.placeholder.com/70x70/000/00e676?text=LC79" alt="LC79">
-            <span>LC79</span>
+            <span class="rainbow-text">LC79</span>
           </div>
           <div class="game-btn" onclick="openGame('b52')">
             <img src="https://i-b52.site/wp-content/uploads/2024/08/logo-b52-club-1.png" onerror="this.src='https://via.placeholder.com/70x70/000/00e676?text=B52'">
-            <span>B52 Club</span>
+            <span class="rainbow-text">B52 Club</span>
           </div>
           <div class="game-btn" onclick="openGame('iwin')">
             <img src="https://via.placeholder.com/70x70/000/00e676?text=iWin" alt="iWin">
-            <span>iWin Club</span>
+            <span class="rainbow-text">iWin Club</span>
           </div>
         </div>
         <button style="background:rgba(255,255,255,0.1); color:#fff; margin-top:10px; border:1px solid rgba(255,255,255,0.2);" onclick="location.reload()">Đăng Xuất</button>
@@ -311,24 +345,23 @@
     <!-- TOOL BÓNG ĐÁ F168 -->
     <div id="sectionF168" class="hidden">
       <div class="card">
-        <h2>AI Dự Đoán Bóng Đá F168</h2>
+        <h2 class="rainbow-text">AI Dự Đoán Bóng Đá F168</h2>
         <p style="font-size:0.85rem; color:#aaa; margin-bottom:15px; text-align:center;">Trái - Phải - Giữa</p>
         
-        <!-- Đã xóa nút AUTO, chỉ còn Phân Tích và Làm Mới -->
         <div class="btn-sub-row">
             <button class="btn-blue" id="btnF168" onclick="predictF168()" style="flex: 2;">PHÂN TÍCH</button>
             <button style="background:#ff3333; color:#fff; flex: 1;" onclick="document.getElementById('f168ResultBox').style.display='none'">LÀM MỚI</button>
         </div>
         
         <div id="f168ResultBox" class="f168-result">
-          <div id="f168Prediction" class="f168-prediction"></div>
+          <div id="f168Prediction" class="f168-prediction rainbow-text"></div>
           <div style="color:#00e676; font-weight:bold; margin-bottom:5px;">Độ Tự Tin: <span id="f168Conf"></span>%</div>
           <div id="f168Reason" style="font-size:0.8rem; color:#aaa; margin-top:10px;"></div>
         </div>
 
-        <hr style="border-color: rgba(0, 176, 255, 0.3); margin: 15px 0;">
+        <hr style="border-color: rgba(255, 255, 255, 0.2); margin: 15px 0;">
         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
-          <span style="color:#00b0ff; font-weight:bold; font-size:0.9rem;">Lịch Sử Dự Đoán</span>
+          <span class="rainbow-text" style="font-weight:bold; font-size:0.9rem;">Lịch Sử Dự Đoán</span>
           <button class="btn-red btn-sm" style="width:auto; margin:0; padding:5px 10px;" onclick="clearF168History()">Xóa Lịch Sử</button>
         </div>
         <div id="f168HistoryList" class="f168-history-list"></div>
@@ -338,13 +371,13 @@
     <!-- TOOL MD5 -->
     <div id="sectionMd5" class="hidden">
       <div class="card">
-        <h2>Giải Mã MD5</h2>
+        <h2 class="rainbow-text">Giải Mã MD5</h2>
         <p style="font-size:0.85rem; color:#aaa; margin-bottom:15px; text-align:center;">Nhập mã MD5 (từ 30 - 40 ký tự) để phân tích</p>
         <input id="md5Input" placeholder="Nhập chuỗi MD5...">
         <button class="btn-purple" id="btnMd5" onclick="analyzeMD5()">PHÂN TÍCH & GIẢI MÃ</button>
 
         <div id="md5ResultBox" class="md5-result">
-          <div style="color:#b57bff; font-weight:bold; font-size:0.9rem; margin-bottom:10px;">KẾT QUẢ GIẢI MÃ</div>
+          <div class="rainbow-text" style="font-weight:bold; font-size:0.9rem; margin-bottom:10px;">KẾT QUẢ GIẢI MÃ</div>
           <div id="md5ResultText" style="font-size:1.2rem; font-weight:bold; color:#fff; word-break:break-all;"></div>
           <div id="md5Reason" style="font-size:0.8rem; color:#aaa; margin-top:10px;"></div>
         </div>
@@ -354,18 +387,17 @@
     <!-- TOOL DỰ ĐOÁN AVIATOR B52 -->
     <div id="sectionAviator" class="hidden">
       <div class="card">
-        <h2>Dự Đoán Aviator B52</h2>
+        <h2 class="rainbow-text">Dự Đoán Aviator B52</h2>
         <p style="font-size:0.85rem; color:#aaa; margin-bottom:15px; text-align:center;">Thuật toán phân tích hệ số bay (X)</p>
         
-        <!-- Đã xóa nút AUTO, chỉ còn Phân Tích và Làm Mới -->
         <div class="btn-sub-row">
             <button class="btn-red" id="btnAviator" onclick="predictAviator()" style="flex: 2;">PHÂN TÍCH</button>
             <button style="background:#ff3333; color:#fff; flex: 1;" onclick="document.getElementById('aviatorResultBox').style.display='none'">LÀM MỚI</button>
         </div>
 
         <div id="aviatorResultBox" class="aviator-result">
-          <div style="color:#ff4d4d; font-weight:bold; font-size:0.9rem; margin-bottom:10px;">HỆ SỐ BAY DỰ KIẾN</div>
-          <div id="aviatorValue" class="aviator-value">1.00x</div>
+          <div class="rainbow-text" style="font-weight:bold; font-size:0.9rem; margin-bottom:10px;">HỆ SỐ BAY DỰ KIẾN</div>
+          <div id="aviatorValue" class="aviator-value rainbow-text">1.00x</div>
           <div id="aviatorReason" style="font-size:0.85rem; color:#aaa; margin-top:10px;"></div>
         </div>
       </div>
@@ -381,11 +413,12 @@
 
 <div id="floatBtn" class="float-tool-btn hidden" onclick="toggleTool()">🎮</div>
 
+<!-- TOOL DỰ ĐOÁN TRONG SUỐT -->
 <div id="toolBox" class="float-tool-box">
   <div class="light-row"><div id="lightTai" class="light red"></div><span class="label tai">TÀI</span></div>
   <div class="light-row"><div id="lightXiu" class="light green"></div><span class="label xiu">XỈU</span></div>
-  <div class="ai-text" id="aiStatus" style="width:100%; text-align:center;">AI: Chờ...</div>
-  <button style="padding:6px; font-size:11px; margin-top:10px; border-radius:6px; background: #ffcc4d; color: black; border: none; font-weight: bold; width: 100%; cursor: pointer; text-transform: uppercase;" onclick="manualRefreshAI()">🔄 LÀM MỚI</button>
+  <div class="ai-text" id="aiStatus" style="width:100%; text-align:center; font-size:11px;">AI: Chờ lệnh...</div>
+  <button style="padding:8px; font-size:12px; margin-top:10px; border-radius:6px; background: #00e676; color: black; border: none; font-weight: bold; width: 100%; cursor: pointer; text-transform: uppercase; box-shadow: 0 0 10px rgba(0,230,118,0.5);" onclick="runAI()">🚀 PHÂN TÍCH</button>
 </div>
 
 <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
@@ -428,7 +461,6 @@
   let isToolOpen = false, deviceCode = "", deviceInfo = { ip: "", location: "", device: "" };
   let userBalance = 0, userRef = null;
   
-  let gameInterval = null;
   let aiTimeout = null;
   
   let historyResults = []; 
@@ -554,7 +586,6 @@
     }).catch(e => { let m = document.getElementById('depMsg'); m.className = 'msg err'; m.classList.remove('hidden'); m.innerText = "Lỗi Firebase: " + e.message; });
   }
 
-  // CHUYỂN ĐỔI TOOL (TAB)
   function switchTool(tool) {
     document.getElementById('tabTx').classList.toggle('active', tool === 'tx');
     document.getElementById('tabF168').classList.toggle('active', tool === 'f168');
@@ -567,7 +598,6 @@
     document.getElementById('sectionAviator').classList.toggle('hidden', tool !== 'aviator');
   }
 
-  // TOOL DỰ ĐOÁN AVIATOR B52 (CHỈ CHẠY KHI BẤM)
   function predictAviator() {
     const btn = document.getElementById('btnAviator');
     const resBox = document.getElementById('aviatorResultBox');
@@ -584,15 +614,12 @@
       
       if (rand < 0.60) {
           multiplier = (Math.random() * 1.5 + 1.0).toFixed(2);
-          valEl.style.color = "#ff5252"; 
           reasonEl.innerText = "Hệ số thấp. Khuyên bỏ qua phiên này hoặc vào lệnh cực nhỏ.";
       } else if (rand < 0.90) {
           multiplier = (Math.random() * 7.5 + 2.5).toFixed(2);
-          valEl.style.color = "#ffd700"; 
           reasonEl.innerText = "Hệ số ổn định. Có thể cân nhắc vào lệnh ở mức trung bình.";
       } else {
           multiplier = (Math.random() * 40 + 10).toFixed(2);
-          valEl.style.color = "#00e676"; 
           reasonEl.innerText = "Cảnh báo: Hệ số bay cao hiếm gặp! Rủi ro cao nhưng lợi nhuận cực lớn.";
       }
 
@@ -607,7 +634,6 @@
     }, 1500);
   }
 
-  // AI DỰ ĐOÁN BÓNG ĐÁ F168 (CHỈ CHẠY KHI BẤM)
   function predictF168() {
     const btn = document.getElementById('btnF168');
     const resBox = document.getElementById('f168ResultBox');
@@ -623,7 +649,7 @@
       
       const predEl = document.getElementById('f168Prediction');
       predEl.innerText = pred;
-      predEl.className = "f168-prediction " + pred.toLowerCase();
+      predEl.className = "f168-prediction rainbow-text";
       
       document.getElementById('f168Conf').innerText = confidence;
       
@@ -652,7 +678,7 @@
     el.innerHTML = f168History.map(h => `
       <div class="f168-hist-item">
         <span style="color:#aaa">${h.time}</span>
-        <span style="font-weight:bold; color:${h.pred==='TRÁI'?'#ff5252':h.pred==='PHẢI'?'#00e676':'#ffd700'}">${h.pred}</span>
+        <span style="font-weight:bold;" class="rainbow-text">${h.pred}</span>
         <span style="color:#00e5ff">${h.conf}%</span>
       </div>
     `).join('');
@@ -666,7 +692,6 @@
     }
   }
 
-  // CÔNG CỤ GIẢI MÃ MD5
   function analyzeMD5() {
     const input = document.getElementById('md5Input').value.trim();
     const btn = document.getElementById('btnMd5');
@@ -704,7 +729,7 @@
       }
 
       resText.innerText = result;
-      resText.style.color = result === 'TÀI' ? '#00e676' : result === 'XỈU' ? '#ff3333' : '#ffd700';
+      resText.className = "rainbow-text"; // Áp dụng chữ 7 màu cho kết quả
       reasonText.innerText = reason;
       
       resBox.style.display = "block";
@@ -713,7 +738,6 @@
     }, 2000);
   }
 
-  // XỬ LÝ MỞ GAME VÀ THỜI GIAN 35s (TÀI XỈU) - GIỮ NGUYÊN AUTO NHƯ BẠN MUỐN
   function openGame(game) {
     if(game === 'b52' || game === 'iwin') {
       alert("Hệ thống B52 và iWin đang bảo trì, vui lòng quay lại sau!");
@@ -728,15 +752,12 @@
     if(game === 'sun') frame.src = "https://web.sunhot.win/?affId=Sunwin";
     else if(game === 'lc79') frame.src = "https://play.lc79d.vin/";
 
-    historyResults = [];
-    if(gameInterval) clearInterval(gameInterval);
+    historyResults = []; 
     
     isToolOpen = true; 
     document.getElementById('toolBox').style.display = 'flex';
-    runAI(); 
-    
-    // Đã đổi thành 35 giây (35000 ms) cho Tool Tài Xỉu
-    gameInterval = setInterval(() => { runAI(); }, 35000);
+    document.getElementById('aiStatus').innerText = "AI: Chờ lệnh...";
+    document.getElementById('aiStatus').style.color = "#ffd700";
   }
 
   function closeGame() {
@@ -746,7 +767,6 @@
     document.getElementById('toolBox').style.display = 'none'; 
     document.getElementById('gameFrame').src = "about:blank"; 
     isToolOpen = false;
-    if(gameInterval) clearInterval(gameInterval); 
     if(aiTimeout) clearTimeout(aiTimeout);
   }
 
@@ -755,33 +775,27 @@
     document.getElementById('toolBox').style.display = isToolOpen ? 'flex' : 'none';
   }
 
-  // HÀM LÀM MỚI THỦ CÔNG TỪ TOOL NỔI
-  function manualRefreshAI() {
-    if (!isToolOpen) return;
-    if (gameInterval) clearInterval(gameInterval);
-    if (aiTimeout) clearTimeout(aiTimeout);
-    
-    runAI(); 
-    // Đã đổi thành 35 giây (35000 ms) cho Tool Tài Xỉu
-    gameInterval = setInterval(() => { runAI(); }, 35000); 
-  }
-
-  // THUẬT TOÁN TÀI XỈU (50 - 85%)
   function runAI() {
     if(!isToolOpen) return; 
 
     const tai = document.getElementById('lightTai'), xiu = document.getElementById('lightXiu'), aiStatus = document.getElementById('aiStatus');
-    tai.className = 'light red'; xiu.className = 'light green'; aiStatus.innerText = "AI: Đang phân tích..."; aiStatus.style.color = "#ffd700";
+    
+    tai.className = 'light red'; 
+    xiu.className = 'light green'; 
+    aiStatus.innerHTML = "AI: Đang phân tích..."; 
+    aiStatus.style.color = "#ffd700";
 
     if(aiTimeout) clearTimeout(aiTimeout);
 
     aiTimeout = setTimeout(() => {
       let predict = "TAI";
       let confidence = 50;
+      let algoNote = "";
 
       if (historyResults.length < 3) {
-         predict = (Date.now() % 2 === 0) ? "TAI" : "XIU";
-         confidence = Math.floor(Math.random() * 10) + 50;
+         predict = (new Date().getSeconds() % 2 === 0) ? "TAI" : "XIU";
+         confidence = Math.floor(Math.random() * 15) + 55;
+         algoNote = "Cầu khởi điểm";
       } 
       else {
         let last = historyResults[historyResults.length - 1];
@@ -789,17 +803,21 @@
         let last3 = historyResults[historyResults.length - 3];
 
         if (last === "TAI" && last2 === "TAI" && last3 === "TAI") {
-           predict = "XIU"; confidence = Math.floor(Math.random() * 16) + 70;
+           predict = "XIU"; confidence = Math.floor(Math.random() * 16) + 75;
+           algoNote = "Bẻ cầu bệt Tài";
         }
         else if (last === "XIU" && last2 === "XIU" && last3 === "XIU") {
-           predict = "TAI"; confidence = Math.floor(Math.random() * 16) + 70;
+           predict = "TAI"; confidence = Math.floor(Math.random() * 16) + 75;
+           algoNote = "Bẻ cầu bệt Xỉu";
         }
         else if (last !== last2 && last2 !== last3 && last !== last3) {
            predict = (last === "TAI") ? "XIU" : "TAI";
            confidence = Math.floor(Math.random() * 11) + 65;
+           algoNote = "Bắt cầu 1-1";
         }
         else {
            predict = last; confidence = Math.floor(Math.random() * 11) + 60;
+           algoNote = "Cầu đang có lợi thế";
         }
       }
 
@@ -810,10 +828,14 @@
       if(confidence > 85) confidence = 85;
 
       if(predict === "TAI") {
-        tai.classList.add('active-red'); aiStatus.innerText = `AI: TÀI (${confidence}%)`; aiStatus.style.color = "#ff3333";
+        tai.classList.add('active-red'); 
+        aiStatus.innerHTML = `AI: TÀI (${confidence}%)<br><span style="font-size:10px;color:#aaa">${algoNote}</span>`; 
+        aiStatus.style.color = "#ff3333";
         setTimeout(() => { tai.classList.remove('active-red'); }, 1600);
       } else {
-        xiu.classList.add('active-green'); aiStatus.innerText = `AI: XỈU (${confidence}%)`; aiStatus.style.color = "#00e676";
+        xiu.classList.add('active-green'); 
+        aiStatus.innerHTML = `AI: XỈU (${confidence}%)<br><span style="font-size:10px;color:#aaa">${algoNote}</span>`; 
+        aiStatus.style.color = "#00e676";
         setTimeout(() => { xiu.classList.remove('active-green'); }, 1600);
       }
     }, 1500); 
