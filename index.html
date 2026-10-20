@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Hai×bo · Tool </title>
+<title>Hai×bo · Tool AI Tài Xỉu & F168 & MD5</title>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&display=swap');
 
@@ -281,8 +281,8 @@
         </div>
 
         <div class="prediction-panel">
-          <!-- CẬP NHẬT PHẦN MÃ PHIÊN CÓ THÊM - SUNWIN -->
-          <div class="session-id">Mã Phiên: <span id="sessionIdDisplay">#459680</span> <span class="game-tag">- Sunwin</span></div>
+          <!-- CẬP NHẬT MÃ PHIÊN THÀNH 459685 -->
+          <div class="session-id">Mã Phiên: <span id="sessionIdDisplay">#459685</span> <span class="game-tag">- Sunwin</span></div>
           
           <div class="light-container">
             <div class="light-box">
@@ -304,7 +304,6 @@
             <button id="btnLose" class="btn-red" onclick="handleResult('LOSE')" disabled>THUA</button>
           </div>
 
-          <!-- PHẦN LỊCH SỬ THẮNG THUA MỚI THÊM -->
           <hr style="border-color: rgba(0, 230, 118, 0.2); margin: 15px 0;">
           <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
             <span style="color:#00e676; font-weight:bold; font-size:0.85rem;">Lịch Sử Thắng / Thua</span>
@@ -407,15 +406,13 @@
   
   let f168History = JSON.parse(localStorage.getItem('f168_history') || "[]");
 
-  // BIẾN TOOL TÀI XỈU (CHẠY NGẦM)
-  let currentSessionId = parseInt(localStorage.getItem('tx_session_id') || "459680");
-  let sessionStartTime = parseInt(localStorage.getItem('tx_session_start') || "0");
+  // BIẾN TOOL TÀI XỈU (CHẠY NGẦM) - ĐÃ ĐỔI KEY LƯU TRỮ SANG _v2 ĐỂ RESET VỀ 459685
+  let currentSessionId = parseInt(localStorage.getItem('tx_session_id_v2') || "459685");
+  let sessionStartTime = parseInt(localStorage.getItem('tx_session_start_v2') || "0");
   let lastPrediction = localStorage.getItem('tx_last_prediction') || "TAI";
   let lastConfidence = parseInt(localStorage.getItem('tx_last_confidence') || "50");
   
   let historyResults = JSON.parse(localStorage.getItem('tx_history_results') || "[]");
-  
-  // BIẾN LƯU LỊCH SỬ THẮNG THUA
   let winLossHistory = JSON.parse(localStorage.getItem('tx_win_loss_history') || "[]");
   
   let uiInterval = null;
@@ -500,7 +497,7 @@
     
     if (sessionStartTime === 0 || (now - sessionStartTime) > 3600000) {
       sessionStartTime = now;
-      localStorage.setItem('tx_session_start', sessionStartTime);
+      localStorage.setItem('tx_session_start_v2', sessionStartTime);
       generateNewPrediction();
     } else {
       let timePassed = Math.floor((now - sessionStartTime) / 1000);
@@ -508,11 +505,11 @@
       if (timePassed >= 65) {
         let sessionsPassed = Math.floor(timePassed / 65);
         currentSessionId += sessionsPassed;
-        localStorage.setItem('tx_session_id', currentSessionId);
+        localStorage.setItem('tx_session_id_v2', currentSessionId);
         
         let remainingTime = timePassed % 65;
         sessionStartTime = now - (remainingTime * 1000);
-        localStorage.setItem('tx_session_start', sessionStartTime);
+        localStorage.setItem('tx_session_start_v2', sessionStartTime);
         
         generateNewPrediction();
       } else {
@@ -527,9 +524,9 @@
       
       if (left <= 0) {
         sessionStartTime = Date.now();
-        localStorage.setItem('tx_session_start', sessionStartTime);
+        localStorage.setItem('tx_session_start_v2', sessionStartTime);
         currentSessionId++;
-        localStorage.setItem('tx_session_id', currentSessionId);
+        localStorage.setItem('tx_session_id_v2', currentSessionId);
         
         generateNewPrediction();
       } else {
@@ -602,21 +599,15 @@
 
   // XỬ LÝ KHI BẤM THẮNG/THUA
   function handleResult(type) {
-    // Khóa nút ngay lập tức
     document.getElementById('btnWin').disabled = true;
     document.getElementById('btnLose').disabled = true;
     
-    // Thêm vào mảng lịch sử
     const time = new Date().toLocaleTimeString('vi-VN');
     winLossHistory.unshift({ session: currentSessionId, result: type, time: time });
     
-    // Chỉ giữ lại 15 phiên gần nhất
     if(winLossHistory.length > 15) winLossHistory.pop();
     
-    // Lưu vào bộ nhớ
     localStorage.setItem('tx_win_loss_history', JSON.stringify(winLossHistory));
-    
-    // Render lại danh sách
     renderWinLossHistory();
   }
 
