@@ -1,1121 +1,304 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Hai×bo · Tool AI Tài Xỉu & F168 & MD5 & Aviator</title>
-<style>
-  @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&display=swap');
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TOOL DỰ ĐOÁN LC79</title>
+    <style>
+        body {
+            background-color: #0a0000;
+            color: #fff;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            background-image: radial-gradient(circle at 50% 0%, #330000 0%, #0a0000 70%);
+        }
 
-  body { 
-    background: #000; 
-    color: #fff; 
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
-    display: flex; 
-    justify-content: center; 
-    padding: 20px; 
-    min-height: 100vh; 
-    margin: 0; 
-    overflow-x: hidden;
-  }
-  
-  .app { width: 100%; max-width: 520px; position: relative; z-index: 10; }
-  
-  /* ================= BACKGROUND 7 MÀU CHẢY ================= */
-  .bg-rainbow {
-    position: fixed;
-    top: 0; left: 0; width: 100vw; height: 100vh;
-    z-index: -2;
-    background: linear-gradient(45deg, #ff0000, #ff7f00, #ffff00, #00ff00, #0000ff, #4b0082, #8b00ff, #ff0000);
-    background-size: 400% 400%;
-    animation: rainbowFlow 15s ease infinite;
-    opacity: 0.3;
-  }
-  @keyframes rainbowFlow {
-    0% { background-position: 0% 50%; }
-    50% { background-position: 100% 50%; }
-    100% { background-position: 0% 50%; }
-  }
+        .tool-container {
+            background: rgba(20, 0, 0, 0.8);
+            border: 1px solid #ff3333;
+            border-radius: 15px;
+            padding: 25px;
+            width: 90%;
+            max-width: 400px;
+            text-align: center;
+            box-shadow: 0 0 20px rgba(255, 51, 51, 0.3);
+            backdrop-filter: blur(10px);
+        }
 
-  /* NỀN MA TRẬN XANH */
-  #matrix-canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; opacity: 0.5; }
+        /* THÔNG BÁO BẢO TRÌ NHẤP NHÁY */
+        .maintenance-alert {
+            background-color: #ffcc00;
+            color: #000;
+            font-weight: bold;
+            padding: 10px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            animation: blink 1.5s infinite;
+            font-size: 14px;
+            text-transform: uppercase;
+        }
 
-  /* ================= CHỮ / SỐ 7 MÀU ================= */
-  .rainbow-text {
-    background-image: linear-gradient(to right, #ff0000, #ff7f00, #ffff00, #00ff00, #0000ff, #4b0082, #8b00ff, #ff0000);
-    background-size: 200% auto;
-    -webkit-background-clip: text;
-    background-clip: text;
-    color: transparent;
-    animation: rainbowText 3s linear infinite;
-    font-weight: 900;
-    text-shadow: 0 0 10px rgba(255,255,255,0.2);
-  }
-  @keyframes rainbowText {
-    to { background-position: 200% center; }
-  }
+        @keyframes blink {
+            0% { opacity: 1; box-shadow: 0 0 15px #ffcc00; }
+            50% { opacity: 0.5; box-shadow: 0 0 5px #ffcc00; }
+            100% { opacity: 1; box-shadow: 0 0 15px #ffcc00; }
+        }
 
-  .warning-banner {
-    background: rgba(255, 215, 0, 0.2);
-    border: 1px solid #ffd700;
-    color: #ffd700;
-    text-align: center;
-    padding: 12px;
-    border-radius: 10px;
-    font-weight: 900;
-    font-size: 0.85rem;
-    margin-bottom: 20px;
-    box-shadow: 0 0 15px rgba(255, 215, 0, 0.3);
-    text-transform: uppercase;
-    animation: pulseWarning 2s infinite alternate;
-  }
-  @keyframes pulseWarning {
-    0% { opacity: 0.7; }
-    100% { opacity: 1; text-shadow: 0 0 10px #ffd700; }
-  }
+        /* KHU VỰC MÃ PHIÊN VÀ ĐẾM NGƯỢC */
+        .session-box {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #000;
+            padding: 12px;
+            border-radius: 8px;
+            border: 1px dashed #555;
+            margin-bottom: 20px;
+        }
 
-  #floatingBalance { 
-    position: fixed; top: 15px; right: 15px; 
-    background: linear-gradient(135deg, rgba(0, 230, 118, 0.9), rgba(0, 150, 70, 0.9)); 
-    color: #000; padding: 10px 20px; border-radius: 30px; font-weight: 900; font-size: 1.1rem; 
-    z-index: 2147483647; box-shadow: 0 5px 15px rgba(0, 230, 118, 0.4); border: 2px solid #fff;
-    backdrop-filter: blur(10px);
-  }
+        .session-id {
+            font-size: 18px;
+            font-weight: bold;
+            color: #00e5ff;
+        }
 
-  .card { 
-    background: rgba(15, 20, 15, 0.75); 
-    padding: 25px; 
-    border-radius: 16px; 
-    border: 1px solid rgba(255, 255, 255, 0.2); 
-    margin-bottom: 20px; 
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8), inset 0 0 20px rgba(255, 255, 255, 0.05); 
-    position: relative; 
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-  }
-  
-  h2 { 
-    color: #00e676; text-shadow: 0 0 10px rgba(0, 230, 118, 0.5); 
-    font-size: 1.2rem; text-transform: uppercase; 
-    border-bottom: 1px solid rgba(255, 255, 255, 0.2); 
-    padding-bottom: 12px; margin-bottom: 20px; text-align: center;
-    font-family: 'Orbitron', sans-serif; letter-spacing: 1px;
-  }
-  
-  input, select { 
-    width: 100%; padding: 14px; margin-bottom: 15px; 
-    background: rgba(0, 0, 0, 0.6); border: 1px solid rgba(255, 255, 255, 0.3); 
-    color: #fff; border-radius: 10px; box-sizing: border-box; outline: none;
-    font-size: 0.95rem; transition: all 0.3s ease;
-  }
-  input:focus, select:focus { 
-    border-color: #00e676; box-shadow: 0 0 15px rgba(0, 230, 118, 0.3); 
-    background: rgba(0, 20, 10, 0.8);
-  }
-  
-  button { 
-    width: 100%; padding: 15px; border: none; border-radius: 12px; 
-    font-weight: 800; font-size: 1rem; cursor: pointer; margin-bottom: 12px; 
-    transition: all 0.3s ease; text-transform: uppercase; letter-spacing: 1px;
-  }
-  button:active { transform: scale(0.97); }
-  button:disabled { opacity: 0.6; cursor: not-allowed; transform: none !important; }
-  
-  .btn-main { background: linear-gradient(135deg, #00e676, #008f4c); color: #000; box-shadow: 0 5px 15px rgba(0, 230, 118, 0.3); }
-  .btn-green { background: linear-gradient(135deg, #00b359, #008f4c); color: #fff; box-shadow: 0 5px 15px rgba(0, 179, 89, 0.3); }
-  .btn-purple { background: linear-gradient(135deg, #b57bff, #8f5ce0); color: #fff; box-shadow: 0 5px 15px rgba(181, 123, 255, 0.3); }
-  .btn-blue { background: linear-gradient(135deg, #00b0ff, #0077ff); color: #fff; box-shadow: 0 5px 15px rgba(0, 176, 255, 0.3); }
-  .btn-red { background: linear-gradient(135deg, #ff3333, #cc0000); color: #fff; }
-  
-  .game-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px; }
-  .game-btn { 
-    background: rgba(0, 0, 0, 0.5); border: 1px solid rgba(255, 255, 255, 0.2); 
-    padding: 15px; border-radius: 12px; display: flex; flex-direction: column; 
-    align-items: center; cursor: pointer; transition: all 0.3s ease; 
-  }
-  .game-btn:hover { 
-    border-color: #00e676; background: rgba(0, 230, 118, 0.1); 
-    box-shadow: 0 0 20px rgba(0, 230, 118, 0.2); transform: translateY(-3px);
-  }
-  .game-btn img { width: 70px; height: 70px; object-fit: contain; margin-bottom: 10px; border-radius: 12px; }
-  .game-btn span { font-weight: bold; font-size: 1rem; }
-  
-  .hidden { display: none !important; }
-  
-  .msg { padding: 12px; border-radius: 8px; font-size: 0.9rem; font-weight: bold; margin-top: 15px; text-align: center; }
-  .msg.err { background: rgba(255, 82, 82, 0.15); color: #ff5252; border: 1px solid #ff5252; }
-  .msg.ok { background: rgba(0, 230, 118, 0.15); color: #00e676; border: 1px solid #00e676; }
-  
-  .bank-box { background: rgba(0, 0, 0, 0.4); padding: 15px; border: 1px dashed rgba(255, 255, 255, 0.3); border-radius: 10px; margin-bottom: 15px; line-height: 1.8; font-size: 0.95rem; }
-  .card-box { background: rgba(0, 0, 0, 0.4); padding: 15px; border: 1px dashed rgba(255, 255, 255, 0.3); border-radius: 10px; margin-bottom: 15px; }
-  .autobuy-box { background: rgba(0, 0, 0, 0.4); padding: 15px; border: 1px dashed rgba(255, 255, 255, 0.3); border-radius: 10px; margin-bottom: 15px; }
-  .bank-code-box { background: rgba(0, 230, 118, 0.1); border: 1px solid #00e676; padding: 15px; border-radius: 10px; margin-bottom: 15px; text-align: center; }
-  .bank-code-box b { font-size: 1.4rem; color: #00e676; letter-spacing: 2px; text-shadow: 0 0 10px rgba(0, 230, 118, 0.5); }
+        .timer {
+            font-size: 18px;
+            font-weight: bold;
+            color: #ff3333;
+            font-family: monospace;
+        }
 
-  .tiktok-icon { 
-    position: absolute; top: -15px; right: 15px; padding: 8px 15px; 
-    background: #000; border-radius: 30px; border: 1px solid #ff007f; 
-    display: flex; align-items: center; gap: 8px; 
-    box-shadow: 0 0 15px rgba(255, 0, 127, 0.4); 
-    text-decoration: none; color: #fff; font-size: 0.8rem; font-weight: bold; z-index: 10;
-  }
-  .tiktok-icon svg { width: 18px; height: 18px; fill: #fff; }
+        /* KHU VỰC HIỂN THỊ DỰ ĐOÁN */
+        .predict-box {
+            background: #111;
+            border: 1px solid #333;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 15px;
+            min-height: 110px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
 
-  /* TAB CHUYỂN ĐỔI TOOL */
-  .tool-tabs { display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; }
-  .tool-tabs button { flex: 1; min-width: 45%; background: rgba(0,0,0,0.6); border: 1px solid rgba(255,255,255,0.2); color: #888; padding: 10px 5px; font-size: 0.85rem; margin-bottom: 0; }
-  .tool-tabs button.active { background: rgba(0, 230, 118, 0.15); border-color: #00e676; color: #00e676; box-shadow: 0 0 10px rgba(0,230,118,0.3); }
+        .predict-result {
+            font-size: 35px;
+            font-weight: bold;
+            color: #00ff00;
+            text-shadow: 0 0 10px rgba(0, 255, 0, 0.5);
+        }
 
-  /* KHU VỰC GAME VÀ TOOL OVERLAY */
-  #gameOverlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: 99998; background: #000; display: none; flex-direction: column; }
-  #gameFrame { width: 100%; height: 100%; border: none; flex: 1; }
-  
-  #closeGameBtn { 
-    position: absolute; top: 15px; left: 15px; background: rgba(255, 0, 0, 0.5); color: white; 
-    padding: 8px 15px; border-radius: 8px; z-index: 99999; font-weight: bold; cursor: pointer; 
-    border: 1px solid rgba(255,0,0,0.8); font-size: 12px; width: auto; margin: 0; backdrop-filter: blur(5px);
-  }
-  
-  /* NÚT NỔI 🎮 */
-  .float-tool-btn { 
-    position: fixed; top: 80px; right: 15px; width: 45px; height: 45px; 
-    background: rgba(0, 230, 118, 0.7); border-radius: 50%; border: 2px solid #00e676; 
-    box-shadow: 0 0 20px #00e676; z-index: 2147483647; display: flex; align-items: center; 
-    justify-content: center; font-size: 20px; cursor: pointer; backdrop-filter: blur(5px);
-    transition: 0.3s;
-  }
-  .float-tool-btn:hover { transform: scale(1.1); }
-  
-  /* ================= TOOL DỰ ĐOÁN OVERLAY ================= */
-  .float-tool-box { 
-    position: fixed; top: 130px; right: 15px; 
-    background: rgba(0, 0, 0, 0.3);
-    border: 1px solid rgba(255, 255, 255, 0.3); 
-    border-radius: 12px; padding: 10px 8px; z-index: 2147483647; 
-    display: none; text-align: center; backdrop-filter: blur(15px); 
-    box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
-    flex-direction: column; align-items: center; justify-content: center; width: 110px;
-  }
+        .predict-type {
+            font-size: 28px;
+            font-weight: bold;
+            color: #fff;
+        }
 
-  .light-row { display: flex; align-items: center; justify-content: space-around; width: 100%; margin-bottom: 5px; }
-  .light-col { display: flex; flex-direction: column; align-items: center; }
-  .light { width: 16px; height: 16px; border-radius: 50%; border: 1px solid rgba(255,255,255,0.3); margin-bottom: 2px; }
-  .light.red { background: #300; } .light.green { background: #030; }
-  .light.active-red { animation: flashRed 0.4s 4 alternate; }
-  @keyframes flashRed { 0% { background: #ff0000; box-shadow: 0 0 20px #ff0000; } 100% { background: #500; box-shadow: none; } }
-  .light.active-green { animation: flashGreen 0.4s 4 alternate; }
-  @keyframes flashGreen { 0% { background: #00ff00; box-shadow: 0 0 20px #00ff00; } 100% { background: #050; box-shadow: none; } }
-  
-  .label { font-size: 12px; font-weight: 900; text-shadow: 1px 1px 2px #000; }
-  .label.tai { color: #ff3333; } .label.xiu { color: #00e676; }
-  
-  .dice-container { display: flex; justify-content: center; gap: 4px; margin: 4px 0; font-size: 22px; line-height: 1; text-shadow: 0 0 5px rgba(255,255,255,0.5); }
-  .ai-text { font-size: 10px; color: #00e5ff; font-weight: 900; margin-top: 4px; text-shadow: 1px 1px 2px #000; line-height: 1.2; }
-  
-  .key-stock-box { text-align: center; color: #aaa; font-size: 0.9rem; margin-top: 15px; padding: 12px; border: 1px dashed rgba(255,255,255,0.2); border-radius: 10px; background: rgba(0,0,0,0.4);}
-  .key-stock-box b { color: #00e676; font-size: 1.3rem; text-shadow: 0 0 10px rgba(0,230,118,0.5); }
+        /* KHU VỰC KHẢO SÁT (THẮNG/THUA) */
+        .survey-box {
+            background: rgba(0, 255, 0, 0.05);
+            border: 1px solid #004400;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 15px;
+            display: none; /* Ẩn lúc đầu */
+        }
 
-  /* F168 UI */
-  .f168-result { background: #000; border: 1px solid #00b0ff; padding: 15px; border-radius: 10px; margin-top: 15px; text-align: center; display: none; }
-  .f168-prediction { font-size: 2rem; font-weight: 900; font-family: 'Orbitron', sans-serif; margin: 10px 0; }
-  .f168-prediction.trai { color: #ff5252; }
-  .f168-prediction.phai { color: #00e676; }
-  .f168-prediction.giua { color: #ffd700; }
-  .f168-history-list { max-height: 150px; overflow-y: auto; display: flex; flex-direction: column; gap: 5px; margin-top: 10px; }
-  .f168-hist-item { display: flex; justify-content: space-between; font-size: 0.8rem; padding: 5px 10px; background: rgba(255,255,255,0.05); border-radius: 5px; }
+        .survey-title {
+            font-size: 13px;
+            color: #ccc;
+            margin-bottom: 10px;
+        }
 
-  /* MD5 UI */
-  .md5-result { background: #000; border: 1px solid #b57bff; padding: 15px; border-radius: 10px; margin-top: 15px; text-align: center; display: none; }
-  .loading { display: inline-block; width: 15px; height: 15px; border: 3px solid rgba(255,255,255,0.3); border-radius: 50%; border-top-color: #fff; animation: spin 1s infinite; vertical-align: middle; margin-right: 5px; }
-  @keyframes spin { to { transform: rotate(360deg); } }
+        .btn-group {
+            display: flex;
+            gap: 10px;
+        }
 
-  /* AVIATOR UI */
-  .aviator-result { background: #000; border: 1px solid #ff4d4d; padding: 15px; border-radius: 10px; margin-top: 15px; text-align: center; display: none; }
-  .aviator-value { font-size: 3rem; font-weight: 900; font-family: 'Orbitron', sans-serif; margin: 15px 0; text-shadow: 0 0 20px currentColor; }
+        .btn-survey {
+            flex: 1;
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.2s;
+        }
 
-  .btn-sub-row { display: flex; gap: 10px; margin-bottom: 12px; }
-  .btn-sub-row button { flex: 1; padding: 10px; font-size: 0.85rem; margin-bottom: 0; }
+        .btn-win { background-color: #00e676; color: #000; }
+        .btn-win:hover { background-color: #00c853; }
+        
+        .btn-loss { background-color: #ff3333; color: #fff; }
+        .btn-loss:hover { background-color: #d50000; }
 
-  /* ================= GIAO DIỆN THẢO LUẬN ================= */
-  #btnOpenChat {
-    position: fixed; bottom: 20px; left: 20px;
-    background: linear-gradient(135deg, #00b0ff, #0077ff);
-    color: #fff; padding: 12px 20px; border-radius: 30px;
-    font-weight: bold; cursor: pointer; z-index: 99999;
-    box-shadow: 0 5px 15px rgba(0, 176, 255, 0.4);
-    border: 2px solid #fff; display: flex; align-items: center; gap: 8px;
-    font-size: 14px; transition: 0.3s;
-  }
-  #btnOpenChat:hover { transform: scale(1.05); }
-
-  #chatModal {
-    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-    background: rgba(0,0,0,0.8); backdrop-filter: blur(5px);
-    z-index: 2147483647; display: none; justify-content: center; align-items: center;
-    padding: 15px;
-  }
-  .chat-container {
-    background: #121212; width: 100%; max-width: 500px; height: 80vh;
-    border-radius: 15px; border: 1px solid #00b0ff;
-    display: flex; flex-direction: column; overflow: hidden;
-    box-shadow: 0 10px 40px rgba(0, 176, 255, 0.3);
-  }
-  .chat-header {
-    background: #1a1a1a; padding: 15px; display: flex; justify-content: space-between;
-    align-items: center; border-bottom: 1px solid #333;
-  }
-  .chat-header h3 { margin: 0; color: #00b0ff; font-size: 16px; }
-  .chat-header button { width: auto; margin: 0; padding: 5px 10px; background: #ff4d4d; font-size: 12px; border-radius: 5px; }
-  
-  .chat-messages {
-    flex: 1; padding: 15px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px;
-    background: #0a0a0a;
-  }
-  .chat-msg {
-    background: #1e1e1e; padding: 10px; border-radius: 8px; font-size: 14px;
-    border-left: 3px solid #00b0ff; word-wrap: break-word;
-  }
-  .chat-msg .name { color: #00e676; font-weight: bold; font-size: 12px; margin-bottom: 3px; display: flex; justify-content: space-between; }
-  .chat-msg .name span { color: #888; font-weight: normal; font-size: 11px; }
-  .chat-msg .text { color: #ddd; margin-bottom: 5px; }
-  .chat-msg img { max-width: 100%; border-radius: 5px; margin-top: 5px; border: 1px solid #444; cursor: pointer; }
-
-  .chat-input-area {
-    padding: 10px; background: #1a1a1a; border-top: 1px solid #333;
-    display: flex; flex-direction: column; gap: 8px;
-  }
-  .chat-input-area input[type="text"] { margin: 0; padding: 10px; font-size: 13px; }
-  .chat-input-area .file-row { display: flex; gap: 10px; align-items: center; }
-  .chat-input-area input[type="file"] { flex: 1; font-size: 12px; color: #aaa; margin: 0; padding: 5px; background: transparent; border: 1px dashed #555; }
-  .chat-input-area button { margin: 0; padding: 10px; font-size: 14px; }
-  .preview-img { max-height: 50px; border-radius: 5px; display: none; }
-</style>
+        /* THỐNG KÊ AI */
+        .ai-stats {
+            font-size: 12px;
+            color: #aaa;
+            text-align: left;
+            background: #000;
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid #222;
+        }
+        .ai-stats span { color: #00e5ff; font-weight: bold;}
+        .ai-stats .green { color: #00ff00; }
+    </style>
 </head>
 <body>
-<!-- LỚP NỀN 7 MÀU CHẢY -->
-<div class="bg-rainbow"></div>
-<canvas id="matrix-canvas"></canvas>
-<div id="floatingBalance">Số dư: 0đ</div>
 
-<!-- NÚT MỞ THẢO LUẬN -->
-<div id="btnOpenChat" onclick="openChat()">💬 Thảo Luận</div>
-
-<div class="app" id="mainApp">
-  <h1 class="rainbow-text" style="text-align:center; font-family:'Orbitron', sans-serif; font-size: 2.2rem; margin-bottom: 20px;">Hai×bo AI STORE</h1>
-
-  <div class="warning-banner">
-    ⚠️ TOOL CHỈ HỖ TRỢ 80% VÀ KHI GÃY QUÁ 3 TAY BẺ TOOL ⚠️
-  </div>
-
-  <div id="authView" class="card">
-    <a href="https://www.tiktok.com/@nousser64?_r=1&_t=ZS-9AeEvdyWy8G" target="_blank" class="tiktok-icon">
-      <svg viewBox="0 0 24 24"><path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64 2.93 2.93 0 0 1 .88.13V9.4a6.84 6.84 0 0 0-1-.05A6.33 6.33 0 0 0 5 20.1a6.34 6.34 0 0 0 10.86-4.43v-7a8.16 8.16 0 0 0 4.77 1.52v-3.4a4.85 4.85 0 0 1-1-.1z"></path></svg>
-      (Bấm vào icon mua IB Admin)
-    </a>
-
-    <h2 class="rainbow-text">Nhập Key Để Vào Tool</h2>
-    <input id="keyInput" type="password" placeholder="Nhập Key Đã Mua...">
-    <button class="btn-main" onclick="checkKey()">XÁC NHẬN KEY</button>
-    <div id="authMsg" class="msg err hidden"></div>
-
-    <hr style="border-color: rgba(255, 255, 255, 0.2); margin: 25px 0;">
-
-    <h2 class="rainbow-text">Tự Động Mua Key</h2>
-    <div class="autobuy-box">
-      <select id="buyDuration" style="margin-bottom:10px;">
-        <option value="1|25000">Key 1 Ngày - 25.000đ</option>
-        <option value="7|75000">Key 1 Tuần - 75.000đ</option>
-        <option value="30|200000">Key 1 Tháng - 200.000đ</option>
-        <option value="0|450000">Key Vĩnh Viễn - 450.000đ</option>
-      </select>
-      <button class="btn-main" style="background:linear-gradient(135deg, #ffd700, #ff8c00); color:#000; box-shadow: 0 5px 15px rgba(255, 215, 0, 0.3);" onclick="autoBuyKey()">MUA NGAY</button>
-      <div id="buyMsg" class="msg hidden"></div>
-      <div id="boughtKeyDisplay" style="background:#000; padding:12px; border-radius:8px; border:1px dashed #00e676; color:#00e676; font-size:1.2rem; font-weight:bold; text-align:center; margin-top:15px; display:none; user-select:all;"></div>
+<div class="tool-container">
+    <!-- THÔNG BÁO BẢO TRÌ -->
+    <div class="maintenance-alert">
+        ⚠️ GAME LC79 ĐANG BẢO TRÌ ⚠️
     </div>
 
-    <div class="key-stock-box">Kho Key Hiện Tại: <b id="stockCount">Đang tải...</b> Key</div>
-
-    <hr style="border-color: rgba(255, 255, 255, 0.2); margin: 25px 0;">
-
-    <h2 class="rainbow-text">Nạp Tiền Mua Key</h2>
-    <div class="bank-box">
-      <p class="rainbow-text" style="font-weight:bold; margin-bottom:8px;">1. Chuyển Khoản Ngân Hàng</p>
-      <p>Ngân hàng: <b>LPBank</b></p>
-      <p>Số TK: <b>0868866580</b></p>
-      <p>Chủ TK: <b>MA VAN HUNG</b></p>
-    </div>
-    
-    <div class="bank-code-box">
-      <p>Nội dung CK (Mã thiết bị của bạn):</p>
-      <b id="deviceBankCode">Đang tạo...</b>
-    </div>
-    
-    <input id="bankAmount" type="number" placeholder="Nhập số tiền đã chuyển (Tối thiểu 10k)...">
-    <button class="btn-green" onclick="depositBank()">XÁC NHẬN ĐÃ CHUYỂN KHOẢN</button>
-
-    <br><br>
-    
-    <div class="card-box">
-      <p class="rainbow-text" style="font-weight:bold; margin-bottom:8px;">2. Nạp Thẻ Cào</p>
-      <div style="display:flex; gap:10px;">
-        <select id="cardType" style="flex:1;"><option>Viettel</option><option>Vina</option><option>Mobi</option></select>
-        <select id="cardAmount" style="flex:1;"><option value="20000">20.000đ</option><option value="50000">50.000đ</option><option value="100000">100.000đ</option><option value="200000">200.000đ</option><option value="500000">500.000đ</option></select>
-      </div>
-      <input id="cardSerial" placeholder="Số Serial (10-15 số)" maxlength="15">
-      <input id="cardPin" placeholder="Mã thẻ (PIN) (10-15 số)" maxlength="15">
-      <button class="btn-purple" id="btnCard" onclick="depositCard()">GỬI THẺ CÀO</button>
-    </div>
-    <div id="depMsg" class="msg hidden"></div>
-  </div>
-
-  <div id="mainView" class="hidden">
-    <!-- Hiển thị hạn Key sau khi vào -->
-    <div style="text-align:center; margin-bottom: 15px; font-weight: bold; color: #00e676;">
-        Hạn sử dụng Key: <span id="displayKeyTime" class="rainbow-text">Đang kiểm tra...</span>
-    </div>
-
-    <!-- TABS CHỌN TOOL -->
-    <div class="tool-tabs">
-      <button id="tabTx" class="active" onclick="switchTool('tx')">TÀI XỈU</button>
-      <button id="tabF168" onclick="switchTool('f168')">F168</button>
-      <button id="tabMd5" onclick="switchTool('md5')">MD5</button>
-      <button id="tabAviator" onclick="switchTool('aviator')">AVIATOR B52</button>
-    </div>
-
-    <!-- TOOL TÀI XỈU (MẶC ĐỊNH) -->
-    <div id="sectionTx">
-      <div class="card">
-        <h2 class="rainbow-text">Chọn Game Để Vào</h2>
-        <div class="game-grid">
-          <div class="game-btn" onclick="openGame('sun')">
-            <img src="https://cdnlogo.com/logos/s/63/sunwin.png" onerror="this.src='https://via.placeholder.com/70x70/000/00e676?text=Sunwin'">
-            <span class="rainbow-text">Sunwin</span>
-          </div>
-          <div class="game-btn" onclick="openGame('lc79')">
-            <img src="https://via.placeholder.com/70x70/000/00e676?text=LC79" alt="LC79">
-            <span class="rainbow-text">LC79</span>
-          </div>
-          <div class="game-btn" onclick="openGame('b52')">
-            <img src="https://i-b52.site/wp-content/uploads/2024/08/logo-b52-club-1.png" onerror="this.src='https://via.placeholder.com/70x70/000/00e676?text=B52'">
-            <span class="rainbow-text">B52 Club</span>
-          </div>
-          <div class="game-btn" onclick="openGame('iwin')">
-            <img src="https://via.placeholder.com/70x70/000/00e676?text=iWin" alt="iWin">
-            <span class="rainbow-text">iWin Club</span>
-          </div>
+    <!-- MÃ PHIÊN VÀ ĐẾM NGƯỢC -->
+    <div class="session-box">
+        <div>
+            <div style="font-size: 11px; color: #aaa;">MÃ PHIÊN</div>
+            <div class="session-id" id="sessionDisplay">#45968</div>
         </div>
-        <button style="background:rgba(255,255,255,0.1); color:#fff; margin-top:10px; border:1px solid rgba(255,255,255,0.2);" onclick="location.reload()">Đăng Xuất</button>
-      </div>
+        <div>
+            <div style="font-size: 11px; color: #aaa; text-align: right;">CHỜ KẾT QUẢ</div>
+            <div class="timer" id="timerDisplay">65s</div>
+        </div>
     </div>
 
-    <!-- TOOL BÓNG ĐÁ F168 -->
-    <div id="sectionF168" class="hidden">
-      <div class="card">
-        <h2 class="rainbow-text">AI Dự Đoán Bóng Đá F168</h2>
-        <p style="font-size:0.85rem; color:#aaa; margin-bottom:15px; text-align:center;">Trái - Phải - Giữa</p>
-        
-        <div class="btn-sub-row">
-            <button class="btn-blue" id="btnF168" onclick="predictF168()" style="flex: 2;">PHÂN TÍCH</button>
-            <button style="background:#ff3333; color:#fff; flex: 1;" onclick="document.getElementById('f168ResultBox').style.display='none'">LÀM MỚI</button>
+    <!-- KẾT QUẢ DỰ ĐOÁN -->
+    <div class="predict-box">
+        <div id="resultContent">
+            <div style="color: #ffcc00; font-style: italic;">Đang phân tích...</div>
         </div>
-        
-        <div id="f168ResultBox" class="f168-result">
-          <div id="f168Prediction" class="f168-prediction rainbow-text"></div>
-          <div style="color:#00e676; font-weight:bold; margin-bottom:5px;">Độ Tự Tin: <span id="f168Conf"></span>%</div>
-          <div id="f168Reason" style="font-size:0.8rem; color:#aaa; margin-top:10px;"></div>
-        </div>
-
-        <hr style="border-color: rgba(255, 255, 255, 0.2); margin: 15px 0;">
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
-          <span class="rainbow-text" style="font-weight:bold; font-size:0.9rem;">Lịch Sử Dự Đoán</span>
-          <button class="btn-red btn-sm" style="width:auto; margin:0; padding:5px 10px;" onclick="clearF168History()">Xóa Lịch Sử</button>
-        </div>
-        <div id="f168HistoryList" class="f168-history-list"></div>
-      </div>
     </div>
 
-    <!-- TOOL MD5 -->
-    <div id="sectionMd5" class="hidden">
-      <div class="card">
-        <h2 class="rainbow-text">Giải Mã MD5</h2>
-        <p style="font-size:0.85rem; color:#aaa; margin-bottom:15px; text-align:center;">Nhập mã MD5 (từ 30 - 40 ký tự) để phân tích</p>
-        <input id="md5Input" placeholder="Nhập chuỗi MD5...">
-        <button class="btn-purple" id="btnMd5" onclick="analyzeMD5()">PHÂN TÍCH & GIẢI MÃ</button>
-
-        <div id="md5ResultBox" class="md5-result">
-          <div class="rainbow-text" style="font-weight:bold; font-size:0.9rem; margin-bottom:10px;">KẾT QUẢ GIẢI MÃ</div>
-          <div id="md5ResultText" style="font-size:1.2rem; font-weight:bold; word-break:break-all;"></div>
-          <div id="md5Reason" style="font-size:0.8rem; color:#aaa; margin-top:10px;"></div>
+    <!-- KHẢO SÁT THẮNG THUA -->
+    <div class="survey-box" id="surveyBox">
+        <div class="survey-title">Phiên này dự đoán có đúng không?</div>
+        <div class="btn-group">
+            <button class="btn-survey btn-win" onclick="recordResult(true)">THẮNG</button>
+            <button class="btn-survey btn-loss" onclick="recordResult(false)">THUA</button>
         </div>
-      </div>
     </div>
 
-    <!-- TOOL DỰ ĐOÁN AVIATOR B52 -->
-    <div id="sectionAviator" class="hidden">
-      <div class="card">
-        <h2 class="rainbow-text">Dự Đoán Aviator B52</h2>
-        <p style="font-size:0.85rem; color:#aaa; margin-bottom:15px; text-align:center;">Thuật toán phân tích hệ số bay (X)</p>
-        
-        <div class="btn-sub-row">
-            <button class="btn-red" id="btnAviator" onclick="predictAviator()" style="flex: 2;">PHÂN TÍCH</button>
-            <button style="background:#ff3333; color:#fff; flex: 1;" onclick="document.getElementById('aviatorResultBox').style.display='none'">LÀM MỚI</button>
-        </div>
-
-        <div id="aviatorResultBox" class="aviator-result">
-          <div class="rainbow-text" style="font-weight:bold; font-size:0.9rem; margin-bottom:10px;">HỆ SỐ BAY DỰ KIẾN</div>
-          <div id="aviatorValue" class="aviator-value rainbow-text">1.00x</div>
-          <div id="aviatorReason" style="font-size:0.85rem; color:#aaa; margin-top:10px;"></div>
-        </div>
-      </div>
+    <!-- THỐNG KÊ AI GIẢ LẬP -->
+    <div class="ai-stats">
+        🧠 AI Learning Status:<br>
+        Đã học: <span id="totalRounds">0</span> phiên | 
+        Độ chính xác: <span class="green" id="accuracyStat">0%</span>
     </div>
-
-  </div>
 </div>
-
-<div id="gameOverlay">
-  <button id="closeGameBtn" onclick="closeGame()">✕ Thoát</button>
-  <iframe id="gameFrame" src="about:blank" allowfullscreen></iframe>
-</div>
-
-<div id="floatBtn" class="float-tool-btn hidden" onclick="toggleTool()">🎮</div>
-
-<!-- TOOL DỰ ĐOÁN TRONG SUỐT (THU NHỎ) -->
-<div id="toolBox" class="float-tool-box">
-  <div class="light-row">
-    <div class="light-col">
-      <div id="lightTai" class="light red"></div>
-      <span class="label tai">TÀI</span>
-    </div>
-    <div class="light-col">
-      <div id="lightXiu" class="light green"></div>
-      <span class="label xiu">XỈU</span>
-    </div>
-  </div>
-  <div class="dice-container" id="diceResult"></div>
-  <div class="ai-text" id="aiStatus">AI: Chờ...</div>
-  <button id="btnRunAI" style="padding:6px; font-size:10px; margin-top:8px; border-radius:6px; background: #00e676; color: black; border: none; font-weight: bold; width: 100%; cursor: pointer; text-transform: uppercase; box-shadow: 0 0 10px rgba(0,230,118,0.5);" onclick="runAI()">🚀 PHÂN TÍCH</button>
-</div>
-
-<!-- MODAL THẢO LUẬN -->
-<div id="chatModal">
-  <div class="chat-container">
-    <div class="chat-header">
-      <h3>💬 THẢO LUẬN & CHỨNG MINH</h3>
-      <button onclick="closeChat()">✕ Đóng</button>
-    </div>
-    <div class="chat-messages" id="chatMessages">
-      <!-- Tin nhắn sẽ được load ở đây -->
-    </div>
-    <div class="chat-input-area">
-      <input type="text" id="chatName" placeholder="Tên của bạn (Tùy chọn)..." maxlength="20">
-      <input type="text" id="chatText" placeholder="Nhập nội dung thảo luận..." maxlength="200">
-      <div class="file-row">
-        <input type="file" id="chatImage" accept="image/*" onchange="previewChatImage(this)">
-        <img id="chatImagePreview" class="preview-img" src="" alt="Preview">
-        <button class="btn-main" id="btnSendChat" onclick="sendChat()" style="flex: 1;">GỬI</button>
-      </div>
-    </div>
-  </div>
-</div>
-
-<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
 
 <script>
-  // HIỆU ỨNG MA TRẬN
-  const canvas = document.getElementById('matrix-canvas'); const ctx = canvas.getContext('2d');
-  canvas.width = window.innerWidth; canvas.height = window.innerHeight;
-  const chars = "IWINLC79B52SUNWIN0123456789@#$%".split(""); const fontSize = 16;
-  const columns = canvas.width / fontSize; const drops = [];
-  for(let x = 0; x < columns; x++) drops[x] = 1;
-  function drawMatrix() {
-    ctx.fillStyle = "rgba(0, 0, 0, 0.05)"; ctx.fillRect(0, 0, canvas.width, canvas.height);
-    ctx.fillStyle = "#00e676"; ctx.font = fontSize + "px monospace";
-    for(let i = 0; i < drops.length; i++) {
-      const text = chars[Math.floor(Math.random() * chars.length)];
-      ctx.fillText(text, i * fontSize, drops[i] * fontSize);
-      if(drops[i] * fontSize > canvas.height && Math.random() > 0.975) drops[i] = 0;
-      drops[i]++;
-    }
-  }
-  setInterval(drawMatrix, 50);
-  window.addEventListener('resize', () => { canvas.width = window.innerWidth; canvas.height = window.innerHeight; });
+    // Cấu hình
+    let currentSession = 45968;
+    let timeLeft = 65;
+    let timerInterval = null;
+    let currentPredictionType = ""; // Lưu Tài/Xỉu của phiên hiện tại để đối chiếu
 
-  window.onerror = function(msg) { console.log("Lỗi Script: " + msg); };
+    // Lấy dữ liệu AI từ bộ nhớ trình duyệt (để F5 không bị mất)
+    let aiWins = parseInt(localStorage.getItem('lc79_wins')) || 0;
+    let aiLosses = parseInt(localStorage.getItem('lc79_losses')) || 0;
 
-  const firebaseConfig = {
-    apiKey: "AIzaSyAaQg91q7wMeQ4kXyCnOQuolvN_KmJoHBI",
-    authDomain: "vip1-c45cb.firebaseapp.com",
-    projectId: "vip1-c45cb",
-    storageBucket: "vip1-c45cb.firebasestorage.app",
-    messagingSenderId: "191209527323",
-    appId: "1:191209527323:web:b908c85ad00bfb6c2ac0be",
-    databaseURL: "https://vip1-c45cb-default-rtdb.asia-southeast1.firebasedatabase.app"
-  };
-  let db = null; try { firebase.initializeApp(firebaseConfig); db = firebase.database(); } catch(e) {}
-
-  const DISCORD_WEBHOOK = "https://discord.com/api/webhooks/1561068482504691742/R5_eAJ4B5QaQ7iGpCORqd8ZPwTiYDVJuUucjiiYqaMS4NjfN-zQ6cAvupv-IW9lN54Ke";
-  let isToolOpen = false, deviceCode = "", deviceInfo = { ip: "", location: "", device: "" };
-  let userBalance = 0, userRef = null;
-  
-  // Biến quản lý trạng thái Tool
-  let aiTimeout = null;
-  let cooldownTimer = null;
-  let cooldownRemaining = 40;
-  let isCoolingDown = false;
-
-  let historyResults = []; 
-  let f168History = JSON.parse(localStorage.getItem('f168_history') || "[]");
-
-  // ================= CHỨC NĂNG THẢO LUẬN =================
-  let chatBase64Image = "";
-
-  function openChat() {
-    document.getElementById('chatModal').style.display = 'flex';
-    document.getElementById('chatMessages').scrollTop = document.getElementById('chatMessages').scrollHeight;
-  }
-
-  function closeChat() {
-    document.getElementById('chatModal').style.display = 'none';
-  }
-
-  function previewChatImage(input) {
-    const file = input.files[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onload = function(e) {
-        chatBase64Image = e.target.result;
-        const preview = document.getElementById('chatImagePreview');
-        preview.src = chatBase64Image;
-        preview.style.display = 'block';
-      };
-      reader.readAsDataURL(file);
-    } else {
-      chatBase64Image = "";
-      document.getElementById('chatImagePreview').style.display = 'none';
-    }
-  }
-
-  function sendChat() {
-    const name = document.getElementById('chatName').value.trim() || "Ẩn Danh";
-    const text = document.getElementById('chatText').value.trim();
-    
-    if (!text && !chatBase64Image) return alert("Vui lòng nhập nội dung hoặc chọn ảnh!");
-
-    const btn = document.getElementById('btnSendChat');
-    btn.innerText = "ĐANG GỬI...";
-    btn.disabled = true;
-
-    db.ref('discussions').push({
-      name: name,
-      text: text,
-      image: chatBase64Image, // Lưu Base64
-      deviceCode: deviceCode,
-      time: Date.now()
-    }).then(() => {
-      // Xóa form
-      document.getElementById('chatText').value = "";
-      document.getElementById('chatImage').value = "";
-      document.getElementById('chatImagePreview').style.display = 'none';
-      chatBase64Image = "";
-      
-      btn.innerText = "GỬI";
-      btn.disabled = false;
-    }).catch(e => {
-      alert("Lỗi gửi tin nhắn: " + e.message);
-      btn.innerText = "GỬI";
-      btn.disabled = false;
-    });
-  }
-
-  // Lắng nghe tin nhắn mới
-  function listenChat() {
-    if (!db) return;
-    db.ref('discussions').limitToLast(50).on('value', snap => {
-      const box = document.getElementById('chatMessages');
-      box.innerHTML = "";
-      if (snap.exists()) {
-        const msgs = snap.val();
-        Object.keys(msgs).forEach(key => {
-          const m = msgs[key];
-          const timeStr = new Date(m.time).toLocaleTimeString('vi-VN');
-          
-          let imgHtml = m.image ? `<img src="${m.image}" onclick="window.open(this.src)" alt="Minh chứng">` : "";
-          
-          box.innerHTML += `
-            <div class="chat-msg">
-              <div class="name">${m.name} <span>${timeStr}</span></div>
-              <div class="text">${m.text}</div>
-              ${imgHtml}
-            </div>
-          `;
-        });
-        // Tự động cuộn xuống dưới
-        box.scrollTop = box.scrollHeight;
-      } else {
-        box.innerHTML = "<div style='text-align:center;color:#666;font-size:12px;'>Chưa có thảo luận nào.</div>";
-      }
-    });
-  }
-  listenChat();
-  // ========================================================
-
-  // Hàm tính toán thời gian còn lại
-  function formatTimeRemaining(ms) {
-    if (ms <= 0) return "Đã hết hạn";
-    if (ms > 9999999 * 60000) return "Vĩnh viễn";
-    let d = Math.floor(ms / (1000 * 60 * 60 * 24));
-    let h = Math.floor((ms % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-    let m = Math.floor((ms % (1000 * 60 * 60)) / (1000 * 60));
-    return `${d > 0 ? d + ' ngày ' : ''}${h > 0 ? h + ' giờ ' : ''}${m} phút`;
-  }
-
-  function updateBalanceUI() { document.getElementById('floatingBalance').innerText = "Số dư: " + userBalance.toLocaleString() + "đ"; }
-
-  async function getDeviceData() {
-    let savedCode = localStorage.getItem('haibo_device_code');
-    if (!savedCode) {
-      savedCode = "HB-" + Math.floor(100000 + Math.random() * 900000);
-      localStorage.setItem('haibo_device_code', savedCode);
-    }
-    deviceCode = savedCode;
-    document.getElementById('deviceBankCode').innerText = deviceCode;
-
-    if(!db) return;
-    userRef = db.ref('users/' + deviceCode);
-    userRef.once('value').then(snap => { if(!snap.exists()) { userRef.set({ balance: 0, createdAt: Date.now() }); } });
-    userRef.child('balance').on('value', snap => { userBalance = snap.val() || 0; updateBalanceUI(); });
-
-    try {
-      const res = await fetch('https://ipapi.co/json/');
-      const data = await res.json();
-      let dev = "PC";
-      if(/android/i.test(navigator.userAgent)) dev = "Android";
-      else if(/iPhone|iPad/i.test(navigator.userAgent)) dev = "iOS";
-      deviceInfo = { ip: data.ip || "Lỗi IP", location: (data.city || "?") + ", " + (data.region || "?"), device: dev };
-      
-      userRef.update({ ip: deviceInfo.ip, location: deviceInfo.location, device: deviceInfo.device, lastActive: Date.now() });
-    } catch(e) { deviceInfo = { ip: "Lỗi mạng", location: "Lỗi mạng", device: "Không rõ" }; }
-  }
-  getDeviceData();
-
-  function listenKeyStock() {
-    if(!db) return;
-    db.ref('keys').on('value', snap => {
-      if(snap.exists()) {
-        const keysObj = snap.val(); let activeCount = 0; const now = Date.now();
-        for (let k in keysObj) { if (keysObj[k].expire === 0 || keysObj[k].expire > now) { activeCount++; } }
-        document.getElementById('stockCount').innerText = activeCount;
-      } else { document.getElementById('stockCount').innerText = "0"; }
-    });
-  }
-  listenKeyStock();
-
-  function sendDiscordNotify(action, amount, detail) {
-    if(!DISCORD_WEBHOOK) return;
-    fetch(DISCORD_WEBHOOK, {
-      method: "POST", headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ username: "Hai×bo System", embeds: [{ title: `🚨 YÊU CẦU ${action.toUpperCase()}`, color: 65280, fields: [{ name: "Mã TB", value: deviceCode, inline: true }, { name: "Số tiền", value: amount.toLocaleString() + "đ", inline: true }, { name: "IP", value: deviceInfo.ip || "Lỗi", inline: true }, { name: "Khu vực", value: deviceInfo.location || "Lỗi", inline: true }, { name: "Chi tiết", value: detail, inline: false }], timestamp: new Date().toISOString() }] })
-    }).catch(e=>console.log(e));
-  }
-
-  function checkKey() {
-    const input = document.getElementById('keyInput').value.trim();
-    if(!db) return alert("Firebase chưa kết nối!");
-    db.ref('keys/' + input).once('value').then(snap => {
-      if(snap.exists()) {
-        const data = snap.val();
-        if(data.expire > Date.now() || data.expire === 0) {
-          const maxDev = data.maxDevices || 1; const usedDevs = data.usedDevices || {};
-          if (usedDevs[deviceCode]) { 
-              let timeLeft = data.expire === 0 ? "Vĩnh viễn" : formatTimeRemaining(data.expire - Date.now());
-              alert(`Key đã kích hoạt trên thiết bị này!\nHạn sử dụng: ${timeLeft}`);
-              grantAccess(data.expire); 
-          } 
-          else if (Object.keys(usedDevs).length < maxDev) {
-            db.ref('keys/' + input + '/usedDevices/' + deviceCode).set(true).then(() => {
-                let timeLeft = data.expire === 0 ? "Vĩnh viễn" : formatTimeRemaining(data.expire - Date.now());
-                alert(`Kích hoạt thành công!\nHạn sử dụng: ${timeLeft}`);
-                grantAccess(data.expire);
-            });
-          } else { let m = document.getElementById('authMsg'); m.classList.remove('hidden'); m.innerText = "Key này đã đạt giới hạn thiết bị!"; }
-        } else { let m = document.getElementById('authMsg'); m.classList.remove('hidden'); m.innerText = "Key đã hết hạn!"; }
-      } else { let m = document.getElementById('authMsg'); m.classList.remove('hidden'); m.innerText = "Key không tồn tại!"; }
-    });
-  }
-
-  function grantAccess(expireTime) {
-    document.getElementById('authView').classList.add('hidden');
-    document.getElementById('mainView').classList.remove('hidden');
-    
-    let timeStr = expireTime === 0 ? "Vĩnh viễn" : formatTimeRemaining(expireTime - Date.now());
-    document.getElementById('displayKeyTime').innerText = timeStr;
-
-    renderF168History(); 
-  }
-
-  function autoBuyKey() {
-    if(!db || !userRef) return;
-    const [days, price] = document.getElementById('buyDuration').value.split('|').map(Number);
-    const msg = document.getElementById('buyMsg'); const keyDisplay = document.getElementById('boughtKeyDisplay');
-    if(userBalance < price) { msg.className = 'msg err'; msg.classList.remove('hidden'); msg.innerText = "Số dư không đủ!"; return; }
-
-    userRef.child('balance').set(userBalance - price).then(() => {
-      const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"; let newKey = "HB-";
-      for(let i=0; i<12; i++) { if(i === 4 || i === 8) newKey += "-"; newKey += chars.charAt(Math.floor(Math.random() * chars.length)); }
-      let expireTime = days === 0 ? 0 : Date.now() + (days * 24 * 60 * 60 * 1000);
-
-      db.ref('keys/' + newKey).set({ duration: days === 0 ? "Vĩnh viễn" : days + " Ngày", expire: expireTime, maxDevices: 1, usedDevices: {}, createdAt: new Date().toLocaleString('vi-VN'), timestamp: Date.now() })
-      .then(() => {
-        msg.className = 'msg ok'; msg.classList.remove('hidden'); msg.innerText = "Mua thành công!";
-        keyDisplay.style.display = "block"; keyDisplay.innerText = newKey;
-        sendDiscordNotify("Mua Key", price, `Đã xuất key ${newKey}`);
-      });
-    });
-  }
-
-  function depositCard() {
-    if(!db) return;
-    const type = document.getElementById('cardType').value; const amount = parseInt(document.getElementById('cardAmount').value);
-    const serial = document.getElementById('cardSerial').value.trim(); const pin = document.getElementById('cardPin').value.trim();
-    const msg = document.getElementById('depMsg');
-    if(!serial || !pin) { msg.className = 'msg err'; msg.classList.remove('hidden'); msg.innerText = "Nhập đủ Serial/PIN!"; return; }
-
-    db.ref('deposits').push().set({ method: 'Thẻ Cào', type: type, amount: amount, serial: serial, pin: pin, deviceCode: deviceCode, ip: deviceInfo.ip, location: deviceInfo.location, device: deviceInfo.device, time: new Date().toLocaleString('vi-VN'), status: 'pending', timestamp: Date.now() })
-    .then(() => {
-      msg.className = 'msg ok'; msg.classList.remove('hidden'); msg.innerText = "Đã gửi thẻ! Chờ Admin duyệt.";
-      document.getElementById('cardSerial').value = ""; document.getElementById('cardPin').value = "";
-      sendDiscordNotify("Nạp Thẻ", amount, `${type} - Seri: ${serial}`);
-    }).catch(e => { msg.className = 'msg err'; msg.classList.remove('hidden'); msg.innerText = "Lỗi Firebase: " + e.message; });
-  }
-
-  function depositBank() {
-    if(!db) return;
-    const amount = parseInt(document.getElementById('bankAmount').value);
-    if(!amount || amount < 10000) { let m = document.getElementById('depMsg'); m.className = 'msg err'; m.classList.remove('hidden'); m.innerText = "Tối thiểu 10.000đ!"; return; }
-
-    db.ref('deposits').push().set({ method: 'Chuyển Khoản', amount: amount, deviceCode: deviceCode, ip: deviceInfo.ip, location: deviceInfo.location, device: deviceInfo.device, time: new Date().toLocaleString('vi-VN'), status: 'pending', timestamp: Date.now() })
-    .then(() => {
-      let m = document.getElementById('depMsg'); m.className = 'msg ok'; m.classList.remove('hidden'); m.innerText = "Đã ghi nhận! Chờ Admin check bill.";
-      document.getElementById('bankAmount').value = "";
-      sendDiscordNotify("Chuyển Khoản", amount, `Nội dung: ${deviceCode}`);
-    }).catch(e => { let m = document.getElementById('depMsg'); m.className = 'msg err'; m.classList.remove('hidden'); m.innerText = "Lỗi Firebase: " + e.message; });
-  }
-
-  function switchTool(tool) {
-    document.getElementById('tabTx').classList.toggle('active', tool === 'tx');
-    document.getElementById('tabF168').classList.toggle('active', tool === 'f168');
-    document.getElementById('tabMd5').classList.toggle('active', tool === 'md5');
-    document.getElementById('tabAviator').classList.toggle('active', tool === 'aviator');
-    
-    document.getElementById('sectionTx').classList.toggle('hidden', tool !== 'tx');
-    document.getElementById('sectionF168').classList.toggle('hidden', tool !== 'f168');
-    document.getElementById('sectionMd5').classList.toggle('hidden', tool !== 'md5');
-    document.getElementById('sectionAviator').classList.toggle('hidden', tool !== 'aviator');
-  }
-
-  function predictAviator() {
-    const btn = document.getElementById('btnAviator');
-    const resBox = document.getElementById('aviatorResultBox');
-    const valEl = document.getElementById('aviatorValue');
-    const reasonEl = document.getElementById('aviatorReason');
-
-    btn.disabled = true;
-    btn.innerHTML = `<span class="loading"></span> ĐANG PHÂN TÍCH...`;
-    resBox.style.display = "none";
-
-    setTimeout(() => {
-      let multiplier = 1.00;
-      let rand = Math.random();
-      
-      if (rand < 0.60) {
-          multiplier = (Math.random() * 1.5 + 1.0).toFixed(2);
-          reasonEl.innerText = "Hệ số thấp. Khuyên bỏ qua phiên này hoặc vào lệnh cực nhỏ.";
-      } else if (rand < 0.90) {
-          multiplier = (Math.random() * 7.5 + 2.5).toFixed(2);
-          reasonEl.innerText = "Hệ số ổn định. Có thể cân nhắc vào lệnh ở mức trung bình.";
-      } else {
-          multiplier = (Math.random() * 40 + 10).toFixed(2);
-          reasonEl.innerText = "Cảnh báo: Hệ số bay cao hiếm gặp! Rủi ro cao nhưng lợi nhuận cực lớn.";
-      }
-
-      valEl.innerText = multiplier + "x";
-      valEl.style.animation = "none";
-      valEl.offsetHeight; 
-      valEl.style.animation = "pulseWarning 0.5s 2 alternate";
-
-      resBox.style.display = "block";
-      btn.disabled = false;
-      btn.innerHTML = `PHÂN TÍCH`;
-    }, 1500);
-  }
-
-  function predictF168() {
-    const btn = document.getElementById('btnF168');
-    const resBox = document.getElementById('f168ResultBox');
-
-    btn.disabled = true;
-    btn.innerHTML = `<span class="loading"></span> ĐANG PHÂN TÍCH...`;
-    resBox.style.display = "none";
-
-    setTimeout(() => {
-      const options = ["TRÁI", "PHẢI", "GIỮA"];
-      const pred = options[Math.floor(Math.random() * 3)];
-      const confidence = Math.floor(Math.random() * 36) + 50; 
-      
-      const predEl = document.getElementById('f168Prediction');
-      predEl.innerText = pred;
-      predEl.className = "f168-prediction rainbow-text";
-      
-      document.getElementById('f168Conf').innerText = confidence;
-      
-      let reason = "";
-      if (pred === "TRÁI") reason = "Cánh trái đang có lợi thế, khả năng cao bóng sẽ dồn về hướng này.";
-      else if (pred === "PHẢI") reason = "Cánh phải đang yếu hơn, khả năng cao đối phương sẽ khai thác.";
-      else reason = "Hai cánh cân bằng, trận đấu diễn ra chặt chẽ ở khu vực giữa sân.";
-
-      document.getElementById('f168Reason').innerText = reason;
-      resBox.style.display = "block";
-
-      const time = new Date().toLocaleTimeString('vi-VN');
-      f168History.unshift({ pred, conf: confidence, time });
-      if (f168History.length > 10) f168History.pop();
-      localStorage.setItem('f168_history', JSON.stringify(f168History));
-      renderF168History();
-
-      btn.disabled = false;
-      btn.innerHTML = `PHÂN TÍCH`;
-    }, 1500);
-  }
-
-  function renderF168History() {
-    const el = document.getElementById('f168HistoryList');
-    if(!f168History.length) { el.innerHTML = "<div style='color:#aaa; font-size:0.8rem; text-align:center'>Chưa có dữ liệu</div>"; return; }
-    el.innerHTML = f168History.map(h => `
-      <div class="f168-hist-item">
-        <span style="color:#aaa">${h.time}</span>
-        <span style="font-weight:bold;" class="rainbow-text">${h.pred}</span>
-        <span style="color:#00e5ff">${h.conf}%</span>
-      </div>
-    `).join('');
-  }
-
-  function clearF168History() {
-    if(confirm("Xóa sạch lịch sử dự đoán F168?")) {
-      f168History = [];
-      localStorage.removeItem('f168_history');
-      renderF168History();
-    }
-  }
-
-  function analyzeMD5() {
-    const input = document.getElementById('md5Input').value.trim();
-    const btn = document.getElementById('btnMd5');
-    const resBox = document.getElementById('md5ResultBox');
-    const resText = document.getElementById('md5ResultText');
-    const reasonText = document.getElementById('md5Reason');
-
-    if(input.length < 30 || input.length > 40) {
-      alert("Mã MD5 phải từ 30 đến 40 ký tự!");
-      return;
+    // Hàm tạo kết quả random (50% - 85%)
+    function getRandomPrediction() {
+        let percent = Math.floor(Math.random() * (85 - 50 + 1)) + 50;
+        let type = Math.random() < 0.5 ? "TÀI" : "XỈU";
+        return { type: type, percent: percent };
     }
 
-    btn.disabled = true;
-    btn.innerHTML = `<span class="loading"></span> ĐANG GIẢI MÃ...`;
-    resBox.style.display = "none";
-
-    setTimeout(() => {
-      let hashSum = 0;
-      for (let i = 0; i < input.length; i++) {
-        hashSum += input.charCodeAt(i);
-      }
-
-      let result = "";
-      let reason = "";
-
-      if (hashSum % 3 === 0) {
-        result = "XỈU";
-        reason = "Mã băm trả về kết quả chẵn, dự đoán Xỉu.";
-      } else if (hashSum % 3 === 1) {
-        result = "TÀI";
-        reason = "Mã băm trả về kết quả lẻ, dự đoán Tài.";
-      } else {
-        result = "HÒA";
-        reason = "Mã băm cân bằng, khả năng cao ra Hòa.";
-      }
-
-      resText.innerText = result;
-      resText.className = "rainbow-text"; 
-      reasonText.innerText = reason;
-      
-      resBox.style.display = "block";
-      btn.disabled = false;
-      btn.innerHTML = `PHÂN TÍCH & GIẢI MÃ`;
-    }, 2000);
-  }
-
-  function openGame(game) {
-    if(game === 'b52' || game === 'iwin') {
-      alert("Hệ thống B52 và iWin đang bảo trì, vui lòng quay lại sau!");
-      return;
-    }
-
-    document.getElementById('mainApp').style.display = 'none'; 
-    document.getElementById('gameOverlay').style.display = 'flex'; 
-    document.getElementById('floatBtn').classList.remove('hidden'); 
-    
-    const frame = document.getElementById('gameFrame');
-    if(game === 'sun') frame.src = "https://web.sunhot.win/?affId=Sunwin";
-    else if(game === 'lc79') frame.src = "https://play.lc79d.vin/";
-
-    historyResults = []; 
-    
-    isToolOpen = true; 
-    document.getElementById('toolBox').style.display = 'flex';
-    document.getElementById('aiStatus').innerText = "AI: Sẵn sàng...";
-    document.getElementById('aiStatus').style.color = "#ffd700";
-    document.getElementById('btnRunAI').disabled = false;
-    document.getElementById('btnRunAI').innerText = "🚀 PHÂN TÍCH";
-    document.getElementById('btnRunAI').style.background = "#00e676";
-    
-    document.getElementById('lightTai').className = 'light red';
-    document.getElementById('lightXiu').className = 'light green';
-    document.getElementById('diceResult').innerHTML = '';
-  }
-
-  function closeGame() {
-    document.getElementById('mainApp').style.display = 'block'; 
-    document.getElementById('gameOverlay').style.display = 'none';
-    document.getElementById('floatBtn').classList.add('hidden'); 
-    document.getElementById('toolBox').style.display = 'none'; 
-    document.getElementById('gameFrame').src = "about:blank"; 
-    isToolOpen = false;
-    
-    if(aiTimeout) clearTimeout(aiTimeout);
-    if(cooldownTimer) clearInterval(cooldownTimer);
-    isCoolingDown = false;
-  }
-
-  function toggleTool() {
-    isToolOpen = !isToolOpen; 
-    document.getElementById('toolBox').style.display = isToolOpen ? 'flex' : 'none';
-  }
-
-  function runAI() {
-    if(!isToolOpen || isCoolingDown) return; 
-
-    const tai = document.getElementById('lightTai'), xiu = document.getElementById('lightXiu'), aiStatus = document.getElementById('aiStatus');
-    const btn = document.getElementById('btnRunAI');
-    const diceBox = document.getElementById('diceResult');
-    
-    isCoolingDown = true;
-    btn.disabled = true;
-    btn.style.background = "#555";
-    btn.innerText = "ĐANG GỌI API...";
-    
-    tai.className = 'light red'; 
-    xiu.className = 'light green'; 
-    diceBox.innerHTML = ''; 
-    aiStatus.innerHTML = `<span style="color:#ffd700">Kết nối AI Server...</span>`; 
-
-    if(aiTimeout) clearTimeout(aiTimeout);
-
-    aiTimeout = setTimeout(() => {
-      let predict = "TAI";
-      let confidence = 50;
-      let algoNote = "";
-      let apiVersion = "Sunwin-AI-v4.1"; 
-
-      if (historyResults.length < 3) {
-         predict = (new Date().getSeconds() % 2 === 0) ? "TAI" : "XIU";
-         confidence = Math.floor(Math.random() * 10) + 65;
-         algoNote = "Khởi tạo cầu";
-      } 
-      else {
-        let last = historyResults[historyResults.length - 1];
-        let last2 = historyResults[historyResults.length - 2];
-        let last3 = historyResults[historyResults.length - 3];
-
-        if (last === "TAI" && last2 === "TAI" && last3 === "TAI") {
-           predict = "XIU"; confidence = Math.floor(Math.random() * 10) + 80; 
-           algoNote = "Bẻ cầu bệt Tài";
+    // Cập nhật thống kê AI lên màn hình
+    function updateAIStats() {
+        let total = aiWins + aiLosses;
+        document.getElementById('totalRounds').innerText = total;
+        
+        if (total > 0) {
+            let accuracy = Math.round((aiWins / total) * 100);
+            document.getElementById('accuracyStat').innerText = accuracy + "%";
+        } else {
+            document.getElementById('accuracyStat').innerText = "0%";
         }
-        else if (last === "XIU" && last2 === "XIU" && last3 === "XIU") {
-           predict = "TAI"; confidence = Math.floor(Math.random() * 10) + 80;
-           algoNote = "Bẻ cầu bệt Xỉu";
+    }
+
+    // Hàm xử lý khi bấm nút Thắng/Thua
+    function recordResult(isWin) {
+        // Cộng điểm
+        if (isWin) {
+            aiWins++;
+            localStorage.setItem('lc79_wins', aiWins);
+        } else {
+            aiLosses++;
+            localStorage.setItem('lc79_losses', aiLosses);
         }
-        else if (last !== last2 && last2 !== last3 && last !== last3) {
-           predict = (last === "TAI") ? "XIU" : "TAI";
-           confidence = Math.floor(Math.random() * 10) + 70;
-           algoNote = "Bắt cầu 1-1";
-        }
-        else {
-           predict = last; confidence = Math.floor(Math.random() * 10) + 60;
-           algoNote = "Cầu đang có lợi thế";
-        }
-      }
 
-      if(confidence < 50) confidence = 50;
-      if(confidence > 95) confidence = 95;
+        // Cập nhật giao diện
+        updateAIStats();
+        
+        // Ẩn nút khảo sát đi để chờ phiên sau
+        document.getElementById('surveyBox').style.display = 'none';
+        
+        // Hiệu ứng thông báo nhỏ
+        let msg = isWin ? "✅ Đã ghi nhận: AI học được điểm cộng!" : "❌ Đã ghi nhận: AI học được điểm trừ!";
+        alert(msg);
+    }
 
-      historyResults.push(predict);
-      if(historyResults.length > 10) historyResults.shift();
+    // Hàm bắt đầu đếm ngược cho phiên mới
+    function startSession() {
+        // Cập nhật mã phiên
+        document.getElementById('sessionDisplay').innerText = "#" + currentSession;
+        
+        // Hiển thị trạng thái đang chờ
+        document.getElementById('resultContent').innerHTML = '<div style="color: #ffcc00; font-style: italic;">Đang phân tích dữ liệu...</div>';
+        
+        // Ẩn nút khảo sát (nếu đang hiện từ phiên trước)
+        document.getElementById('surveyBox').style.display = 'none';
 
-      let d1, d2, d3, sum;
-      if(predict === "TAI") {
-          do {
-              d1 = Math.floor(Math.random() * 6) + 1;
-              d2 = Math.floor(Math.random() * 6) + 1;
-              d3 = Math.floor(Math.random() * 6) + 1;
-              sum = d1 + d2 + d3;
-          } while (sum < 11 || sum > 18);
-      } else {
-          do {
-              d1 = Math.floor(Math.random() * 6) + 1;
-              d2 = Math.floor(Math.random() * 6) + 1;
-              d3 = Math.floor(Math.random() * 6) + 1;
-              sum = d1 + d2 + d3;
-          } while (sum < 3 || sum > 10);
-      }
+        // Reset thời gian
+        timeLeft = 65;
+        document.getElementById('timerDisplay').innerText = timeLeft + "s";
 
-      const diceIcons = {1:'⚀', 2:'⚁', 3:'⚂', 4:'⚃', 5:'⚄', 6:'⚅'};
-      diceBox.innerHTML = `<span style="color:#fff">${diceIcons[d1]}</span><span style="color:#fff">${diceIcons[d2]}</span><span style="color:#fff">${diceIcons[d3]}</span>`;
+        // Sau 2 giây, in ra kết quả dự đoán
+        setTimeout(() => {
+            let result = getRandomPrediction();
+            currentPredictionType = result.type;
+            let color = result.type === "TÀI" ? "#ff3333" : "#00e5ff"; // Tài đỏ, Xỉu xanh
+            
+            document.getElementById('resultContent').innerHTML = `
+                <div class="predict-type" style="color: ${color}">${result.type}</div>
+                <div class="predict-result">${result.percent}%</div>
+            `;
+            
+            // Hiện nút Thắng/Thua để người dùng khảo sát
+            document.getElementById('surveyBox').style.display = 'block';
 
-      if(predict === "TAI") {
-        tai.classList.add('active-red'); 
-        aiStatus.innerHTML = `<span style="color:#ff3333; font-size:12px; font-weight:bold;">TÀI (${confidence}%)</span><br><span style="font-size:9px;color:#ccc">${algoNote}</span>`; 
-        setTimeout(() => { tai.classList.remove('active-red'); }, 1600);
-      } else {
-        xiu.classList.add('active-green'); 
-        aiStatus.innerHTML = `<span style="color:#00e676; font-size:12px; font-weight:bold;">XỈU (${confidence}%)</span><br><span style="font-size:9px;color:#ccc">${algoNote}</span>`; 
-        setTimeout(() => { xiu.classList.remove('active-green'); }, 1600);
-      }
+        }, 2000); 
 
-      startCooldown();
+        // Chạy đồng hồ đếm ngược
+        if (timerInterval) clearInterval(timerInterval);
+        
+        timerInterval = setInterval(() => {
+            timeLeft--;
+            document.getElementById('timerDisplay').innerText = timeLeft + "s";
 
-    }, 1500); 
-  }
+            if (timeLeft <= 0) {
+                clearInterval(timerInterval);
+                currentSession++; // Nhảy mã phiên
+                startSession();   // Bắt đầu phiên mới
+            }
+        }, 1000);
+    }
 
-  function startCooldown() {
-    cooldownRemaining = 40;
-    const btn = document.getElementById('btnRunAI');
-    btn.innerText = `ĐỢI ${cooldownRemaining}s...`;
-    
-    if(cooldownTimer) clearInterval(cooldownTimer);
-    
-    cooldownTimer = setInterval(() => {
-      cooldownRemaining--;
-      if(cooldownRemaining <= 0) {
-        clearInterval(cooldownTimer);
-        isCoolingDown = false;
-        btn.disabled = false;
-        btn.innerText = "🚀 PHÂN TÍCH";
-        btn.style.background = "#00e676";
-      } else {
-        btn.innerText = `ĐỢI ${cooldownRemaining}s...`;
-      }
-    }, 1000);
-  }
+    // Khởi chạy khi mở trang
+    window.onload = function() {
+        updateAIStats(); // Hiển thị thống kê cũ
+        startSession();  // Bắt đầu đếm ngược
+    };
 </script>
+
 </body>
 </html>
