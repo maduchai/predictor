@@ -143,7 +143,6 @@
     border: 1px solid rgba(255,0,0,0.8); font-size: 12px; width: auto; margin: 0; backdrop-filter: blur(5px);
   }
   
-  /* GIAO DIỆN DỰ ĐOÁN */
   .prediction-panel { background: rgba(0,0,0,0.6); border: 1px solid #00e676; padding: 20px; border-radius: 12px; margin-top: 20px; }
   .session-id { text-align: center; font-family: 'Orbitron', sans-serif; font-size: 1.4rem; color: #ffd700; margin-bottom: 15px; text-shadow: 0 0 10px #ffd700; }
   .session-id span.game-tag { font-size: 1rem; color: #00e676; text-shadow: none; font-family: 'Segoe UI', sans-serif; font-weight: bold; }
@@ -166,11 +165,9 @@
   .action-buttons { display: flex; gap: 10px; margin-bottom: 15px; }
   .action-buttons button { margin-bottom: 0; }
 
-  /* HISTORY LIST CHUNG */
   .history-list { max-height: 150px; overflow-y: auto; display: flex; flex-direction: column; gap: 5px; margin-top: 10px; }
   .hist-item { display: flex; justify-content: space-between; font-size: 0.85rem; padding: 8px 10px; background: rgba(255,255,255,0.05); border-radius: 5px; align-items: center; }
 
-  /* F168 & MD5 UI */
   .f168-result, .md5-result { background: #000; border: 1px solid #00b0ff; padding: 15px; border-radius: 10px; margin-top: 15px; text-align: center; display: none; }
   .md5-result { border-color: #b57bff; }
   .f168-prediction { font-size: 2rem; font-weight: 900; font-family: 'Orbitron', sans-serif; margin: 10px 0; }
@@ -281,8 +278,7 @@
         </div>
 
         <div class="prediction-panel">
-          <!-- CẬP NHẬT MÃ PHIÊN THÀNH 459685 -->
-          <div class="session-id">Mã Phiên: <span id="sessionIdDisplay">#459685</span> <span class="game-tag">- Sunwin</span></div>
+          <div class="session-id">Mã Phiên: <span id="sessionIdDisplay">#459695</span> <span class="game-tag">- Sunwin</span></div>
           
           <div class="light-container">
             <div class="light-box">
@@ -297,7 +293,8 @@
 
           <div class="confidence-box">Độ Tự Tin: <span id="predictConfidence" style="color: #00e5ff;">Đang chờ...</span></div>
           
-          <div class="timer-box">Chờ phiên tiếp: <span id="countdownTimer">65s</span></div>
+          <!-- ĐÃ SỬA THÀNH 68s -->
+          <div class="timer-box">Chờ phiên tiếp: <span id="countdownTimer">68s</span></div>
 
           <div class="action-buttons">
             <button id="btnWin" class="btn-green" onclick="handleResult('WIN')" disabled>THẮNG</button>
@@ -306,13 +303,10 @@
 
           <hr style="border-color: rgba(0, 230, 118, 0.2); margin: 15px 0;">
           <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
-            <span style="color:#00e676; font-weight:bold; font-size:0.85rem;">Lịch Sử Thắng / Thua</span>
+            <span style="color:#00e676; font-weight:bold; font-size:0.85rem;">Lịch Sử Thắng / Thua Của Bạn</span>
             <button class="btn-red" style="width:auto; margin:0; padding:5px 10px; font-size:0.8rem;" onclick="clearWinLossHistory()">Xóa Lịch Sử</button>
           </div>
-          <div id="winLossHistoryList" class="history-list">
-            <!-- Dữ liệu sẽ được render ở đây -->
-          </div>
-
+          <div id="winLossHistoryList" class="history-list"></div>
         </div>
 
         <button style="background:rgba(255,255,255,0.1); color:#fff; margin-top:20px; border:1px solid rgba(255,255,255,0.2);" onclick="location.reload()">Đăng Xuất</button>
@@ -405,17 +399,11 @@
   let userBalance = 0, userRef = null;
   
   let f168History = JSON.parse(localStorage.getItem('f168_history') || "[]");
-
-  // BIẾN TOOL TÀI XỈU (CHẠY NGẦM) - ĐÃ ĐỔI KEY LƯU TRỮ SANG _v2 ĐỂ RESET VỀ 459685
-  let currentSessionId = parseInt(localStorage.getItem('tx_session_id_v2') || "459685");
-  let sessionStartTime = parseInt(localStorage.getItem('tx_session_start_v2') || "0");
-  let lastPrediction = localStorage.getItem('tx_last_prediction') || "TAI";
-  let lastConfidence = parseInt(localStorage.getItem('tx_last_confidence') || "50");
-  
-  let historyResults = JSON.parse(localStorage.getItem('tx_history_results') || "[]");
   let winLossHistory = JSON.parse(localStorage.getItem('tx_win_loss_history') || "[]");
   
-  let uiInterval = null;
+  let activeGlobalSession = 459695;
+  let lastRenderedSession = 0;
+  let globalTimerInterval = null;
 
   function updateBalanceUI() { document.getElementById('floatingBalance').innerText = "Số dư: " + userBalance.toLocaleString() + "đ"; }
 
@@ -486,115 +474,91 @@
     document.getElementById('authView').classList.add('hidden');
     document.getElementById('mainView').classList.remove('hidden');
     renderF168History();
+    renderWinLossHistory(); 
     
-    // Kích hoạt Tool Tài Xỉu (Đồng bộ từ lúc mở web)
-    initPredictionSystem();
-    renderWinLossHistory(); // Hiển thị lịch sử thắng thua
+    // KÍCH HOẠT ĐỒNG BỘ TOÀN CẦU (FIREBASE CLOCK)
+    initGlobalSyncClock();
   }
 
-  function initPredictionSystem() {
-    const now = Date.now();
-    
-    if (sessionStartTime === 0 || (now - sessionStartTime) > 3600000) {
-      sessionStartTime = now;
-      localStorage.setItem('tx_session_start_v2', sessionStartTime);
-      generateNewPrediction();
-    } else {
-      let timePassed = Math.floor((now - sessionStartTime) / 1000);
-      
-      if (timePassed >= 65) {
-        let sessionsPassed = Math.floor(timePassed / 65);
-        currentSessionId += sessionsPassed;
-        localStorage.setItem('tx_session_id_v2', currentSessionId);
-        
-        let remainingTime = timePassed % 65;
-        sessionStartTime = now - (remainingTime * 1000);
-        localStorage.setItem('tx_session_start_v2', sessionStartTime);
-        
-        generateNewPrediction();
+  // ==========================================
+  // HỆ THỐNG ĐỒNG BỘ TOÀN CẦU (GLOBAL SYNC CLOCK)
+  // ==========================================
+  function initGlobalSyncClock() {
+    if(!db) return;
+
+    db.ref('tx_global_clock').once('value').then((snap) => {
+      if (!snap.exists()) {
+        db.ref('tx_global_clock').set({
+          base_session: 459695,
+          base_time: Date.now()
+        });
       } else {
-        updatePredictionUI();
+        startTicker(snap.val());
       }
-    }
+    });
 
-    if (uiInterval) clearInterval(uiInterval);
-    uiInterval = setInterval(() => {
-      let elapsed = Math.floor((Date.now() - sessionStartTime) / 1000);
-      let left = 65 - elapsed;
+    db.ref('tx_global_clock').on('value', (snap) => {
+      if (snap.exists()) {
+        startTicker(snap.val());
+      }
+    });
+  }
+
+  function startTicker(clockData) {
+    let baseTime = clockData.base_time;
+    let baseSession = clockData.base_session;
+
+    if (globalTimerInterval) clearInterval(globalTimerInterval);
+
+    globalTimerInterval = setInterval(() => {
+      let now = Date.now();
+      let elapsed = now - baseTime;
       
-      if (left <= 0) {
-        sessionStartTime = Date.now();
-        localStorage.setItem('tx_session_start_v2', sessionStartTime);
-        currentSessionId++;
-        localStorage.setItem('tx_session_id_v2', currentSessionId);
-        
-        generateNewPrediction();
+      // TÍNH TOÁN THỜI GIAN 68 GIÂY (68000 ms)
+      let sessionsPassed = Math.floor(elapsed / 68000);
+      let currentSession = baseSession + sessionsPassed;
+      
+      // Thời gian còn lại của phiên hiện tại (tính từ 68s)
+      let timeLeft = 68 - Math.floor((elapsed % 68000) / 1000);
+      
+      let result = getPredictionForSession(currentSession);
+
+      activeGlobalSession = currentSession;
+
+      document.getElementById('sessionIdDisplay').innerText = '#' + currentSession;
+      document.getElementById('predictConfidence').innerText = result.conf + '%';
+      document.getElementById('countdownTimer').innerText = timeLeft + 's';
+
+      const taiLight = document.getElementById('predictLightTai');
+      const xiuLight = document.getElementById('predictLightXiu');
+      
+      taiLight.className = 'light-big red';
+      xiuLight.className = 'light-big green';
+      
+      if(result.pred === "TAI") {
+        taiLight.classList.add('active-red');
       } else {
-        document.getElementById('countdownTimer').innerText = left + 's';
+        xiuLight.classList.add('active-green');
       }
-    }, 1000);
+
+      if (lastRenderedSession !== currentSession) {
+        document.getElementById('btnWin').disabled = false;
+        document.getElementById('btnLose').disabled = false;
+        lastRenderedSession = currentSession;
+      }
+
+    }, 500); // Cập nhật giao diện 0.5s 1 lần cho mượt
   }
 
-  function generateNewPrediction() {
-    let predict = "TAI";
-    let confidence = 50;
-
-    if (historyResults.length < 3) {
-        predict = (Date.now() % 2 === 0) ? "TAI" : "XIU";
-        confidence = Math.floor(Math.random() * 10) + 50;
-    } else {
-      let last = historyResults[historyResults.length - 1];
-      let last2 = historyResults[historyResults.length - 2];
-      let last3 = historyResults[historyResults.length - 3];
-
-      if (last === "TAI" && last2 === "TAI" && last3 === "TAI") {
-          predict = "XIU"; confidence = Math.floor(Math.random() * 16) + 70;
-      }
-      else if (last === "XIU" && last2 === "XIU" && last3 === "XIU") {
-          predict = "TAI"; confidence = Math.floor(Math.random() * 16) + 70;
-      }
-      else if (last !== last2 && last2 !== last3 && last !== last3) {
-          predict = (last === "TAI") ? "XIU" : "TAI";
-          confidence = Math.floor(Math.random() * 11) + 65;
-      }
-      else {
-          predict = last; confidence = Math.floor(Math.random() * 11) + 60;
-      }
-    }
-
-    historyResults.push(predict);
-    if(historyResults.length > 10) historyResults.shift();
-
-    if(confidence < 50) confidence = 50;
-    if(confidence > 85) confidence = 85;
-
-    lastPrediction = predict;
-    lastConfidence = confidence;
-    localStorage.setItem('tx_last_prediction', predict);
-    localStorage.setItem('tx_last_confidence', confidence);
-    localStorage.setItem('tx_history_results', JSON.stringify(historyResults));
-
-    updatePredictionUI();
-  }
-
-  function updatePredictionUI() {
-    document.getElementById('sessionIdDisplay').innerText = '#' + currentSessionId;
-    document.getElementById('predictConfidence').innerText = lastConfidence + '%';
+  // Thuật toán tạo kết quả đồng bộ (Mọi người dùng nhập cùng 1 mã phiên sẽ ra cùng 1 kết quả)
+  function getPredictionForSession(sessionId) {
+    let x = Math.sin(sessionId) * 10000;
+    let rand = x - Math.floor(x); 
     
-    const taiLight = document.getElementById('predictLightTai');
-    const xiuLight = document.getElementById('predictLightXiu');
+    let pred = rand > 0.5 ? "TAI" : "XIU";
+    let conf = Math.floor((rand * 36)) + 50; 
     
-    taiLight.className = 'light-big red';
-    xiuLight.className = 'light-big green';
-    
-    if(lastPrediction === "TAI") {
-      taiLight.classList.add('active-red');
-    } else {
-      xiuLight.classList.add('active-green');
-    }
-
-    document.getElementById('btnWin').disabled = false;
-    document.getElementById('btnLose').disabled = false;
+    return { pred: pred, conf: conf };
   }
 
   // XỬ LÝ KHI BẤM THẮNG/THUA
@@ -603,7 +567,7 @@
     document.getElementById('btnLose').disabled = true;
     
     const time = new Date().toLocaleTimeString('vi-VN');
-    winLossHistory.unshift({ session: currentSessionId, result: type, time: time });
+    winLossHistory.unshift({ session: activeGlobalSession, result: type, time: time });
     
     if(winLossHistory.length > 15) winLossHistory.pop();
     
@@ -632,13 +596,6 @@
       renderWinLossHistory();
     }
   }
-
-  // Lắng nghe sự kiện quay lại tab
-  document.addEventListener("visibilitychange", () => {
-    if (document.visibilityState === "visible") {
-      initPredictionSystem(); 
-    }
-  });
 
   // ==========================================
   // CÁC HÀM KHÁC
