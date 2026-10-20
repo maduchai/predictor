@@ -278,7 +278,8 @@
         </div>
 
         <div class="prediction-panel">
-          <div class="session-id">Mã Phiên: <span id="sessionIdDisplay">#459695</span> <span class="game-tag">- Sunwin</span></div>
+          <!-- CẬP NHẬT MÃ PHIÊN THÀNH 46020 -->
+          <div class="session-id">Mã Phiên: <span id="sessionIdDisplay">#46020</span> <span class="game-tag">- Sunwin</span></div>
           
           <div class="light-container">
             <div class="light-box">
@@ -293,7 +294,6 @@
 
           <div class="confidence-box">Độ Tự Tin: <span id="predictConfidence" style="color: #00e5ff;">Đang chờ...</span></div>
           
-          <!-- ĐÃ SỬA THÀNH 68s -->
           <div class="timer-box">Chờ phiên tiếp: <span id="countdownTimer">68s</span></div>
 
           <div class="action-buttons">
@@ -401,7 +401,8 @@
   let f168History = JSON.parse(localStorage.getItem('f168_history') || "[]");
   let winLossHistory = JSON.parse(localStorage.getItem('tx_win_loss_history') || "[]");
   
-  let activeGlobalSession = 459695;
+  // ĐÃ CẬP NHẬT MÃ PHIÊN CƠ SỞ
+  let activeGlobalSession = 46020;
   let lastRenderedSession = 0;
   let globalTimerInterval = null;
 
@@ -485,20 +486,26 @@
   // ==========================================
   function initGlobalSyncClock() {
     if(!db) return;
+    let targetBaseSession = 46020; // CẬP NHẬT MÃ PHIÊN MỚI TẠI ĐÂY
 
     db.ref('tx_global_clock').once('value').then((snap) => {
-      if (!snap.exists()) {
+      // Nếu chưa có trên Firebase, HOẶC mã phiên cũ không phải 46020 -> Tự động Reset lại mốc thời gian mới
+      if (!snap.exists() || snap.val().base_session !== targetBaseSession) {
         db.ref('tx_global_clock').set({
-          base_session: 459695,
+          base_session: targetBaseSession,
           base_time: Date.now()
+        }).then(() => {
+          // Sau khi set xong thì lấy dữ liệu mới để chạy
+          db.ref('tx_global_clock').once('value').then(s => startTicker(s.val()));
         });
       } else {
         startTicker(snap.val());
       }
     });
 
+    // Lắng nghe thay đổi realtime từ Firebase
     db.ref('tx_global_clock').on('value', (snap) => {
-      if (snap.exists()) {
+      if (snap.exists() && snap.val().base_session === targetBaseSession) {
         startTicker(snap.val());
       }
     });
