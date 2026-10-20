@@ -1,304 +1,523 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TOOL DỰ ĐOÁN LC79</title>
-    <style>
-        body {
-            background-color: #0a0000;
-            color: #fff;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            margin: 0;
-            background-image: radial-gradient(circle at 50% 0%, #330000 0%, #0a0000 70%);
-        }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ADMIN · Hai×bo</title>
+<style>
+  :root{ 
+    --panel: rgba(15, 0, 0, 0.85); /* Nền đen trong suốt */
+    --red:#ff3333; 
+    --gold:#ffd700; 
+    --green:#00e676; 
+    --cyan:#00e5ff; 
+  }
+  *{box-sizing:border-box;font-family:system-ui,sans-serif;margin:0;padding:0}
+  
+  /* 1. HIỆU ỨNG NỀN 7 MÀU NHẠT CHUYỂN ĐỘNG */
+  body { 
+    background: linear-gradient(-45deg, #ff9a9e, #fecfef, #f6d365, #fda085, #84fab0, #8fd3f4, #a6c1ee);
+    background-size: 400% 400%;
+    animation: gradientBG 15s ease infinite;
+    color:#ffe6e6; 
+    padding:20px; 
+    display:flex; 
+    justify-content:center; 
+    min-height:100vh; 
+  }
+  @keyframes gradientBG {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+  }
 
-        .tool-container {
-            background: rgba(20, 0, 0, 0.8);
-            border: 1px solid #ff3333;
-            border-radius: 15px;
-            padding: 25px;
-            width: 90%;
-            max-width: 400px;
-            text-align: center;
-            box-shadow: 0 0 20px rgba(255, 51, 51, 0.3);
-            backdrop-filter: blur(10px);
-        }
+  .app{ width:100%; max-width:1000px; }
+  .header{ text-align:center; margin-bottom:20px; }
+  .header h1{ color:var(--red); text-shadow:0 0 15px var(--red), 0 0 5px #fff; font-size:2rem; }
+  
+  /* KHUNG TRONG SUỐT */
+  .card{ 
+    background: var(--panel); 
+    backdrop-filter: blur(8px); 
+    -webkit-backdrop-filter: blur(8px);
+    padding:20px; 
+    border-radius:12px; 
+    border:1px solid #551111; 
+    margin-bottom:20px; 
+    box-shadow: 0 8px 32px 0 rgba(0,0,0,0.5);
+  }
+  
+  h2{ color:var(--red); margin-bottom:15px; font-size:1.1rem; border-bottom:1px solid #551111; padding-bottom:5px; text-transform:uppercase; }
+  input, select{ width:100%; padding:10px; margin-bottom:10px; background:#000; border:1px solid #551111; color:#fff; border-radius:6px; outline:none; }
+  button{ background:var(--red); color:#fff; border:none; padding:10px 15px; border-radius:6px; cursor:pointer; font-weight:bold; transition:0.2s;}
+  button:hover { filter: brightness(1.2); transform: scale(1.02); }
+  .btn-g{ background:var(--green); color:#000; } 
+  .btn-c{ background:var(--cyan); color:#000;}
+  .btn-sm { padding: 5px 10px; font-size: 0.8rem; }
+  table{ width:100%; border-collapse:collapse; margin-top:10px; font-size:0.85rem; text-align:left; }
+  th,td{ padding:10px; border-bottom:1px solid #551111; }
+  th{ color:var(--gold); font-size:0.8rem; text-transform:uppercase;}
+  .hidden{ display:none!important; }
+  .status-pending { color: #ffd700; font-weight: bold; }
+  .status-done { color: #00e676; font-weight: bold; }
+  .header-bar { display:flex; justify-content:space-between; align-items:center; background:var(--panel); backdrop-filter: blur(8px); padding:10px 20px; border-radius:8px; margin-bottom:20px; border:1px solid var(--red); flex-wrap:wrap; gap:10px;}
+  .manual-add-box { background: rgba(0, 230, 118, 0.1); border: 1px dashed var(--green); padding: 15px; border-radius: 8px; margin-bottom: 20px;}
+  .manual-add-box h3 { color: var(--green); margin-bottom: 10px; font-size: 1rem; }
+  
+  /* CSS cho đồng hồ đếm ngược */
+  .countdown-timer { font-family: monospace; font-size: 0.9rem; color: #ffeb3b; display: block; margin-top: 3px; }
 
-        /* THÔNG BÁO BẢO TRÌ NHẤP NHÁY */
-        .maintenance-alert {
-            background-color: #ffcc00;
-            color: #000;
-            font-weight: bold;
-            padding: 10px;
-            border-radius: 8px;
-            margin-bottom: 15px;
-            animation: blink 1.5s infinite;
-            font-size: 14px;
-            text-transform: uppercase;
-        }
+  /* ==================================================== */
+  /* CSS CHO PHẦN TOOL DỰ ĐOÁN TÀI XỈU (LC79) TÍCH HỢP   */
+  /* ==================================================== */
+  .predict-maintenance {
+      background-color: #ffcc00; color: #000; font-weight: bold; padding: 10px; border-radius: 8px;
+      margin-bottom: 15px; animation: blink 1.5s infinite; font-size: 14px; text-transform: uppercase; text-align: center;
+  }
+  @keyframes blink { 0% { opacity: 1; } 50% { opacity: 0.6; } 100% { opacity: 1; } }
 
-        @keyframes blink {
-            0% { opacity: 1; box-shadow: 0 0 15px #ffcc00; }
-            50% { opacity: 0.5; box-shadow: 0 0 5px #ffcc00; }
-            100% { opacity: 1; box-shadow: 0 0 15px #ffcc00; }
-        }
+  .predict-session-box {
+      display: flex; justify-content: space-between; align-items: center;
+      background: #000; padding: 12px; border-radius: 8px; border: 1px dashed #555; margin-bottom: 15px;
+  }
+  .predict-session-id { font-size: 18px; font-weight: bold; color: var(--cyan); }
+  .predict-timer { font-size: 18px; font-weight: bold; color: var(--red); font-family: monospace; }
 
-        /* KHU VỰC MÃ PHIÊN VÀ ĐẾM NGƯỢC */
-        .session-box {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background: #000;
-            padding: 12px;
-            border-radius: 8px;
-            border: 1px dashed #555;
-            margin-bottom: 20px;
-        }
+  .predict-result-box {
+      background: #111; border: 1px solid #333; border-radius: 10px; padding: 15px; margin-bottom: 15px;
+      min-height: 100px; display: flex; flex-direction: column; justify-content: center; text-align: center;
+  }
+  .predict-type { font-size: 28px; font-weight: bold; }
+  .predict-percent { font-size: 35px; font-weight: bold; color: var(--green); text-shadow: 0 0 10px rgba(0, 255, 0, 0.5); }
 
-        .session-id {
-            font-size: 18px;
-            font-weight: bold;
-            color: #00e5ff;
-        }
+  .predict-survey-box {
+      background: rgba(0, 255, 0, 0.05); border: 1px solid #004400; border-radius: 8px;
+      padding: 15px; margin-bottom: 15px; display: none; text-align: center;
+  }
+  .predict-survey-title { font-size: 13px; color: #ccc; margin-bottom: 10px; }
+  .predict-btn-group { display: flex; gap: 10px; }
+  .predict-btn { flex: 1; padding: 10px; border: none; border-radius: 5px; font-weight: bold; cursor: pointer; transition: 0.2s; }
+  .predict-btn-win { background-color: var(--green); color: #000; }
+  .predict-btn-loss { background-color: var(--red); color: #fff; }
 
-        .timer {
-            font-size: 18px;
-            font-weight: bold;
-            color: #ff3333;
-            font-family: monospace;
-        }
-
-        /* KHU VỰC HIỂN THỊ DỰ ĐOÁN */
-        .predict-box {
-            background: #111;
-            border: 1px solid #333;
-            border-radius: 10px;
-            padding: 15px;
-            margin-bottom: 15px;
-            min-height: 110px;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-        }
-
-        .predict-result {
-            font-size: 35px;
-            font-weight: bold;
-            color: #00ff00;
-            text-shadow: 0 0 10px rgba(0, 255, 0, 0.5);
-        }
-
-        .predict-type {
-            font-size: 28px;
-            font-weight: bold;
-            color: #fff;
-        }
-
-        /* KHU VỰC KHẢO SÁT (THẮNG/THUA) */
-        .survey-box {
-            background: rgba(0, 255, 0, 0.05);
-            border: 1px solid #004400;
-            border-radius: 8px;
-            padding: 15px;
-            margin-bottom: 15px;
-            display: none; /* Ẩn lúc đầu */
-        }
-
-        .survey-title {
-            font-size: 13px;
-            color: #ccc;
-            margin-bottom: 10px;
-        }
-
-        .btn-group {
-            display: flex;
-            gap: 10px;
-        }
-
-        .btn-survey {
-            flex: 1;
-            padding: 10px;
-            border: none;
-            border-radius: 5px;
-            font-weight: bold;
-            cursor: pointer;
-            transition: 0.2s;
-        }
-
-        .btn-win { background-color: #00e676; color: #000; }
-        .btn-win:hover { background-color: #00c853; }
-        
-        .btn-loss { background-color: #ff3333; color: #fff; }
-        .btn-loss:hover { background-color: #d50000; }
-
-        /* THỐNG KÊ AI */
-        .ai-stats {
-            font-size: 12px;
-            color: #aaa;
-            text-align: left;
-            background: #000;
-            padding: 10px;
-            border-radius: 5px;
-            border: 1px solid #222;
-        }
-        .ai-stats span { color: #00e5ff; font-weight: bold;}
-        .ai-stats .green { color: #00ff00; }
-    </style>
+  .predict-ai-stats {
+      font-size: 12px; color: #aaa; text-align: left; background: #000;
+      padding: 10px; border-radius: 5px; border: 1px solid #222;
+  }
+  .predict-ai-stats span { color: var(--cyan); font-weight: bold;}
+</style>
 </head>
 <body>
+<div class="app">
+  <div class="header"><h1>ADMIN DASHBOARD</h1></div>
 
-<div class="tool-container">
-    <!-- THÔNG BÁO BẢO TRÌ -->
-    <div class="maintenance-alert">
-        ⚠️ GAME LC79 ĐANG BẢO TRÌ ⚠️
+  <div id="authView" class="card" style="max-width:400px; margin:0 auto;">
+    <h2>Đăng Nhập</h2>
+    <input id="adminPass" type="password" placeholder="Mật khẩu (admin123)...">
+    <button onclick="login()" style="width:100%">VÀO HỆ THỐNG</button>
+    <div id="loginMsg" style="color:var(--red); font-weight:bold; text-align:center; margin-top:10px;"></div>
+  </div>
+
+  <div id="adminPanel" class="hidden">
+    <div class="header-bar">
+      <div style="color:var(--red); font-weight:bold; letter-spacing:1px;">HỆ THỐNG QUẢN LÝ</div>
+      <div style="display:flex; gap:10px; flex-wrap:wrap;">
+        <button class="btn-c btn-sm" onclick="changePassword()">🔑 Đổi Pass</button>
+        <button class="btn-sm" style="background:#ff5252; color:#fff;" onclick="clearDepositHistory()">🗑 Xóa Lịch Sử Nạp</button>
+        <button class="btn-sm" onclick="location.reload()">Đăng Xuất</button>
+      </div>
     </div>
 
-    <!-- MÃ PHIÊN VÀ ĐẾM NGƯỢC -->
-    <div class="session-box">
-        <div>
-            <div style="font-size: 11px; color: #aaa;">MÃ PHIÊN</div>
-            <div class="session-id" id="sessionDisplay">#45968</div>
-        </div>
-        <div>
-            <div style="font-size: 11px; color: #aaa; text-align: right;">CHỜ KẾT QUẢ</div>
-            <div class="timer" id="timerDisplay">65s</div>
-        </div>
+    <!-- ========================================== -->
+    <!-- TOOL DỰ ĐOÁN TÀI XỈU TÍCH HỢP VÀO ADMIN    -->
+    <!-- ========================================== -->
+    <div class="card">
+      <h2>Tool Dự Đoán Tài Xỉu (LC79)</h2>
+      
+      <div class="predict-maintenance">⚠️ GAME LC79 ĐANG BẢO TRÌ ⚠️</div>
+      
+      <div class="predict-session-box">
+          <div>
+              <div style="font-size: 11px; color: #aaa;">MÃ PHIÊN</div>
+              <div class="predict-session-id" id="predictSessionDisplay">#45968</div>
+          </div>
+          <div>
+              <div style="font-size: 11px; color: #aaa; text-align: right;">CHỜ KẾT QUẢ</div>
+              <div class="predict-timer" id="predictTimerDisplay">65s</div>
+          </div>
+      </div>
+
+      <div class="predict-result-box">
+          <div id="predictResultContent">
+              <div style="color: #ffcc00; font-style: italic;">Đang phân tích...</div>
+          </div>
+      </div>
+
+      <div class="predict-survey-box" id="predictSurveyBox">
+          <div class="predict-survey-title">Phiên này dự đoán có đúng không?</div>
+          <div class="predict-btn-group">
+              <button class="predict-btn predict-btn-win" onclick="recordPredictResult(true)">THẮNG</button>
+              <button class="predict-btn predict-btn-loss" onclick="recordPredictResult(false)">THUA</button>
+          </div>
+      </div>
+
+      <div class="predict-ai-stats">
+          🧠 AI Learning Status:<br>
+          Đã học: <span id="predictTotalRounds">0</span> phiên | 
+          Độ chính xác: <span style="color:var(--green);" id="predictAccuracyStat">0%</span>
+      </div>
+    </div>
+    <!-- ========================================== -->
+
+    <!-- QUẢN LÝ THIẾT BỊ TRUY CẬP -->
+    <div class="card">
+      <h2>Quản Lý Thiết Bị Truy Cập</h2>
+      <table>
+        <thead><tr><th>Mã TB</th><th>IP / Tỉnh</th><th>Thiết bị</th><th>Số Dư</th><th>Lần cuối</th><th>Hành động</th></tr></thead>
+        <tbody id="deviceList"><tr><td colspan="6" style="text-align:center; color:#888;">Đang tải dữ liệu...</td></tr></tbody>
+      </table>
     </div>
 
-    <!-- KẾT QUẢ DỰ ĐOÁN -->
-    <div class="predict-box">
-        <div id="resultContent">
-            <div style="color: #ffcc00; font-style: italic;">Đang phân tích...</div>
-        </div>
+    <div class="manual-add-box">
+      <h3>💰 Cộng Tiền Thủ Công</h3>
+      <div style="display:flex; gap:10px; margin-bottom:10px;">
+        <input id="manualDeviceCode" placeholder="Mã TB (VD: HB-123456)" style="flex:2;">
+        <input id="manualAmount" type="number" placeholder="Số tiền" style="flex:1;">
+      </div>
+      <button class="btn-g" onclick="manualAddMoney()" style="width:100%;">CỘNG TIỀN</button>
+      <div id="manualMsg" style="font-weight:bold; text-align:center; margin-top:10px;"></div>
     </div>
 
-    <!-- KHẢO SÁT THẮNG THUA -->
-    <div class="survey-box" id="surveyBox">
-        <div class="survey-title">Phiên này dự đoán có đúng không?</div>
-        <div class="btn-group">
-            <button class="btn-survey btn-win" onclick="recordResult(true)">THẮNG</button>
-            <button class="btn-survey btn-loss" onclick="recordResult(false)">THUA</button>
-        </div>
+    <div class="card">
+      <h2>Duyệt Nạp Tiền</h2>
+      <table>
+        <thead><tr><th>Mã TB</th><th>Hình thức</th><th>IP / Tỉnh</th><th>Thông tin</th><th>Hành động</th></tr></thead>
+        <tbody id="depList"><tr><td colspan="5" style="text-align:center; color:#888;">Đang tải dữ liệu...</td></tr></tbody>
+      </table>
     </div>
 
-    <!-- THỐNG KÊ AI GIẢ LẬP -->
-    <div class="ai-stats">
-        🧠 AI Learning Status:<br>
-        Đã học: <span id="totalRounds">0</span> phiên | 
-        Độ chính xác: <span class="green" id="accuracyStat">0%</span>
+    <div class="card">
+      <h2>Tạo Key Kích Hoạt</h2>
+      <div style="display:flex; gap:10px; margin-bottom:10px;">
+        <select id="keyDuration" style="flex:1;">
+            <option value="0.01">Test (1 Phút)</option>
+            <option value="1">1 Ngày</option>
+            <option value="7">1 Tuần</option>
+            <option value="30">1 Tháng</option>
+            <option value="0">Vĩnh Viễn</option>
+        </select>
+        <input type="number" id="keyDeviceLimit" value="1" min="1" style="flex:1;" title="Số thiết bị">
+        <button class="btn-c" onclick="createKey()" style="flex:1;">Tạo Key</button>
+      </div>
+      <div id="keyResult" style="background:#000; padding:15px; border:1px dashed var(--gold); color:var(--gold); text-align:center; font-size:1.2rem; font-weight:bold; display:none; letter-spacing:1px;"></div>
     </div>
+
+    <div class="card">
+      <h2>Danh Sách Key Đã Tạo</h2>
+      <table>
+        <thead><tr><th>Mã Key</th><th>Hạn</th><th>Thiết bị (Dùng / Tối đa)</th><th>Trạng Thái (Đếm ngược)</th><th>Hành động</th></tr></thead>
+        <tbody id="keyList"><tr><td colspan="5" style="text-align:center; color:#888;">Đang tải dữ liệu...</td></tr></tbody>
+      </table>
+    </div>
+  </div>
 </div>
 
+<!-- FIREBASE SDK -->
+<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
+
 <script>
-    // Cấu hình
-    let currentSession = 45968;
-    let timeLeft = 65;
-    let timerInterval = null;
-    let currentPredictionType = ""; // Lưu Tài/Xỉu của phiên hiện tại để đối chiếu
+  window.onerror = function(msg) { alert("Lỗi: " + msg); };
+  const firebaseConfig = {
+    apiKey: "AIzaSyAaQg91q7wMeQ4kXyCnOQuolvN_KmJoHBI",
+    authDomain: "vip1-c45cb.firebaseapp.com",
+    projectId: "vip1-c45cb",
+    storageBucket: "vip1-c45cb.firebasestorage.app",
+    messagingSenderId: "191209527323",
+    appId: "1:191209527323:web:b908c85ad00bfb6c2ac0be",
+    databaseURL: "https://vip1-c45cb-default-rtdb.asia-southeast1.firebasedatabase.app"
+  };
+  firebase.initializeApp(firebaseConfig);
+  const db = firebase.database();
 
-    // Lấy dữ liệu AI từ bộ nhớ trình duyệt (để F5 không bị mất)
-    let aiWins = parseInt(localStorage.getItem('lc79_wins')) || 0;
-    let aiLosses = parseInt(localStorage.getItem('lc79_losses')) || 0;
+  const DISCORD_WEBHOOK = "https://discord.com/api/webhooks/1561068482504691742/R5_eAJ4B5QaQ7iGpCORqd8ZPwTiYDVJuUucjiiYqaMS4NjfN-zQ6cAvupv-IW9lN54Ke";
+  const getPass = () => localStorage.getItem('admin_password') || "admin123";
 
-    // Hàm tạo kết quả random (50% - 85%)
-    function getRandomPrediction() {
-        let percent = Math.floor(Math.random() * (85 - 50 + 1)) + 50;
-        let type = Math.random() < 0.5 ? "TÀI" : "XỈU";
-        return { type: type, percent: percent };
+  // Biến lưu trữ toàn bộ key để phục vụ việc đếm ngược
+  let globalKeysData = {};
+
+  function login() {
+    if(document.getElementById('adminPass').value === getPass()) {
+      document.getElementById('authView').classList.add('hidden');
+      document.getElementById('adminPanel').classList.remove('hidden');
+      loadDevices(); 
+      loadDeposits();
+      loadKeys(); // Bắt đầu tải key và chạy đếm ngược
+      startPredictSession(); // BẮT ĐẦU CHẠY TOOL DỰ ĐOÁN KHI ĐĂNG NHẬP
+    } else { document.getElementById('loginMsg').innerText = "Sai mật khẩu!"; }
+  }
+
+  function changePassword() {
+    const oldPass = prompt("Nhập mật khẩu hiện tại:");
+    if(oldPass !== getPass()) return alert("Mật khẩu cũ sai!");
+    const newPass = prompt("Nhập mật khẩu MỚI:");
+    if(newPass && newPass.trim() !== "") { localStorage.setItem('admin_password', newPass.trim()); alert("Đổi mật khẩu thành công!"); }
+  }
+
+  function loadDevices() {
+    const deviceList = document.getElementById('deviceList');
+    db.ref('users').on('value', snap => {
+      deviceList.innerHTML = "";
+      if(!snap.exists()) { deviceList.innerHTML = "<tr><td colspan='6' style='text-align:center;'>Chưa có thiết bị nào</td></tr>"; return; }
+      
+      const arr = Object.keys(snap.val()).map(k => ({ code: k, ...snap.val()[k] })).sort((a,b)=> (b.lastActive||0) - (a.lastActive||0));
+      
+      arr.forEach(dev => {
+        const lastAct = dev.lastActive ? new Date(dev.lastActive).toLocaleString('vi-VN') : "Chưa rõ";
+        const ipStr = dev.ip || "Không rõ IP";
+        const locStr = dev.location || "Không rõ";
+        const deviceStr = dev.device || "Không rõ";
+        const balanceStr = (dev.balance || 0).toLocaleString() + "đ";
+
+        deviceList.innerHTML += `
+          <tr>
+            <td style="color:var(--gold); font-weight:bold; user-select:all">${dev.code}</td>
+            <td><b>IP:</b> ${ipStr}<br><small style="color:#aaa;">${locStr}</small></td>
+            <td>${deviceStr}</td>
+            <td style="color:var(--green); font-weight:bold;">${balanceStr}</td>
+            <td style="font-size:0.75rem; color:#aaa;">${lastAct}</td>
+            <td><button class="btn-sm" style="background:#551111;" onclick="deleteDevice('${dev.code}')">Xóa</button></td>
+          </tr>
+        `;
+      });
+    });
+  }
+
+  function deleteDevice(code) {
+    if(confirm("Xóa vĩnh viễn thiết bị " + code + " khỏi hệ thống?")) {
+      db.ref('users/' + code).remove();
     }
+  }
 
-    // Cập nhật thống kê AI lên màn hình
-    function updateAIStats() {
-        let total = aiWins + aiLosses;
-        document.getElementById('totalRounds').innerText = total;
+  function clearDepositHistory() {
+    if(!confirm("Mày có chắc chắn muốn xóa TOÀN BỘ lịch sử nạp tiền không? Hành động này sẽ xóa sạch dữ liệu trên Firebase và không thể hoàn tác!")) return;
+    db.ref('deposits').remove().then(() => { alert("Đã xóa sạch toàn bộ lịch sử nạp tiền!"); }).catch(err => { alert("Lỗi khi xóa: " + err.message); });
+  }
+
+  function manualAddMoney() {
+    const devCode = document.getElementById('manualDeviceCode').value.trim();
+    const amount = parseInt(document.getElementById('manualAmount').value);
+    const msg = document.getElementById('manualMsg');
+    if(!devCode || isNaN(amount) || amount <= 0) { msg.style.color = "#ff5252"; msg.innerText = "Nhập đúng Mã TB và Số Tiền (> 0)"; return; }
+    msg.style.color = "#ffd700"; msg.innerText = "Đang xử lý...";
+
+    db.ref('users/' + devCode + '/balance').transaction((currentBal) => { return (currentBal || 0) + amount; }, (error, committed, snapshot) => {
+      if (error) { msg.style.color = "#ff5252"; msg.innerText = "Lỗi: " + error.message; } 
+      else if (committed) {
+        msg.style.color = "#00e676"; msg.innerText = `Đã cộng ${amount.toLocaleString()}đ cho thiết bị ${devCode}!`;
+        document.getElementById('manualDeviceCode').value = ""; document.getElementById('manualAmount').value = "";
+        fetch(DISCORD_WEBHOOK, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ username: "Admin Hai×bo", embeds: [{ title: "💸 CỘNG TIỀN THỦ CÔNG", color: 16711680, description: `Admin đã cộng **${amount.toLocaleString()}đ** vào thiết bị **${devCode}**.`, timestamp: new Date().toISOString() }] }) });
+      }
+    });
+  }
+
+  function createKey() {
+    const days = parseFloat(document.getElementById('keyDuration').value);
+    const maxDevices = parseInt(document.getElementById('keyDeviceLimit').value) || 1;
+    const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"; let key = "HB-";
+    for(let i=0; i<12; i++) { if(i === 4 || i === 8) key += "-"; key += chars.charAt(Math.floor(Math.random() * chars.length)); }
+    
+    let expireTime = days === 0 ? 0 : Date.now() + (days * 24 * 60 * 60 * 1000);
+    let durationText = days === 0 ? "Vĩnh viễn" : (days < 1 ? (days * 24 * 60) + " Phút" : days + " Ngày");
+
+    db.ref('keys/' + key).set({ duration: durationText, expire: expireTime, maxDevices: maxDevices, usedDevices: {}, createdAt: new Date().toLocaleString('vi-VN'), timestamp: Date.now() })
+    .then(() => { let el = document.getElementById('keyResult'); el.style.display = "block"; el.innerText = key; });
+  }
+
+  function loadKeys() {
+    const keyList = document.getElementById('keyList');
+    db.ref('keys').on('value', snap => {
+      keyList.innerHTML = "";
+      globalKeysData = snap.val() || {};
+      
+      if(!snap.exists()) { keyList.innerHTML = "<tr><td colspan='5' style='text-align:center;'>Chưa có key nào</td></tr>"; return; }
+      
+      const arr = Object.keys(globalKeysData).map(k => ({ key: k, ...globalKeysData[k] })).sort((a,b)=>b.timestamp - a.timestamp);
+      
+      arr.forEach(item => {
+        const usedCount = item.usedDevices ? Object.keys(item.usedDevices).length : 0;
+        const maxDev = item.maxDevices || 1;
+        const deviceStatus = usedCount >= maxDev ? `<span style="color:#ff5252">${usedCount}/${maxDev} (Đầy)</span>` : `<span style="color:#00e5ff">${usedCount}/${maxDev}</span>`;
         
-        if (total > 0) {
-            let accuracy = Math.round((aiWins / total) * 100);
-            document.getElementById('accuracyStat').innerText = accuracy + "%";
-        } else {
-            document.getElementById('accuracyStat').innerText = "0%";
-        }
-    }
+        let statusCell = `<td id="status-${item.key}" data-expire="${item.expire}" data-key="${item.key}">Đang tính...</td>`;
 
-    // Hàm xử lý khi bấm nút Thắng/Thua
-    function recordResult(isWin) {
-        // Cộng điểm
-        if (isWin) {
-            aiWins++;
-            localStorage.setItem('lc79_wins', aiWins);
-        } else {
-            aiLosses++;
-            localStorage.setItem('lc79_losses', aiLosses);
-        }
+        keyList.innerHTML += `
+          <tr>
+            <td style="color:var(--gold); font-weight:bold; user-select:all">${item.key}</td>
+            <td>${item.duration}</td>
+            <td>${deviceStatus}</td>
+            ${statusCell}
+            <td><button class="btn-sm" style="background:#551111;" onclick="deleteKey('${item.key}')">Xóa</button></td>
+          </tr>
+        `;
+      });
+      updateAllTimers();
+    });
+  }
 
-        // Cập nhật giao diện
-        updateAIStats();
-        
-        // Ẩn nút khảo sát đi để chờ phiên sau
-        document.getElementById('surveyBox').style.display = 'none';
-        
-        // Hiệu ứng thông báo nhỏ
-        let msg = isWin ? "✅ Đã ghi nhận: AI học được điểm cộng!" : "❌ Đã ghi nhận: AI học được điểm trừ!";
-        alert(msg);
-    }
+  function deleteKey(key) { 
+      if(confirm("Xóa key: " + key + " ?")) db.ref('keys/' + key).remove(); 
+  }
 
-    // Hàm bắt đầu đếm ngược cho phiên mới
-    function startSession() {
-        // Cập nhật mã phiên
-        document.getElementById('sessionDisplay').innerText = "#" + currentSession;
-        
-        // Hiển thị trạng thái đang chờ
-        document.getElementById('resultContent').innerHTML = '<div style="color: #ffcc00; font-style: italic;">Đang phân tích dữ liệu...</div>';
-        
-        // Ẩn nút khảo sát (nếu đang hiện từ phiên trước)
-        document.getElementById('surveyBox').style.display = 'none';
+  function formatTime(ms) {
+      if (ms <= 0) return "Hết hạn";
+      let s = Math.floor(ms / 1000);
+      let d = Math.floor(s / 86400); s -= d * 86400;
+      let h = Math.floor(s / 3600); s -= h * 3600;
+      let m = Math.floor(s / 60); s -= m * 60;
+      let res = "";
+      if (d > 0) res += d + "n ";
+      if (h > 0) res += h + "h ";
+      if (m > 0) res += m + "m ";
+      res += s + "s";
+      return res;
+  }
 
-        // Reset thời gian
-        timeLeft = 65;
-        document.getElementById('timerDisplay').innerText = timeLeft + "s";
+  function updateAllTimers() {
+      const statusCells = document.querySelectorAll('td[data-expire]');
+      statusCells.forEach(td => {
+          let expire = parseInt(td.getAttribute('data-expire'));
+          let key = td.getAttribute('data-key');
+          
+          if (expire === 0) {
+              td.innerHTML = `<span style="color:#00e676">Hoạt động</span><br><small style="color:#aaa">Vĩnh viễn</small>`;
+              return;
+          }
+          let diff = expire - Date.now();
+          if (diff <= 0) {
+              td.innerHTML = `<span style="color:#ff5252">Hết hạn (Đang xóa...)</span>`;
+              db.ref('keys/' + key).remove();
+          } else {
+              td.innerHTML = `<span style="color:#00e676">Hoạt động</span><br><small class="countdown-timer">${formatTime(diff)}</small>`;
+          }
+      });
+  }
 
-        // Sau 2 giây, in ra kết quả dự đoán
-        setTimeout(() => {
-            let result = getRandomPrediction();
-            currentPredictionType = result.type;
-            let color = result.type === "TÀI" ? "#ff3333" : "#00e5ff"; // Tài đỏ, Xỉu xanh
-            
-            document.getElementById('resultContent').innerHTML = `
-                <div class="predict-type" style="color: ${color}">${result.type}</div>
-                <div class="predict-result">${result.percent}%</div>
-            `;
-            
-            // Hiện nút Thắng/Thua để người dùng khảo sát
-            document.getElementById('surveyBox').style.display = 'block';
+  setInterval(() => {
+      if (!document.getElementById('adminPanel').classList.contains('hidden')) {
+          updateAllTimers();
+      }
+  }, 1000);
 
-        }, 2000); 
+  function loadDeposits() {
+    const depList = document.getElementById('depList');
+    db.ref('deposits').on('value', snap => {
+      depList.innerHTML = "";
+      if(!snap.exists()) { depList.innerHTML = "<tr><td colspan='5' style='text-align:center;'>Chưa có đơn nào</td></tr>"; return; }
+      const arr = Object.keys(snap.val()).map(k => ({ id: k, ...snap.val()[k] })).sort((a,b)=>b.timestamp - a.timestamp);
+      arr.forEach(dep => {
+        const btn = dep.status === 'pending' ? `<button class="btn-g btn-sm" onclick="approveDeposit('${dep.id}')">Duyệt</button>` : '<span class="status-done">Đã duyệt</span>';
+        let amountNum = parseInt(dep.amount) || 0;
+        let info = dep.method === 'Thẻ Cào' ? `${dep.type} - ${amountNum.toLocaleString()}đ` : `Nội dung: ${dep.deviceCode} (${amountNum.toLocaleString()}đ)`;
+        depList.innerHTML += `<tr><td style="color:var(--gold); font-weight:bold;">${dep.deviceCode}</td><td>${dep.method}</td><td><b>IP:</b> ${dep.ip}<br><small style="color:#aaa;">${dep.location}</small></td><td>${info}</td><td>${btn}</td></tr>`;
+      });
+    });
+  }
 
-        // Chạy đồng hồ đếm ngược
-        if (timerInterval) clearInterval(timerInterval);
-        
-        timerInterval = setInterval(() => {
-            timeLeft--;
-            document.getElementById('timerDisplay').innerText = timeLeft + "s";
+  function approveDeposit(id) {
+    if(!confirm("Xác nhận đã nhận được tiền và duyệt đơn này?")) return;
+    db.ref('deposits/' + id).once('value').then(snap => {
+      if(!snap.exists()) return;
+      let dep = snap.val();
+      if(dep.status !== 'pending') return;
+      let devCode = dep.deviceCode;
+      let amount = parseInt(dep.amount) || 0;
+      if(amount > 0 && devCode) {
+        db.ref('users/' + devCode + '/balance').transaction((currentBal) => { return (currentBal || 0) + amount; }, (error, committed, snapshot) => {
+          if (error) { alert("LỖI CỘNG TIỀN: " + error.message); } 
+          else if (committed) {
+            db.ref('deposits/' + id).update({ status: 'approved' }).then(() => {
+              fetch(DISCORD_WEBHOOK, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ username: "Admin Hai×bo", embeds: [{ title: "✅ ĐÃ DUYỆT NẠP TIỀN!", color: 65280, description: `Đơn mã **${id}** đã cộng **${amount.toLocaleString()}đ** vào thiết bị **${devCode}**.`, timestamp: new Date().toISOString() }] }) });
+            });
+          }
+        });
+      } else { db.ref('deposits/' + id).update({ status: 'approved' }); }
+    });
+  }
 
-            if (timeLeft <= 0) {
-                clearInterval(timerInterval);
-                currentSession++; // Nhảy mã phiên
-                startSession();   // Bắt đầu phiên mới
-            }
-        }, 1000);
-    }
+  // ====================================================
+  // JAVASCRIPT CHO TOOL DỰ ĐOÁN TÀI XỈU
+  // ====================================================
+  let predictSessionId = 45968;
+  let predictTimeLeft = 65;
+  let predictTimerInterval = null;
+  let predictCurrentType = "";
+  let aiWins = parseInt(localStorage.getItem('lc79_wins')) || 0;
+  let aiLosses = parseInt(localStorage.getItem('lc79_losses')) || 0;
 
-    // Khởi chạy khi mở trang
-    window.onload = function() {
-        updateAIStats(); // Hiển thị thống kê cũ
-        startSession();  // Bắt đầu đếm ngược
-    };
+  function getPredictRandom() {
+      let percent = Math.floor(Math.random() * (85 - 50 + 1)) + 50;
+      let type = Math.random() < 0.5 ? "TÀI" : "XỈU";
+      return { type: type, percent: percent };
+  }
+
+  function updatePredictAIStats() {
+      let total = aiWins + aiLosses;
+      document.getElementById('predictTotalRounds').innerText = total;
+      if (total > 0) {
+          let accuracy = Math.round((aiWins / total) * 100);
+          document.getElementById('predictAccuracyStat').innerText = accuracy + "%";
+      } else {
+          document.getElementById('predictAccuracyStat').innerText = "0%";
+      }
+  }
+
+  function recordPredictResult(isWin) {
+      if (isWin) { aiWins++; localStorage.setItem('lc79_wins', aiWins); } 
+      else { aiLosses++; localStorage.setItem('lc79_losses', aiLosses); }
+      updatePredictAIStats();
+      document.getElementById('predictSurveyBox').style.display = 'none';
+      // Không dùng alert để tránh làm phiền, chỉ đổi trạng thái
+  }
+
+  function startPredictSession() {
+      document.getElementById('predictSessionDisplay').innerText = "#" + predictSessionId;
+      document.getElementById('predictResultContent').innerHTML = '<div style="color: #ffcc00; font-style: italic;">Đang phân tích...</div>';
+      document.getElementById('predictSurveyBox').style.display = 'none';
+
+      predictTimeLeft = 65;
+      document.getElementById('predictTimerDisplay').innerText = predictTimeLeft + "s";
+
+      setTimeout(() => {
+          let result = getPredictRandom();
+          predictCurrentType = result.type;
+          let color = result.type === "TÀI" ? "var(--red)" : "var(--cyan)"; 
+          
+          document.getElementById('predictResultContent').innerHTML = `
+              <div class="predict-type" style="color: ${color}">${result.type}</div>
+              <div class="predict-percent">${result.percent}%</div>
+          `;
+          document.getElementById('predictSurveyBox').style.display = 'block';
+      }, 2000); 
+
+      if (predictTimerInterval) clearInterval(predictTimerInterval);
+      
+      predictTimerInterval = setInterval(() => {
+          predictTimeLeft--;
+          document.getElementById('predictTimerDisplay').innerText = predictTimeLeft + "s";
+
+          if (predictTimeLeft <= 0) {
+              clearInterval(predictTimerInterval);
+              predictSessionId++; 
+              startPredictSession(); 
+          }
+      }, 1000);
+  }
+
+  // Khởi tạo trạng thái AI khi load trang
+  window.addEventListener('load', () => {
+      updatePredictAIStats();
+  });
 </script>
-
 </body>
 </html>
