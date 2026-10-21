@@ -164,14 +164,20 @@
   /* TOOL DỰ ĐOÁN VỚI ROBOT VÀ NỀN MỜ TRONG SUỐT */
   .float-tool-box { 
     position: fixed; top: 160px; right: 20px; 
-    background: rgba(10, 0, 0, 0.6);
+    background: rgba(10, 0, 0, 0.7);
     backdrop-filter: blur(15px);
     -webkit-backdrop-filter: blur(15px);
-    border: 1px solid rgba(255, 0, 0, 0.6); 
+    border: 1px solid rgba(255, 215, 0, 0.8); /* Viền Vàng VIP */
     border-radius: 16px; padding: 15px; z-index: 2147483647; 
     display: none; text-align: center; 
-    box-shadow: 0 10px 30px rgba(255,0,0,0.2);
-    flex-direction: column; align-items: center; justify-content: center; width: 140px; 
+    box-shadow: 0 0 20px rgba(255,215,0,0.3), inset 0 0 15px rgba(255,0,0,0.2);
+    flex-direction: column; align-items: center; justify-content: center; width: 150px; 
+  }
+
+  .vip-badge {
+    font-size: 10px; font-weight: bold; color: #000; background: linear-gradient(90deg, #ffd700, #ff8c00);
+    padding: 2px 8px; border-radius: 10px; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 1px;
+    box-shadow: 0 0 10px rgba(255,215,0,0.5);
   }
 
   /* CSS CHO ROBOT */
@@ -180,11 +186,10 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    margin-bottom: 15px;
+    margin-bottom: 10px;
   }
   .robot-img {
-    width: 60px;
-    height: 60px;
+    width: 55px; height: 55px;
     filter: drop-shadow(0 0 10px rgba(255, 0, 0, 0.8));
     animation: floatRobot 3s ease-in-out infinite;
   }
@@ -203,16 +208,23 @@
     position: relative;
     box-shadow: 0 4px 10px rgba(0,0,0,0.5);
     transition: all 0.3s ease;
+    display: flex; flex-direction: column; align-items: center;
   }
   .robot-speech::before {
     content: '';
     position: absolute;
-    top: -6px;
-    left: 50%;
-    transform: translateX(-50%);
+    top: -6px; left: 50%; transform: translateX(-50%);
     border-width: 0 6px 6px 6px;
     border-style: solid;
     border-color: transparent transparent rgba(255, 255, 255, 0.95) transparent;
+  }
+
+  .ai-percent { font-size: 13px; color: #d50000; font-weight: bold; margin-top: 2px;}
+  
+  .pattern-text {
+    font-size: 11px; color: #00e5ff; margin-top: 8px; font-weight: bold;
+    background: rgba(0, 229, 255, 0.1); padding: 3px 8px; border-radius: 5px;
+    border: 1px solid rgba(0, 229, 255, 0.3); width: 100%; box-sizing: border-box;
   }
 
   .light-row { display: flex; align-items: center; justify-content: center; gap: 8px; margin-bottom: 8px; flex-direction: column; }
@@ -392,15 +404,22 @@
 
 <div id="floatBtn" class="float-tool-btn hidden" onclick="toggleTool()">🎮</div>
 
-<!-- TOOL DỰ ĐOÁN VỚI HÌNH ROBOT -->
+<!-- TOOL DỰ ĐOÁN VỚI HÌNH ROBOT, % VÀ VIP AI -->
 <div id="toolBox" class="float-tool-box">
   
+  <div class="vip-badge">👑 VIP AI PRO 👑</div>
+
   <div class="robot-container">
     <img src="https://cdn-icons-png.flaticon.com/512/4712/4712109.png" class="robot-img" alt="AI Robot">
-    <div class="robot-speech" id="robotSpeech" style="color: #888;">Chờ...</div>
+    <div class="robot-speech" id="robotSpeech" style="color: #888;">
+      <span id="aiPredictText">Đang phân tích...</span>
+      <span class="ai-percent" id="aiPercentText"></span>
+    </div>
   </div>
 
-  <div class="light-row"><div id="lightTai" class="light red"></div><span class="label tai">TÀI</span></div>
+  <div class="pattern-text" id="patternText">Đang tìm cầu...</div>
+
+  <div class="light-row" style="margin-top:10px;"><div id="lightTai" class="light red"></div><span class="label tai">TÀI</span></div>
   <div class="light-row"><div id="lightXiu" class="light green"></div><span class="label xiu">XỈU</span></div>
   
   <div class="timer-text" id="aiTimer">Chờ: 67s</div>
@@ -423,9 +442,7 @@
   const columns = canvas.width / fontSize;
   const drops = [];
   
-  for (let x = 0; x < columns; x++) {
-    drops[x] = 1;
-  }
+  for (let x = 0; x < columns; x++) { drops[x] = 1; }
 
   function drawMatrix() {
     ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
@@ -436,9 +453,7 @@
     for (let i = 0; i < drops.length; i++) {
       const text = chars.charAt(Math.floor(Math.random() * chars.length));
       ctx.fillText(text, i * fontSize, drops[i] * fontSize);
-      if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
-        drops[i] = 0;
-      }
+      if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) { drops[i] = 0; }
       drops[i]++;
     }
   }
@@ -469,7 +484,7 @@
   // CẤU HÌNH THỜI GIAN 67 GIÂY
   // ==========================================
   const BASE_SESSION_ID = 47196;   
-  const SESSION_DURATION = 67000;  // Đã đổi thành 67 giây (67000 ms)
+  const SESSION_DURATION = 67000;  // 67 giây
   let globalSyncInterval = null;
   let lastRenderedSession = 0;
 
@@ -665,7 +680,6 @@
       let sessionsPassed = Math.floor(elapsed / SESSION_DURATION);
       let currentSession = baseSession + sessionsPassed;
       
-      // Đã đổi công thức đếm ngược thành 67 giây
       let timeLeft = 67 - Math.floor((elapsed % SESSION_DURATION) / 1000);
       if(timeLeft > 67) timeLeft = 67;
 
@@ -675,20 +689,36 @@
 
       const tai = document.getElementById('lightTai');
       const xiu = document.getElementById('lightXiu');
-      const speech = document.getElementById('robotSpeech');
+      const speechText = document.getElementById('aiPredictText');
+      const percentText = document.getElementById('aiPercentText');
+      const patternText = document.getElementById('patternText');
       
       if (lastRenderedSession !== currentSession) {
         tai.className = 'light red';
         xiu.className = 'light green';
         
-        speech.innerText = result.pred;
-        if(result.pred === "TÀI") {
-          tai.classList.add('active-red');
-          speech.style.color = "#ff0000";
-        } else {
-          xiu.classList.add('active-green');
-          speech.style.color = "#008000";
-        }
+        // Hiệu ứng VIP AI đang phân tích
+        speechText.innerText = "Đang tính...";
+        speechText.style.color = "#888";
+        percentText.innerText = "";
+        patternText.innerText = "VIP AI: Đang soi cầu...";
+        patternText.style.color = "#ffd700";
+
+        // Đợi 2 giây cho giống AI thật đang phân tích rồi mới ra kết quả
+        setTimeout(() => {
+            speechText.innerText = result.pred;
+            percentText.innerText = result.conf + "%";
+            patternText.innerText = "Cầu: " + result.pattern;
+            patternText.style.color = "#00e5ff";
+
+            if(result.pred === "TÀI") {
+              tai.classList.add('active-red');
+              speechText.style.color = "#ff0000";
+            } else {
+              xiu.classList.add('active-green');
+              speechText.style.color = "#008000";
+            }
+        }, 2000);
 
         if(!isToolOpen) {
             isToolOpen = true;
@@ -701,12 +731,23 @@
     }, 1000);
   }
 
+  // THUẬT TOÁN VIP AI: TẠO KẾT QUẢ VÀ % (50-100%), ĐOÁN CẦU
   function getPredictionForSession(sessionId) {
     let x = Math.sin(sessionId) * 10000;
     let rand = x - Math.floor(x); 
+    
     let pred = rand > 0.5 ? "TÀI" : "XỈU";
-    let conf = Math.floor((rand * 23)) + 65; 
-    return { pred: pred, conf: conf };
+    // Tính % từ 50 đến 100
+    let conf = Math.floor(rand * 51) + 50; 
+    
+    // Tạo ngẫu nhiên tên cầu dựa trên rand
+    const patterns = [
+        "Bệt Tài", "Bệt Xỉu", "1-1", "3-2", "2-3", "Nhảy Cóc", "Bẻ Cầu", "Cầu Đảo"
+    ];
+    let patternIndex = Math.floor(rand * patterns.length);
+    let pattern = patterns[patternIndex];
+
+    return { pred: pred, conf: conf, pattern: pattern };
   }
 
   function predictF168(btn) {
