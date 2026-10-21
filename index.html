@@ -163,8 +163,8 @@
   /* TOOL DỰ ĐOÁN VỚI ROBOT VÀ NỀN MỜ */
   .float-tool-box { 
     position: fixed; top: 160px; right: 20px; 
-    background: rgba(0, 0, 0, 0.35); /* Nền tối trong suốt */
-    backdrop-filter: blur(15px); /* Làm mờ hậu cảnh */
+    background: rgba(0, 0, 0, 0.35);
+    backdrop-filter: blur(15px);
     -webkit-backdrop-filter: blur(15px);
     border: 1px solid rgba(0, 230, 118, 0.6); 
     border-radius: 16px; padding: 15px; z-index: 2147483647; 
@@ -205,7 +205,6 @@
     box-shadow: 0 4px 10px rgba(0,0,0,0.4);
     transition: all 0.3s ease;
   }
-  /* Tạo mũi nhọn cho bong bóng chat */
   .robot-speech::before {
     content: '';
     position: absolute;
@@ -393,12 +392,10 @@
 
 <!-- TOOL DỰ ĐOÁN VỚI HÌNH ROBOT -->
 <div id="toolBox" class="float-tool-box">
-  <div class="session-id" id="aiSessionTag">Phiên: #46520</div>
+  <div class="session-id" id="aiSessionTag">Phiên: #...</div>
   
   <div class="robot-container">
-    <!-- Hình ảnh Robot -->
     <img src="https://cdn-icons-png.flaticon.com/512/4712/4712109.png" class="robot-img" alt="AI Robot">
-    <!-- Bong bóng chat báo kết quả -->
     <div class="robot-speech" id="robotSpeech" style="color: #888;">Chờ...</div>
   </div>
 
@@ -430,12 +427,13 @@
   let isToolOpen = false, deviceCode = "", deviceInfo = { ip: "", location: "", device: "" };
   let userBalance = 0, userRef = null;
   
-  // BIẾN ĐỒNG BỘ TOÀN CẦU (64 GIÂY)
+  // ==========================================
+  // CẤU HÌNH ĐỒNG BỘ TOÀN CẦU (MÃ PHIÊN MỚI)
+  // ==========================================
+  const BASE_SESSION_ID = 47196;   // MÃ PHIÊN ĐÃ ĐƯỢC ĐỔI THÀNH 47196
+  const SESSION_DURATION = 64000;  // 64 Giây
   let globalSyncInterval = null;
   let lastRenderedSession = 0;
-  let activeGlobalSession = 46520;
-  const BASE_SESSION_ID = 46520; 
-  const SESSION_DURATION = 64000; // 64 GIÂY
 
   let f168History = JSON.parse(localStorage.getItem('f168_history') || "[]");
 
@@ -602,27 +600,26 @@
     document.getElementById('toolBox').style.display = isToolOpen ? 'flex' : 'none';
   }
 
-  // KẾT NỐI ĐỒNG HỒ FIREBASE
+  // KẾT NỐI ĐỒNG HỒ FIREBASE (ÉP BUỘC RESET NẾU ĐỔI MÃ PHIÊN GỐC)
   function initGlobalSyncClock() {
     if(!db) return;
 
-    db.ref('tx_global_clock').once('value').then((snap) => {
-      if (!snap.exists() || snap.val().base_session !== BASE_SESSION_ID) {
-        db.ref('tx_global_clock').set({
-          base_session: BASE_SESSION_ID,
-          base_time: Date.now()
-        }).then(() => {
-          db.ref('tx_global_clock').once('value').then(s => startTicker(s.val()));
-        });
-      } else {
-        startTicker(snap.val());
-      }
-    });
-
-    db.ref('tx_global_clock').on('value', (snap) => {
-      if (snap.exists() && snap.val().base_session === BASE_SESSION_ID) {
-        startTicker(snap.val());
-      }
+    db.ref('tx_global_clock').transaction((currentData) => {
+        // Nếu chưa có dữ liệu HOẶC mã phiên lưu trên mạng khác với mã phiên trong code (47196)
+        if (currentData === null || currentData.base_session !== BASE_SESSION_ID) {
+            return {
+                base_session: BASE_SESSION_ID,
+                base_time: Date.now()
+            };
+        }
+        return currentData; 
+    }, (error, committed, snapshot) => {
+        if (!error && snapshot.exists()) {
+            startTicker(snapshot.val());
+            db.ref('tx_global_clock').on('value', (snap) => {
+                if(snap.exists()) startTicker(snap.val());
+            });
+        }
     });
   }
 
@@ -633,19 +630,16 @@
     if (globalSyncInterval) clearInterval(globalSyncInterval);
 
     globalSyncInterval = setInterval(() => {
-      let now = Date.now();
-      let elapsed = now - baseTime;
+      let elapsed = Date.now() - baseTime;
       
       let sessionsPassed = Math.floor(elapsed / SESSION_DURATION);
       let currentSession = baseSession + sessionsPassed;
       
       let timeLeft = 64 - Math.floor((elapsed % SESSION_DURATION) / 1000);
-      
+      if(timeLeft > 64) timeLeft = 64;
+
       let result = getPredictionForSession(currentSession);
 
-      activeGlobalSession = currentSession;
-
-      // Cập nhật Giao diện
       document.getElementById('aiSessionTag').innerText = 'Phiên: #' + currentSession;
       document.getElementById('aiTimer').innerText = `Chờ: ${timeLeft}s`;
 
@@ -653,12 +647,10 @@
       const xiu = document.getElementById('lightXiu');
       const speech = document.getElementById('robotSpeech');
       
-      // Nếu là phiên mới
       if (lastRenderedSession !== currentSession) {
         tai.className = 'light red';
         xiu.className = 'light green';
         
-        // Cập nhật Robot nói
         speech.innerText = result.pred;
         if(result.pred === "TÀI") {
           tai.classList.add('active-red');
@@ -676,10 +668,10 @@
         lastRenderedSession = currentSession;
       }
 
-    }, 500);
+    }, 1000);
   }
 
-  // Thuật toán Seeded Random: Cùng 1 mã phiên -> Ra cùng 1 kết quả
+  // THUẬT TOÁN TẠO KẾT QUẢ CỐ ĐỊNH THEO MÃ PHIÊN
   function getPredictionForSession(sessionId) {
     let x = Math.sin(sessionId) * 10000;
     let rand = x - Math.floor(x); 
