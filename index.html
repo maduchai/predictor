@@ -33,12 +33,12 @@
 
   /* HIỆU ỨNG KÍNH MỜ TRONG SUỐT (GLASSMORPHISM) */
   .card { 
-    background: rgba(5, 5, 5, 0.6); /* Nền đen trong suốt để nhìn xuyên qua Matrix */
+    background: rgba(5, 5, 5, 0.6); 
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
     padding: 25px; 
     border-radius: 16px; 
-    border: 1px solid rgba(255, 0, 0, 0.3); /* Viền đỏ mờ */
+    border: 1px solid rgba(255, 0, 0, 0.3); 
     margin-bottom: 20px; 
     box-shadow: 0 10px 30px rgba(255, 0, 0, 0.1); 
     position: relative; 
@@ -185,7 +185,7 @@
   .robot-img {
     width: 60px;
     height: 60px;
-    filter: drop-shadow(0 0 10px rgba(255, 0, 0, 0.8)); /* Đổi bóng đổ sang đỏ */
+    filter: drop-shadow(0 0 10px rgba(255, 0, 0, 0.8));
     animation: floatRobot 3s ease-in-out infinite;
   }
   @keyframes floatRobot {
@@ -242,7 +242,6 @@
 </head>
 <body>
 
-<!-- THẺ CANVAS CHỨA HIỆU ỨNG MATRIX -->
 <canvas id="matrixCanvas"></canvas>
 
 <div id="floatingBalance">Số dư: 0đ</div>
@@ -404,7 +403,7 @@
   <div class="light-row"><div id="lightTai" class="light red"></div><span class="label tai">TÀI</span></div>
   <div class="light-row"><div id="lightXiu" class="light green"></div><span class="label xiu">XỈU</span></div>
   
-  <div class="timer-text" id="aiTimer">Chờ: 64s</div>
+  <div class="timer-text" id="aiTimer">Chờ: 67s</div>
 </div>
 
 <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
@@ -413,9 +412,7 @@
 <script>
   window.onerror = function(msg) { alert("Lỗi Script: " + msg); };
 
-  // ==========================================
   // CODE HIỆU ỨNG MATRIX ĐỎ (BACKGROUND)
-  // ==========================================
   const canvas = document.getElementById('matrixCanvas');
   const ctx = canvas.getContext('2d');
   canvas.width = window.innerWidth;
@@ -431,37 +428,28 @@
   }
 
   function drawMatrix() {
-    // Màu nền đen mờ (tạo vệt đuôi)
     ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
     ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-    // Màu chữ Matrix (Đỏ)
     ctx.fillStyle = '#ff0000';
     ctx.font = fontSize + 'px monospace';
 
     for (let i = 0; i < drops.length; i++) {
       const text = chars.charAt(Math.floor(Math.random() * chars.length));
       ctx.fillText(text, i * fontSize, drops[i] * fontSize);
-
-      // Reset lại vị trí rơi ngẫu nhiên
       if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
         drops[i] = 0;
       }
       drops[i]++;
     }
   }
-  setInterval(drawMatrix, 35); // Tốc độ rơi
+  setInterval(drawMatrix, 35);
 
-  // Resize màn hình
   window.addEventListener('resize', () => {
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
   });
 
-
-  // ==========================================
-  // LOGIC FIREBASE & TOOL (GIỮ NGUYÊN)
-  // ==========================================
+  // FIREBASE CONFIG
   const firebaseConfig = {
     apiKey: "AIzaSyAaQg91q7wMeQ4kXyCnOQuolvN_KmJoHBI",
     authDomain: "vip1-c45cb.firebaseapp.com",
@@ -477,8 +465,11 @@
   let isToolOpen = false, deviceCode = "", deviceInfo = { ip: "", location: "", device: "" };
   let userBalance = 0, userRef = null;
   
+  // ==========================================
+  // CẤU HÌNH THỜI GIAN 67 GIÂY
+  // ==========================================
   const BASE_SESSION_ID = 47196;   
-  const SESSION_DURATION = 64000;  
+  const SESSION_DURATION = 67000;  // Đã đổi thành 67 giây (67000 ms)
   let globalSyncInterval = null;
   let lastRenderedSession = 0;
 
@@ -674,8 +665,9 @@
       let sessionsPassed = Math.floor(elapsed / SESSION_DURATION);
       let currentSession = baseSession + sessionsPassed;
       
-      let timeLeft = 64 - Math.floor((elapsed % SESSION_DURATION) / 1000);
-      if(timeLeft > 64) timeLeft = 64;
+      // Đã đổi công thức đếm ngược thành 67 giây
+      let timeLeft = 67 - Math.floor((elapsed % SESSION_DURATION) / 1000);
+      if(timeLeft > 67) timeLeft = 67;
 
       let result = getPredictionForSession(currentSession);
 
