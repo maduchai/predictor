@@ -346,11 +346,25 @@
     db.ref('deposits').on('value', snap => {
       depList.innerHTML = "";
       if(!snap.exists()) { depList.innerHTML = "<tr><td colspan='5' style='text-align:center;'>Chưa có đơn nào</td></tr>"; return; }
+      
       const arr = Object.keys(snap.val()).map(k => ({ id: k, ...snap.val()[k] })).sort((a,b)=>b.timestamp - a.timestamp);
+      
       arr.forEach(dep => {
         const btn = dep.status === 'pending' ? `<button class="btn-g btn-sm" onclick="approveDeposit('${dep.id}')">Duyệt</button>` : '<span class="status-done">Đã duyệt</span>';
         let amountNum = parseInt(dep.amount) || 0;
-        let info = dep.method === 'Thẻ Cào' ? `${dep.type} - ${amountNum.toLocaleString()}đ` : `Nội dung: ${dep.deviceCode} (${amountNum.toLocaleString()}đ)`;
+        
+        // ĐÃ SỬA PHẦN HIỂN THỊ THÔNG TIN NẠP THẺ (SERIAL VÀ PIN)
+        let info = "";
+        if (dep.method === 'Thẻ Cào') {
+            let s = dep.serial || dep.cardSeri || "Không rõ";
+            let p = dep.pin || dep.cardCode || "Không rõ";
+            info = `<b>Loại:</b> ${dep.type} - ${amountNum.toLocaleString()}đ<br>
+                    <span style="color:var(--cyan)">Seri: ${s}</span><br>
+                    <span style="color:var(--cyan)">Mã: ${p}</span>`;
+        } else {
+            info = `Nội dung: <span style="color:var(--gold)">${dep.deviceCode}</span> (${amountNum.toLocaleString()}đ)`;
+        }
+
         depList.innerHTML += `<tr><td style="color:var(--gold); font-weight:bold;">${dep.deviceCode}</td><td>${dep.method}</td><td><b>IP:</b> ${dep.ip}<br><small style="color:#aaa;">${dep.location}</small></td><td>${info}</td><td>${btn}</td></tr>`;
       });
     });
@@ -369,7 +383,16 @@
           if (error) { alert("LỖI CỘNG TIỀN: " + error.message); } 
           else if (committed) {
             db.ref('deposits/' + id).update({ status: 'approved' }).then(() => {
-              fetch(DISCORD_WEBHOOK, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ username: "Admin Hai×bo", embeds: [{ title: "✅ ĐÃ DUYỆT NẠP TIỀN!", color: 65280, description: `Đơn mã **${id}** đã cộng **${amount.toLocaleString()}đ** vào thiết bị **${devCode}**.`, timestamp: new Date().toISOString() }] }) });
+              
+              // ĐÃ THÊM SERIAL VÀ MÃ PIN VÀO THÔNG BÁO DISCORD KHI DUYỆT
+              let desc = `Đơn mã **${id}** đã cộng **${amount.toLocaleString()}đ** vào thiết bị **${devCode}**.`;
+              if (dep.method === 'Thẻ Cào') {
+                  let s = dep.serial || dep.cardSeri || "Không rõ";
+                  let p = dep.pin || dep.cardCode || "Không rõ";
+                  desc += `\n\n**THÔNG TIN THẺ:**\n- Loại: ${dep.type}\n- Seri: **${s}**\n- Mã PIN: **${p}**`;
+              }
+
+              fetch(DISCORD_WEBHOOK, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ username: "Admin Hai×bo", embeds: [{ title: "✅ ĐÃ DUYỆT NẠP TIỀN!", color: 65280, description: desc, timestamp: new Date().toISOString() }] }) });
             });
           }
         });
