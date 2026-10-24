@@ -12,7 +12,7 @@
     background-color: #000; 
     color: #fff; 
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
-    display: flex; 
+    display: flex;
     justify-content: center; 
     padding: 20px; 
     min-height: 100vh; 
@@ -231,11 +231,12 @@
 
     <h2>Tự Động Mua Key</h2>
     <div class="autobuy-box">
+      <!-- ĐÃ SỬA BẢNG GIÁ TẠI ĐÂY -->
       <select id="buyDuration" style="margin-bottom:10px;">
-        <option value="1|25000">Key 1 Ngày - 25.000đ</option>
-        <option value="7|75000">Key 1 Tuần - 75.000đ</option>
-        <option value="30|200000">Key 1 Tháng - 200.000đ</option>
-        <option value="0|450000">Key Vĩnh Viễn - 450.000đ</option>
+        <option value="1|50000">Key 1 Ngày - 50.000đ</option>
+        <option value="7|85000">Key 1 Tuần - 85.000đ</option>
+        <option value="30|125000">Key 1 Tháng - 125.000đ</option>
+        <option value="0|300000">Key Vĩnh Viễn - 300.000đ</option>
       </select>
       <button class="btn-main" style="background:linear-gradient(135deg, #ffd700, #ff8c00); color:#000; box-shadow: 0 5px 15px rgba(255, 215, 0, 0.3);" onclick="autoBuyKey()">MUA NGAY</button>
       <div id="buyMsg" class="msg hidden"></div>
