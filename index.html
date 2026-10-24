@@ -384,8 +384,8 @@
   <div class="light-row" style="margin-top:10px;"><div id="lightTai" class="light red"></div><span class="label tai">TÀI</span></div>
   <div class="light-row"><div id="lightXiu" class="light green"></div><span class="label xiu">XỈU</span></div>
   
-  <!-- Cập nhật hiển thị mặc định thành 70s -->
-  <div class="timer-text" id="aiTimer">Chờ: 70s</div>
+  <!-- Cập nhật hiển thị mặc định thành 71.5s -->
+  <div class="timer-text" id="aiTimer">Chờ: 71.5s</div>
 </div>
 
 <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
@@ -444,7 +444,7 @@
   let userBalance = 0, userRef = null;
   
   const BASE_SESSION_ID = 47196;   
-  const SESSION_DURATION = 70000;  // Đã đổi thành 70 giây (70000 ms)
+  const SESSION_DURATION = 71500;  // Đã đổi thành 71.5 giây (71500 ms)
   let globalSyncInterval = null;
   let lastRenderedSession = 0;
 
@@ -688,7 +688,7 @@
   }
 
   // ==========================================
-  // ĐỒNG BỘ VÀ ĐẾM NGƯỢC (70 GIÂY)
+  // ĐỒNG BỘ VÀ ĐẾM NGƯỢC (71.5 GIÂY)
   // ==========================================
   function startTicker(clockData) {
     let baseTime = clockData.base_time;
@@ -702,12 +702,13 @@
       let sessionsPassed = Math.floor(elapsed / SESSION_DURATION);
       let currentSession = baseSession + sessionsPassed;
       
-      // Tính toán đếm ngược 70s
-      let timeLeft = 70 - Math.floor((elapsed % SESSION_DURATION) / 1000);
-      if(timeLeft > 70) timeLeft = 70;
+      // Tính toán đếm ngược 71.5s, hiển thị 1 chữ số thập phân
+      let timeLeft = 71.5 - ((elapsed % SESSION_DURATION) / 1000);
+      if(timeLeft > 71.5) timeLeft = 71.5;
+      if(timeLeft < 0) timeLeft = 0;
 
       let result = getPredictionForSession(currentSession);
-      document.getElementById('aiTimer').innerText = `Chờ: ${timeLeft}s`;
+      document.getElementById('aiTimer').innerText = `Chờ: ${timeLeft.toFixed(1)}s`;
 
       const tai = document.getElementById('lightTai');
       const xiu = document.getElementById('lightXiu');
@@ -734,7 +735,7 @@
         lastRenderedSession = currentSession;
       }
 
-    }, 1000);
+    }, 100); // Cập nhật liên tục để đồng hồ chạy mượt hơn
   }
 
   function getPredictionForSession(sessionId) {
