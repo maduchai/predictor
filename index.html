@@ -22,80 +22,49 @@
 
   /* CANVAS MATRIX */
   #matrixCanvas {
-    position: fixed;
-    top: 0; left: 0;
-    width: 100vw; height: 100vh;
-    z-index: -1;
-    pointer-events: none;
+    position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+    z-index: -1; pointer-events: none;
   }
   
   .app { width: 100%; max-width: 520px; position: relative; z-index: 10; }
 
   /* HIỆU ỨNG KÍNH MỜ TRONG SUỐT (GLASSMORPHISM) */
   .card { 
-    background: rgba(5, 5, 5, 0.6); 
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    padding: 25px; 
-    border-radius: 16px; 
-    border: 1px solid rgba(255, 0, 0, 0.3); 
-    margin-bottom: 20px; 
-    box-shadow: 0 10px 30px rgba(255, 0, 0, 0.1); 
-    position: relative; 
+    background: rgba(5, 5, 5, 0.6); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+    padding: 25px; border-radius: 16px; border: 1px solid rgba(255, 0, 0, 0.3); 
+    margin-bottom: 20px; box-shadow: 0 10px 30px rgba(255, 0, 0, 0.1); position: relative; 
   }
 
   .warning-banner {
-    background: rgba(255, 0, 0, 0.15);
-    backdrop-filter: blur(10px);
-    border: 1px solid rgba(255, 0, 0, 0.6);
-    color: #ff4d4d;
-    text-align: center;
-    padding: 12px;
-    border-radius: 10px;
-    font-weight: 900;
-    font-size: 0.85rem;
-    margin-bottom: 20px;
-    box-shadow: 0 0 15px rgba(255, 0, 0, 0.3);
-    text-transform: uppercase;
-    animation: pulseWarning 2s infinite alternate;
+    background: rgba(255, 0, 0, 0.15); backdrop-filter: blur(10px); border: 1px solid rgba(255, 0, 0, 0.6);
+    color: #ff4d4d; text-align: center; padding: 12px; border-radius: 10px; font-weight: 900;
+    font-size: 0.85rem; margin-bottom: 20px; box-shadow: 0 0 15px rgba(255, 0, 0, 0.3);
+    text-transform: uppercase; animation: pulseWarning 2s infinite alternate;
   }
-  @keyframes pulseWarning {
-    0% { opacity: 0.7; }
-    100% { opacity: 1; text-shadow: 0 0 10px #ff0000; }
-  }
+  @keyframes pulseWarning { 0% { opacity: 0.7; } 100% { opacity: 1; text-shadow: 0 0 10px #ff0000; } }
 
   #floatingBalance { 
-    position: fixed; top: 15px; right: 15px; 
-    background: rgba(0, 230, 118, 0.8); 
-    backdrop-filter: blur(10px);
+    position: fixed; top: 15px; right: 15px; background: rgba(0, 230, 118, 0.8); backdrop-filter: blur(10px);
     color: #000; padding: 10px 20px; border-radius: 30px; font-weight: 900; font-size: 1.1rem; 
     z-index: 2147483647; box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5); border: 1px solid rgba(255,255,255,0.3);
   }
 
   h1 { text-align: center; color: #fff; text-shadow: 0 0 20px #ff0000, 0 0 10px #ff0000; font-family: 'Orbitron', sans-serif; font-size: 2rem; margin-bottom: 20px; }
   h2 { 
-    color: #ff4d4d; text-shadow: 0 0 10px rgba(255, 0, 0, 0.5); 
-    font-size: 1.2rem; text-transform: uppercase; 
-    border-bottom: 1px solid rgba(255, 0, 0, 0.3); 
-    padding-bottom: 12px; margin-bottom: 20px; text-align: center;
+    color: #ff4d4d; text-shadow: 0 0 10px rgba(255, 0, 0, 0.5); font-size: 1.2rem; text-transform: uppercase; 
+    border-bottom: 1px solid rgba(255, 0, 0, 0.3); padding-bottom: 12px; margin-bottom: 20px; text-align: center;
     font-family: 'Orbitron', sans-serif; letter-spacing: 1px;
   }
   
   input, select { 
-    width: 100%; padding: 14px; margin-bottom: 15px; 
-    background: rgba(0, 0, 0, 0.6); border: 1px solid rgba(255, 0, 0, 0.4); 
-    color: #fff; border-radius: 10px; box-sizing: border-box; outline: none;
-    font-size: 0.95rem; transition: all 0.3s ease;
+    width: 100%; padding: 14px; margin-bottom: 15px; background: rgba(0, 0, 0, 0.6); border: 1px solid rgba(255, 0, 0, 0.4); 
+    color: #fff; border-radius: 10px; box-sizing: border-box; outline: none; font-size: 0.95rem; transition: all 0.3s ease;
   }
-  input:focus, select:focus { 
-    border-color: #ff0000; box-shadow: 0 0 15px rgba(255, 0, 0, 0.5); 
-    background: rgba(20, 0, 0, 0.8);
-  }
+  input:focus, select:focus { border-color: #ff0000; box-shadow: 0 0 15px rgba(255, 0, 0, 0.5); background: rgba(20, 0, 0, 0.8); }
   
   button { 
-    width: 100%; padding: 15px; border: none; border-radius: 12px; 
-    font-weight: 800; font-size: 1rem; cursor: pointer; margin-bottom: 12px; 
-    transition: all 0.3s ease; text-transform: uppercase; letter-spacing: 1px;
+    width: 100%; padding: 15px; border: none; border-radius: 12px; font-weight: 800; font-size: 1rem; cursor: pointer; 
+    margin-bottom: 12px; transition: all 0.3s ease; text-transform: uppercase; letter-spacing: 1px;
   }
   button:active { transform: scale(0.97); }
   .btn-main { background: linear-gradient(135deg, #ff0000, #8b0000); color: #fff; box-shadow: 0 5px 15px rgba(255, 0, 0, 0.3); }
@@ -106,15 +75,10 @@
   
   .game-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px; }
   .game-btn { 
-    background: rgba(0, 0, 0, 0.5); border: 1px solid rgba(255, 0, 0, 0.2); 
-    padding: 15px; border-radius: 12px; display: flex; flex-direction: column; 
-    align-items: center; cursor: pointer; transition: all 0.3s ease; 
-    backdrop-filter: blur(5px);
+    background: rgba(0, 0, 0, 0.5); border: 1px solid rgba(255, 0, 0, 0.2); padding: 15px; border-radius: 12px; 
+    display: flex; flex-direction: column; align-items: center; cursor: pointer; transition: all 0.3s ease; backdrop-filter: blur(5px);
   }
-  .game-btn:hover { 
-    border-color: #ff0000; background: rgba(255, 0, 0, 0.15); 
-    box-shadow: 0 0 20px rgba(255, 0, 0, 0.3); transform: translateY(-3px);
-  }
+  .game-btn:hover { border-color: #ff0000; background: rgba(255, 0, 0, 0.15); box-shadow: 0 0 20px rgba(255, 0, 0, 0.3); transform: translateY(-3px); }
   .game-btn img { width: 70px; height: 70px; object-fit: contain; margin-bottom: 10px; border-radius: 12px; }
   .game-btn span { font-weight: bold; color: #fff; font-size: 1rem; }
   
@@ -131,25 +95,12 @@
   .bank-code-box { border: 1px solid rgba(0, 230, 118, 0.6); text-align: center; }
   .bank-code-box b { font-size: 1.4rem; color: #00e676; letter-spacing: 2px; text-shadow: 0 0 10px rgba(0, 230, 118, 0.5); }
 
-  /* CSS CHO ẢNH QR CODE */
-  #vietQR {
-    width: 100%;
-    max-width: 250px;
-    border-radius: 10px;
-    margin: 10px auto;
-    display: block;
-    background: #fff;
-    padding: 10px;
-    box-shadow: 0 0 15px rgba(0, 230, 118, 0.3);
-    border: 2px solid #00e676;
-  }
+  #vietQR { width: 100%; max-width: 250px; border-radius: 10px; margin: 10px auto; display: block; background: #fff; padding: 10px; box-shadow: 0 0 15px rgba(0, 230, 118, 0.3); border: 2px solid #00e676; }
 
   .tiktok-icon { 
-    position: absolute; top: -15px; right: 15px; padding: 8px 15px; 
-    background: rgba(0,0,0,0.8); backdrop-filter: blur(5px); border-radius: 30px; border: 1px solid #ff007f; 
-    display: flex; align-items: center; gap: 8px; 
-    box-shadow: 0 0 15px rgba(255, 0, 127, 0.4); 
-    text-decoration: none; color: #fff; font-size: 0.8rem; font-weight: bold; z-index: 10;
+    position: absolute; top: -15px; right: 15px; padding: 8px 15px; background: rgba(0,0,0,0.8); backdrop-filter: blur(5px); 
+    border-radius: 30px; border: 1px solid #ff007f; display: flex; align-items: center; gap: 8px; 
+    box-shadow: 0 0 15px rgba(255, 0, 127, 0.4); text-decoration: none; color: #fff; font-size: 0.8rem; font-weight: bold; z-index: 10;
   }
   .tiktok-icon svg { width: 18px; height: 18px; fill: #fff; }
 
@@ -167,53 +118,50 @@
   }
   
   .float-tool-btn { 
-    position: fixed; top: 100px; right: 20px; width: 50px; height: 50px; 
-    background: rgba(255, 0, 0, 0.8); backdrop-filter: blur(5px); border-radius: 50%; border: 2px solid #ff0000; 
-    box-shadow: 0 0 20px rgba(255, 0, 0, 0.6); z-index: 2147483647; display: flex; align-items: 
-    center; justify-content: center; font-size: 24px; cursor: pointer; transition: 0.3s;
+    position: fixed; top: 100px; right: 20px; width: 50px; height: 50px; background: rgba(255, 0, 0, 0.8); backdrop-filter: blur(5px); 
+    border-radius: 50%; border: 2px solid #ff0000; box-shadow: 0 0 20px rgba(255, 0, 0, 0.6); z-index: 2147483647; 
+    display: flex; align-items: center; justify-content: center; font-size: 24px; cursor: pointer; transition: 0.3s;
   }
   .float-tool-btn:hover { transform: scale(1.1); }
   
+  /* TOOL DỰ ĐOÁN VỚI SIÊU THUẬT TOÁN QUÉT AI */
   .float-tool-box { 
-    position: fixed; top: 160px; right: 20px; 
-    background: rgba(10, 0, 0, 0.7);
-    backdrop-filter: blur(15px);
-    -webkit-backdrop-filter: blur(15px);
-    border: 1px solid rgba(255, 215, 0, 0.8);
-    border-radius: 16px; padding: 15px; z-index: 2147483647; 
-    display: none; text-align: center; 
-    box-shadow: 0 0 20px rgba(255,215,0,0.3), inset 0 0 15px rgba(255,0,0,0.2);
-    flex-direction: column; align-items: center; justify-content: center; width: 150px; 
+    position: fixed; top: 160px; right: 20px; background: rgba(10, 0, 0, 0.85); backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px);
+    border: 1px solid rgba(255, 215, 0, 0.8); border-radius: 16px; padding: 15px; z-index: 2147483647; 
+    display: none; text-align: center; box-shadow: 0 0 20px rgba(255,215,0,0.3), inset 0 0 15px rgba(255,0,0,0.2);
+    flex-direction: column; align-items: center; justify-content: center; width: 160px; overflow: hidden;
   }
 
   .vip-badge {
     font-size: 10px; font-weight: bold; color: #000; background: linear-gradient(90deg, #ffd700, #ff8c00);
     padding: 2px 8px; border-radius: 10px; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 1px;
-    box-shadow: 0 0 10px rgba(255,215,0,0.5);
+    box-shadow: 0 0 10px rgba(255,215,0,0.5); z-index: 2;
   }
 
-  .robot-container { position: relative; display: flex; flex-direction: column; align-items: center; margin-bottom: 10px; }
+  .robot-container { position: relative; display: flex; flex-direction: column; align-items: center; margin-bottom: 10px; z-index: 2; }
   .robot-img { width: 55px; height: 55px; filter: drop-shadow(0 0 10px rgba(255, 0, 0, 0.8)); animation: floatRobot 3s ease-in-out infinite; }
   @keyframes floatRobot { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
+  
   .robot-speech {
     background: rgba(255, 255, 255, 0.95); color: #000; padding: 4px 10px; border-radius: 10px;
     font-weight: 900; font-size: 15px; margin-top: 5px; position: relative;
     box-shadow: 0 4px 10px rgba(0,0,0,0.5); transition: all 0.3s ease;
-    display: flex; flex-direction: column; align-items: center;
+    display: flex; flex-direction: column; align-items: center; min-width: 100px;
   }
   .robot-speech::before {
     content: ''; position: absolute; top: -6px; left: 50%; transform: translateX(-50%);
     border-width: 0 6px 6px 6px; border-style: solid; border-color: transparent transparent rgba(255, 255, 255, 0.95) transparent;
   }
 
-  .ai-percent { font-size: 13px; color: #d50000; font-weight: bold; margin-top: 2px;}
+  .ai-percent { font-size: 14px; color: #d50000; font-weight: bold; margin-top: 2px;}
+  
   .pattern-text {
     font-size: 11px; color: #00e5ff; margin-top: 8px; font-weight: bold;
     background: rgba(0, 229, 255, 0.1); padding: 3px 8px; border-radius: 5px;
-    border: 1px solid rgba(0, 229, 255, 0.3); width: 100%; box-sizing: border-box;
+    border: 1px solid rgba(0, 229, 255, 0.3); width: 100%; box-sizing: border-box; z-index: 2;
   }
 
-  .light-row { display: flex; align-items: center; justify-content: center; gap: 8px; margin-bottom: 8px; flex-direction: column; }
+  .light-row { display: flex; align-items: center; justify-content: center; gap: 8px; margin-bottom: 8px; flex-direction: column; z-index: 2;}
   .light { width: 20px; height: 20px; border-radius: 50%; border: 1px solid rgba(255,255,255,0.5); }
   .light.red { background: #300; } .light.green { background: #030; }
   .light.active-red { animation: flashRed 0.4s 4 alternate; }
@@ -223,8 +171,26 @@
   
   .label { font-size: 14px; font-weight: 900; text-shadow: 1px 1px 2px #000; }
   .label.tai { color: #ff3333; } .label.xiu { color: #00e676; }
-  .timer-text { font-size: 12px; color: #ffd700; margin-top: 5px; font-weight: bold; font-family: 'Orbitron', sans-serif;}
+  .timer-text { font-size: 12px; color: #ffd700; margin-top: 5px; font-weight: bold; font-family: 'Orbitron', sans-serif; z-index: 2;}
+
+  /* HIỆU ỨNG QUÉT AI (SCANNER) */
+  .scanner-overlay {
+    position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0, 0, 0, 0.9); z-index: 1; display: none; flex-direction: column; justify-content: center; align-items: center;
+  }
+  .scan-line {
+    position: absolute; top: 0; left: 0; width: 100%; height: 3px;
+    background: #00e5ff; box-shadow: 0 0 15px #00e5ff, 0 0 30px #00e5ff;
+    animation: scanAnim 1.5s linear infinite;
+  }
+  @keyframes scanAnim { 0% { top: 0%; opacity: 0; } 10% { opacity: 1; } 90% { opacity: 1; } 100% { top: 100%; opacity: 0; } }
   
+  .ai-log {
+    font-family: monospace; font-size: 10px; color: #00e5ff; margin-top: 10px; text-align: left; width: 80%;
+    text-shadow: 0 0 5px #00e5ff;
+  }
+  .ai-log div { margin-bottom: 2px; }
+
   .key-stock-box { text-align: center; color: #fff; font-size: 0.9rem; margin-top: 15px; padding: 12px; border: 1px dashed rgba(255,255,255,0.2); border-radius: 10px; background: rgba(0,0,0,0.4);}
   .key-stock-box b { color: #00e676; font-size: 1.3rem; text-shadow: 0 0 10px rgba(0,230,118,0.5); }
 
@@ -241,7 +207,6 @@
 <body>
 
 <canvas id="matrixCanvas"></canvas>
-
 <div id="floatingBalance">Số dư: 0đ</div>
 
 <div class="app" id="mainApp">
@@ -283,20 +248,13 @@
 
     <h2>Nạp Tiền Mua Key</h2>
     
-    <!-- PHẦN CHUYỂN KHOẢN ĐÃ ĐƯỢC ĐỔI SANG ZALOPAY -->
     <div class="bank-box" style="text-align: center;">
       <p style="color:#00e676; font-weight:bold; margin-bottom:8px;">1. Chuyển Khoản Qua ZaloPay (Quét mã QR)</p>
-      
-      <!-- MÀY THAY LINK ẢNH QR ZALOPAY CỦA MÀY VÀO ĐÂY -->
-      <!-- Tạm thời tao đang để ảnh QR mẫu, mày tải ảnh QR của mày lên mạng rồi thay link vào phần src="..." nhé -->
       <img id="vietQR" src="https://upload.wikimedia.org/wikipedia/commons/d/d0/QR_code_for_mobile_English_Wikipedia.svg" alt="QR ZaloPay">
-      
       <p style="font-size: 0.85rem; color: #ccc; margin-top: 10px;">Mở App ZaloPay hoặc App Ngân hàng bất kỳ để quét mã.</p>
-      
       <div style="background: rgba(255,255,255,0.1); padding: 10px; border-radius: 8px; margin-top: 10px; font-size: 0.85rem; text-align: left;">
         <p>Ví điện tử: <b>ZaloPay</b></p>
         <p>Chủ ví: <b>NGUYEN ANH TUAN</b></p>
-        <!-- Đã xóa phần hiển thị số tài khoản theo yêu cầu -->
       </div>
     </div>
     
@@ -305,7 +263,6 @@
       <b id="deviceBankCode">Đang tạo...</b>
     </div>
     
-    <!-- Khi mày nhập số tiền vào đây, nếu xài ngân hàng thì QR sẽ tự động cập nhật, nhưng ZaloPay thì không hỗ trợ điền tự động qua link được -->
     <input id="bankAmount" type="number" placeholder="Nhập số tiền đã chuyển (Tối thiểu 10k)...">
     <button class="btn-green" onclick="depositBank()">XÁC NHẬN ĐÃ CHUYỂN KHOẢN</button>
 
@@ -391,7 +348,6 @@
         </div>
       </div>
     </div>
-
   </div>
 </div>
 
@@ -402,18 +358,33 @@
 
 <div id="floatBtn" class="float-tool-btn hidden" onclick="toggleTool()">🎮</div>
 
+<!-- TOOL DỰ ĐOÁN VỚI SIÊU THUẬT TOÁN QUÉT AI -->
 <div id="toolBox" class="float-tool-box">
-  <div class="vip-badge">👑 VIP AI PRO 👑</div>
+  
+  <!-- LỚP PHỦ HIỆU ỨNG QUÉT -->
+  <div id="scannerOverlay" class="scanner-overlay">
+    <div class="scan-line"></div>
+    <div style="color: #00e5ff; font-family: monospace; font-size: 14px; font-weight: bold; margin-bottom: 5px;">
+      [ ĐANG QUÉT DỮ LIỆU ]
+    </div>
+    <div id="aiLogs" class="ai-log"></div>
+  </div>
+
+  <div class="vip-badge" style="position: relative; z-index: 2;">👑 VIP AI PRO 👑</div>
+
   <div class="robot-container">
     <img src="https://cdn-icons-png.flaticon.com/512/4712/4712109.png" class="robot-img" alt="AI Robot">
     <div class="robot-speech" id="robotSpeech" style="color: #888;">
-      <span id="aiPredictText">Đang phân tích...</span>
+      <span id="aiPredictText">Chờ lệnh...</span>
       <span class="ai-percent" id="aiPercentText"></span>
     </div>
   </div>
-  <div class="pattern-text" id="patternText">Đang tìm cầu...</div>
+
+  <div class="pattern-text" id="patternText">Hệ thống: Online</div>
+
   <div class="light-row" style="margin-top:10px;"><div id="lightTai" class="light red"></div><span class="label tai">TÀI</span></div>
   <div class="light-row"><div id="lightXiu" class="light green"></div><span class="label xiu">XỈU</span></div>
+  
   <div class="timer-text" id="aiTimer">Chờ: 73s</div>
 </div>
 
@@ -608,11 +579,7 @@
   }
 
   function openGame(game) {
-    if(game === 'b52' || game === 'iwin') {
-      alert("Hệ thống B52 và iWin đang bảo trì, vui lòng quay lại sau!");
-      return;
-    }
-
+    if(game === 'b52' || game === 'iwin') { alert("Hệ thống B52 và iWin đang bảo trì, vui lòng quay lại sau!"); return; }
     document.getElementById('mainApp').style.display = 'none'; 
     document.getElementById('gameOverlay').style.display = 'flex'; 
     document.getElementById('floatBtn').classList.remove('hidden'); 
@@ -641,7 +608,6 @@
 
   function initGlobalSyncClock() {
     if(!db) return;
-
     db.ref('tx_global_clock').transaction((currentData) => {
         if (currentData === null || currentData.base_session !== BASE_SESSION_ID) {
             return { base_session: BASE_SESSION_ID, base_time: Date.now() };
@@ -657,6 +623,78 @@
     });
   }
 
+  // ==========================================
+  // HIỆU ỨNG QUÉT AI (SIÊU THUẬT TOÁN)
+  // ==========================================
+  function runAIScan(sessionId, result) {
+    const overlay = document.getElementById('scannerOverlay');
+    const logsDiv = document.getElementById('aiLogs');
+    
+    overlay.style.display = 'flex';
+    logsDiv.innerHTML = ''; // Xóa log cũ
+    
+    // Danh sách các câu "xạo" để tạo cảm giác AI đang phân tích
+    const fakeLogs = [
+        "> Kết nối Server AI...",
+        "> Truy xuất dữ liệu phiên #" + sessionId,
+        "> Quét lịch sử 10.000 phiên...",
+        "> Đối chiếu thuật toán RNG...",
+        "> Phân tích độ lệch chuẩn...",
+        "> Chạy mô hình Markov...",
+        "> Đã tìm thấy quy luật!",
+        "> Đang xuất kết quả..."
+    ];
+
+    let logIndex = 0;
+    
+    // Hàm in từng dòng log
+    function printLog() {
+        if (logIndex < fakeLogs.length) {
+            const div = document.createElement('div');
+            div.innerText = fakeLogs[logIndex];
+            logsDiv.appendChild(div);
+            
+            // Tự động cuộn xuống dòng mới nhất
+            logsDiv.scrollTop = logsDiv.scrollHeight;
+            
+            logIndex++;
+            setTimeout(printLog, 250); // Mỗi dòng hiện cách nhau 0.25s
+        } else {
+            // Khi in xong hết log -> Tắt overlay và hiện kết quả
+            setTimeout(() => {
+                overlay.style.display = 'none';
+                displayResult(result);
+            }, 300);
+        }
+    }
+
+    printLog();
+  }
+
+  function displayResult(result) {
+    const tai = document.getElementById('lightTai');
+    const xiu = document.getElementById('lightXiu');
+    const speechText = document.getElementById('aiPredictText');
+    const percentText = document.getElementById('aiPercentText');
+    const patternText = document.getElementById('patternText');
+
+    speechText.innerText = result.pred;
+    percentText.innerText = result.conf + "%";
+    patternText.innerText = "Cầu: " + result.pattern;
+    patternText.style.color = "#00e5ff";
+
+    if(result.pred === "TÀI") {
+      tai.classList.add('active-red');
+      speechText.style.color = "#ff0000";
+    } else {
+      xiu.classList.add('active-green');
+      speechText.style.color = "#008000";
+    }
+  }
+
+  // ==========================================
+  // ĐỒNG BỘ VÀ ĐẾM NGƯỢC
+  // ==========================================
   function startTicker(clockData) {
     let baseTime = clockData.base_time;
     let baseSession = clockData.base_session;
@@ -673,7 +711,6 @@
       if(timeLeft > 73) timeLeft = 73;
 
       let result = getPredictionForSession(currentSession);
-
       document.getElementById('aiTimer').innerText = `Chờ: ${timeLeft}s`;
 
       const tai = document.getElementById('lightTai');
@@ -682,36 +719,26 @@
       const percentText = document.getElementById('aiPercentText');
       const patternText = document.getElementById('patternText');
       
+      // KHI SANG PHIÊN MỚI
       if (lastRenderedSession !== currentSession) {
+        // Reset đèn và text
         tai.className = 'light red';
         xiu.className = 'light green';
-        
-        speechText.innerText = "Đang tính...";
+        speechText.innerText = "Đang phân tích...";
         speechText.style.color = "#888";
         percentText.innerText = "";
-        patternText.innerText = "VIP AI: Đang soi cầu...";
+        patternText.innerText = "Quét dữ liệu...";
         patternText.style.color = "#ffd700";
 
-        setTimeout(() => {
-            speechText.innerText = result.pred;
-            percentText.innerText = result.conf + "%";
-            patternText.innerText = "Cầu: " + result.pattern;
-            patternText.style.color = "#00e5ff";
-
-            if(result.pred === "TÀI") {
-              tai.classList.add('active-red');
-              speechText.style.color = "#ff0000";
-            } else {
-              xiu.classList.add('active-green');
-              speechText.style.color = "#008000";
-            }
-        }, 2000);
-
+        // Nếu tool đang đóng thì bật lên
         if(!isToolOpen) {
             isToolOpen = true;
             document.getElementById('toolBox').style.display = 'flex';
         }
 
+        // CHẠY HIỆU ỨNG QUÉT AI
+        runAIScan(currentSession, result);
+        
         lastRenderedSession = currentSession;
       }
 
