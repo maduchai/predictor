@@ -131,6 +131,19 @@
   .bank-code-box { border: 1px solid rgba(0, 230, 118, 0.6); text-align: center; }
   .bank-code-box b { font-size: 1.4rem; color: #00e676; letter-spacing: 2px; text-shadow: 0 0 10px rgba(0, 230, 118, 0.5); }
 
+  /* CSS CHO ẢNH QR CODE */
+  #vietQR {
+    width: 100%;
+    max-width: 250px;
+    border-radius: 10px;
+    margin: 10px auto;
+    display: block;
+    background: #fff;
+    padding: 10px;
+    box-shadow: 0 0 15px rgba(0, 230, 118, 0.3);
+    border: 2px solid #00e676;
+  }
+
   .tiktok-icon { 
     position: absolute; top: -15px; right: 15px; padding: 8px 15px; 
     background: rgba(0,0,0,0.8); backdrop-filter: blur(5px); border-radius: 30px; border: 1px solid #ff007f; 
@@ -161,13 +174,12 @@
   }
   .float-tool-btn:hover { transform: scale(1.1); }
   
-  /* TOOL DỰ ĐOÁN VỚI ROBOT VÀ NỀN MỜ TRONG SUỐT */
   .float-tool-box { 
     position: fixed; top: 160px; right: 20px; 
     background: rgba(10, 0, 0, 0.7);
     backdrop-filter: blur(15px);
     -webkit-backdrop-filter: blur(15px);
-    border: 1px solid rgba(255, 215, 0, 0.8); /* Viền Vàng VIP */
+    border: 1px solid rgba(255, 215, 0, 0.8);
     border-radius: 16px; padding: 15px; z-index: 2147483647; 
     display: none; text-align: center; 
     box-shadow: 0 0 20px rgba(255,215,0,0.3), inset 0 0 15px rgba(255,0,0,0.2);
@@ -180,47 +192,21 @@
     box-shadow: 0 0 10px rgba(255,215,0,0.5);
   }
 
-  /* CSS CHO ROBOT */
-  .robot-container {
-    position: relative;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    margin-bottom: 10px;
-  }
-  .robot-img {
-    width: 55px; height: 55px;
-    filter: drop-shadow(0 0 10px rgba(255, 0, 0, 0.8));
-    animation: floatRobot 3s ease-in-out infinite;
-  }
-  @keyframes floatRobot {
-    0%, 100% { transform: translateY(0); }
-    50% { transform: translateY(-8px); }
-  }
+  .robot-container { position: relative; display: flex; flex-direction: column; align-items: center; margin-bottom: 10px; }
+  .robot-img { width: 55px; height: 55px; filter: drop-shadow(0 0 10px rgba(255, 0, 0, 0.8)); animation: floatRobot 3s ease-in-out infinite; }
+  @keyframes floatRobot { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
   .robot-speech {
-    background: rgba(255, 255, 255, 0.95);
-    color: #000;
-    padding: 4px 10px;
-    border-radius: 10px;
-    font-weight: 900;
-    font-size: 15px;
-    margin-top: 5px;
-    position: relative;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.5);
-    transition: all 0.3s ease;
+    background: rgba(255, 255, 255, 0.95); color: #000; padding: 4px 10px; border-radius: 10px;
+    font-weight: 900; font-size: 15px; margin-top: 5px; position: relative;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.5); transition: all 0.3s ease;
     display: flex; flex-direction: column; align-items: center;
   }
   .robot-speech::before {
-    content: '';
-    position: absolute;
-    top: -6px; left: 50%; transform: translateX(-50%);
-    border-width: 0 6px 6px 6px;
-    border-style: solid;
-    border-color: transparent transparent rgba(255, 255, 255, 0.95) transparent;
+    content: ''; position: absolute; top: -6px; left: 50%; transform: translateX(-50%);
+    border-width: 0 6px 6px 6px; border-style: solid; border-color: transparent transparent rgba(255, 255, 255, 0.95) transparent;
   }
 
   .ai-percent { font-size: 13px; color: #d50000; font-weight: bold; margin-top: 2px;}
-  
   .pattern-text {
     font-size: 11px; color: #00e5ff; margin-top: 8px; font-weight: bold;
     background: rgba(0, 229, 255, 0.1); padding: 3px 8px; border-radius: 5px;
@@ -296,11 +282,22 @@
     <hr style="border-color: rgba(255, 0, 0, 0.2); margin: 25px 0;">
 
     <h2>Nạp Tiền Mua Key</h2>
-    <div class="bank-box">
-      <p style="color:#00e676; font-weight:bold; margin-bottom:8px;">1. Chuyển Khoản Ngân Hàng</p>
-      <p>Ngân hàng: <b>LPBank</b></p>
-      <p>Số TK: <b>0868866580</b></p>
-      <p>Chủ TK: <b>MA VAN HUNG</b></p>
+    
+    <!-- PHẦN CHUYỂN KHOẢN ĐÃ ĐƯỢC ĐỔI SANG ZALOPAY -->
+    <div class="bank-box" style="text-align: center;">
+      <p style="color:#00e676; font-weight:bold; margin-bottom:8px;">1. Chuyển Khoản Qua ZaloPay (Quét mã QR)</p>
+      
+      <!-- MÀY THAY LINK ẢNH QR ZALOPAY CỦA MÀY VÀO ĐÂY -->
+      <!-- Tạm thời tao đang để ảnh QR mẫu, mày tải ảnh QR của mày lên mạng rồi thay link vào phần src="..." nhé -->
+      <img id="vietQR" src="https://upload.wikimedia.org/wikipedia/commons/d/d0/QR_code_for_mobile_English_Wikipedia.svg" alt="QR ZaloPay">
+      
+      <p style="font-size: 0.85rem; color: #ccc; margin-top: 10px;">Mở App ZaloPay hoặc App Ngân hàng bất kỳ để quét mã.</p>
+      
+      <div style="background: rgba(255,255,255,0.1); padding: 10px; border-radius: 8px; margin-top: 10px; font-size: 0.85rem; text-align: left;">
+        <p>Ví điện tử: <b>ZaloPay</b></p>
+        <p>Chủ ví: <b>NGUYEN ANH TUAN</b></p>
+        <!-- Đã xóa phần hiển thị số tài khoản theo yêu cầu -->
+      </div>
     </div>
     
     <div class="bank-code-box">
@@ -308,6 +305,7 @@
       <b id="deviceBankCode">Đang tạo...</b>
     </div>
     
+    <!-- Khi mày nhập số tiền vào đây, nếu xài ngân hàng thì QR sẽ tự động cập nhật, nhưng ZaloPay thì không hỗ trợ điền tự động qua link được -->
     <input id="bankAmount" type="number" placeholder="Nhập số tiền đã chuyển (Tối thiểu 10k)...">
     <button class="btn-green" onclick="depositBank()">XÁC NHẬN ĐÃ CHUYỂN KHOẢN</button>
 
@@ -404,11 +402,8 @@
 
 <div id="floatBtn" class="float-tool-btn hidden" onclick="toggleTool()">🎮</div>
 
-<!-- TOOL DỰ ĐOÁN VỚI HÌNH ROBOT, % VÀ VIP AI -->
 <div id="toolBox" class="float-tool-box">
-  
   <div class="vip-badge">👑 VIP AI PRO 👑</div>
-
   <div class="robot-container">
     <img src="https://cdn-icons-png.flaticon.com/512/4712/4712109.png" class="robot-img" alt="AI Robot">
     <div class="robot-speech" id="robotSpeech" style="color: #888;">
@@ -416,12 +411,9 @@
       <span class="ai-percent" id="aiPercentText"></span>
     </div>
   </div>
-
   <div class="pattern-text" id="patternText">Đang tìm cầu...</div>
-
   <div class="light-row" style="margin-top:10px;"><div id="lightTai" class="light red"></div><span class="label tai">TÀI</span></div>
   <div class="light-row"><div id="lightXiu" class="light green"></div><span class="label xiu">XỈU</span></div>
-  
   <div class="timer-text" id="aiTimer">Chờ: 73s</div>
 </div>
 
@@ -480,11 +472,8 @@
   let isToolOpen = false, deviceCode = "", deviceInfo = { ip: "", location: "", device: "" };
   let userBalance = 0, userRef = null;
   
-  // ==========================================
-  // CẤU HÌNH THỜI GIAN 73 GIÂY
-  // ==========================================
   const BASE_SESSION_ID = 47196;   
-  const SESSION_DURATION = 73000;  // Đã đổi thành 73 giây (73000 ms)
+  const SESSION_DURATION = 73000;  // 73 giây
   let globalSyncInterval = null;
   let lastRenderedSession = 0;
 
@@ -680,7 +669,6 @@
       let sessionsPassed = Math.floor(elapsed / SESSION_DURATION);
       let currentSession = baseSession + sessionsPassed;
       
-      // Đã đổi công thức đếm ngược thành 73 giây
       let timeLeft = 73 - Math.floor((elapsed % SESSION_DURATION) / 1000);
       if(timeLeft > 73) timeLeft = 73;
 
@@ -698,14 +686,12 @@
         tai.className = 'light red';
         xiu.className = 'light green';
         
-        // Hiệu ứng VIP AI đang phân tích
         speechText.innerText = "Đang tính...";
         speechText.style.color = "#888";
         percentText.innerText = "";
         patternText.innerText = "VIP AI: Đang soi cầu...";
         patternText.style.color = "#ffd700";
 
-        // Đợi 2 giây cho giống AI thật đang phân tích rồi mới ra kết quả
         setTimeout(() => {
             speechText.innerText = result.pred;
             percentText.innerText = result.conf + "%";
@@ -732,19 +718,14 @@
     }, 1000);
   }
 
-  // THUẬT TOÁN VIP AI: TẠO KẾT QUẢ VÀ % (50-100%), ĐOÁN CẦU
   function getPredictionForSession(sessionId) {
     let x = Math.sin(sessionId) * 10000;
     let rand = x - Math.floor(x); 
     
     let pred = rand > 0.5 ? "TÀI" : "XỈU";
-    // Tính % từ 50 đến 100
     let conf = Math.floor(rand * 51) + 50; 
     
-    // Tạo ngẫu nhiên tên cầu dựa trên rand
-    const patterns = [
-        "Bệt Tài", "Bệt Xỉu", "1-1", "3-2", "2-3", "Nhảy Cóc", "Bẻ Cầu", "Cầu Đảo"
-    ];
+    const patterns = ["Bệt Tài", "Bệt Xỉu", "1-1", "3-2", "2-3", "Nhảy Cóc", "Bẻ Cầu", "Cầu Đảo"];
     let patternIndex = Math.floor(rand * patterns.length);
     let pattern = patterns[patternIndex];
 
